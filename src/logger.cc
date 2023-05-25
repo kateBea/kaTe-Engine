@@ -18,6 +18,7 @@ namespace kT {
 
     auto Logger::getCoreLogger() -> const std::shared_ptr<spdlog::logger>& {
         KT_ASSERT(sLogger && "sLogger is NULL. Forgot to call kT::Logger::init()?");
+
         return sLogger;
     }
 }

@@ -2,7 +2,7 @@
 #include <core/logger.hh>
 
 int main(int, char**) {
-
+    kT::Logger::init();
 
     KATE_LOGGER_INFO("Info sLogger");
     KATE_LOGGER_CRITICAL("Info sLogger");
