@@ -5,7 +5,11 @@
 #ifndef KATE_ENGINE_MOUSE_EVENTS_HH
 #define KATE_ENGINE_MOUSE_EVENTS_HH
 
+#include <sstream>
+#include <string_view>
+
 #include "Event.hh"
+
 
 namespace kT {
     class MouseMovedEvent: public Event {
@@ -30,6 +34,12 @@ namespace kT {
          * See <code>kT::EventDispatcher</code> for usage
          * */
         static auto getStaticType() -> EventType { return EventType::MOUSE_MOVED_EVENT; }
+
+        auto displayData() const -> std::string override {
+            std::stringstream ss{ getFormattedStr(getType()).data() };
+            ss << " POS: [" << m_PositionX << ',' << m_PositionY << "]";
+            return ss.str();
+        }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
@@ -66,6 +76,12 @@ namespace kT {
          * See <code>kT::EventDispatcher</code> for usage
          * */
         static auto getStaticType() -> EventType { return EventType::MOUSE_BUTTON_PRESSED_EVENT; }
+
+        auto displayData() const -> std::string override {
+            std::stringstream ss{ getFormattedStr(getType()).data() };
+            ss << " BUTTON: [" << m_Button << ']';
+            return ss.str();
+        }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
@@ -90,6 +106,12 @@ namespace kT {
          * See <code>kT::EventDispatcher</code> for usage
          * */
         static auto getStaticType() -> EventType { return EventType::MOUSE_BUTTON_RELEASED_EVENT; }
+
+        auto displayData() const -> std::string override {
+            std::stringstream ss{ getFormattedStr(getType()).data() };
+            ss << " BUTTON: [" << m_Button << ']';
+            return ss.str();
+        }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
@@ -115,6 +137,12 @@ namespace kT {
          * See <code>kT::EventDispatcher</code> for usage
          * */
         static auto getStaticType() -> EventType { return EventType::MOUSE_SCROLLED_EVENT; }
+
+        auto displayData() const -> std::string override {
+            std::stringstream ss{ getFormattedStr(getType()).data() };
+            ss << " OFFSETS: [" << m_OffsetX << ',' << m_OffsetY << ']';
+            return ss.str();
+        }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 

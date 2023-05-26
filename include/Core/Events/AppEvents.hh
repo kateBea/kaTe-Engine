@@ -5,6 +5,9 @@
 #ifndef KATE_ENGINE_APP_EVENTS_HH
 #define KATE_ENGINE_APP_EVENTS_HH
 
+#include <sstream>
+#include <string_view>
+
 #include "Event.hh"
 
 namespace kT {
@@ -26,6 +29,13 @@ namespace kT {
          * See <code>kT::EventDispatcher</code> for usage
          * */
         static auto getStaticType() -> EventType { return EventType::WINDOW_RESIZE_EVENT; }
+
+        auto displayData() const -> std::string override {
+            std::stringstream ss{ getFormattedStr(getType()).data() };
+            ss << " NEW DIMENSIONS: [" << m_Width << ',' << m_Height << ']';
+            return ss.str();
+        }
+
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
@@ -44,6 +54,11 @@ namespace kT {
          * See <code>kT::EventDispatcher</code> for usage
          * */
         static auto getStaticType() -> EventType { return EventType::WINDOW_CLOSE_EVENT; }
+
+        auto displayData() const -> std::string override {
+            std::stringstream ss{ getFormattedStr(getType()).data() };
+            return ss.str();
+        }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
     };
@@ -59,6 +74,12 @@ namespace kT {
          * See <code>kT::EventDispatcher</code> for usage
          * */
         static auto getStaticType() -> EventType { return EventType::APP_TICK_EVENT; }
+
+        auto displayData() const -> std::string override {
+            std::stringstream ss{ getFormattedStr(getType()).data() };
+            return ss.str();
+        }
+
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
     };
@@ -74,6 +95,11 @@ namespace kT {
          * See <code>kT::EventDispatcher</code> for usage
          * */
         static auto getStaticType() -> EventType { return EventType::APP_UPDATE_EVENT; }
+
+        auto displayData() const -> std::string override {
+            std::stringstream ss{ getFormattedStr(getType()).data() };
+            return ss.str();
+        }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
     };
@@ -89,6 +115,11 @@ namespace kT {
          * See <code>kT::EventDispatcher</code> for usage
          * */
         static auto getStaticType() -> EventType { return EventType::APP_RENDER_EVENT; }
+
+        auto displayData() const -> std::string override {
+            std::stringstream ss{ getFormattedStr(getType()).data() };
+            return ss.str();
+        }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
     };

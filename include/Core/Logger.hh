@@ -36,6 +36,13 @@ namespace kT {
     #define KATE_LOGGER_TRACE(...) kT::Logger::getCoreLogger()->trace(__VA_ARGS__)
     #define KATE_LOGGER_INFO(...) kT::Logger::getCoreLogger()->info(__VA_ARGS__)
     #define KATE_LOGGER_DEBUG(...) kT::Logger::getCoreLogger()->debug(__VA_ARGS__)
+#else
+    #define KATE_LOGGER_ERROR(...)
+    #define KATE_LOGGER_WARN(...)
+    #define KATE_LOGGER_CRITICAL(...)
+    #define KATE_LOGGER_TRACE(...)
+    #define KATE_LOGGER_INFO(...)
+#define KATE_LOGGER_DEBUG(...)
 #endif
 
 

@@ -7,6 +7,8 @@
 
 #include <cstdint>
 #include <string_view>
+#include <sstream>
+#include <iomanip>
 
 #include "Event.hh"
 
@@ -46,6 +48,13 @@ namespace kT {
          * See <code>kT::EventDispatcher</code> for usage
          * */
         static auto getStaticType() -> EventType { return EventType::KEY_PRESSED_EVENT; }
+
+        auto displayData() const -> std::string override {
+            std::stringstream ss{ getFormattedStr(getType()).data() };
+            ss << " KEY:" << m_KeyCode << " REPEATED: " << std::boolalpha << std::uppercase << m_Repeated;
+            return ss.str();
+        }
+
     private:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
         bool m_Repeated{};
@@ -65,6 +74,12 @@ namespace kT {
          * See <code>kT::EventDispatcher</code> for usage
          * */
         static auto getStaticType() -> EventType { return EventType::KEY_RELEASED_EVENT; }
+
+        auto displayData() const -> std::string override {
+            std::stringstream ss{ getFormattedStr(getType()).data() };
+            ss << " KEY:" << m_KeyCode;
+            return ss.str();
+        }
     private:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
     };

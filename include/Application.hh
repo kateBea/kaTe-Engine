@@ -13,6 +13,9 @@
     #include "Platform/Window/LinuxWindow.hh"
 #endif
 
+#include "Core/Events/Event.hh"
+#include "Core/Events/AppEvents.hh"
+
 namespace kT {
     class Application {
     public:
@@ -23,6 +26,8 @@ namespace kT {
         {}
 
         ~Application() = default;
+
+        auto onEvent(Event& event) -> void;
 
         auto init() -> void;
         auto loop() -> void;
@@ -36,6 +41,7 @@ namespace kT {
         };
 
         // Helper functions
+        bool onWindowClose(WindowCloseEvent& ev);
 
         // Member variables
         State m_State{};

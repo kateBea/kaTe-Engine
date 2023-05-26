@@ -8,6 +8,7 @@
 #include <string_view>
 #include <type_traits>
 #include <functional>
+#include <string>
 
 #include "../../Core.hh"
 
@@ -111,6 +112,12 @@ namespace kT {
         [[nodiscard]]
         auto isInCategory(EventCategory cat) const -> bool { return getCategoryFlags() & cat; }
 
+        /**
+         * Returns a formatted string representing the data, if any,
+         * that this event holds. Used for debugging purposes
+         * */
+        virtual auto displayData() const -> std::string = 0;
+
         virtual ~Event() = default;
     private:
         friend class EventDispatcher;
@@ -145,7 +152,8 @@ namespace kT {
     class EventDispatcher {
     public:
         /**
-         * Alias for event function.
+         * Alias for event function. The function is supposed to return true if the
+         * event has been handled successfully, false otherwise
          * @tparam T type of event, is supposed to be a class type like <code>kT::KeyPressedEvent</code>, etc
          * */
         template<typename T>

@@ -7,6 +7,7 @@
 
 // C++ Standard Library
 #include <memory>
+#include <utility>
 
 // Third-Party Library
 #include <GLFW/glfw3.h>
@@ -38,11 +39,12 @@ namespace kT {
             :   Window{ std::move(other) }, m_Data{ std::move(other.m_Data) }, m_Window{ other.m_Window }
         {
             other.m_Window = nullptr;
+            startUp();
         }
 
-        auto operator=(LinuxWindow&& other) -> LinuxWindow& {
+        auto operator=(LinuxWindow&& other) noexcept -> LinuxWindow& {
             m_Data = std::move(other.m_Data);
-            m_Window = other.m_Window;
+            m_Window = std::move(other.m_Window);
 
             other.m_Window = nullptr;
 
@@ -56,7 +58,7 @@ namespace kT {
         [[nodiscard]]
         auto getHeight() const -> std::int32_t override { return m_Data.properties.getHeight(); }
 
-        auto setEventCallback(EventCallbackFunc func) -> void override;
+        auto setEventCallback(EventCallbackFunc func) -> void override { m_Data.callback = func; }
 
         auto enableVSync() -> void override;
         auto disableVSync() -> void override;

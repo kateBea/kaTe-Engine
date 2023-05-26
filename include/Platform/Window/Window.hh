@@ -17,7 +17,7 @@
 namespace kT {
     class WindowProperties {
     public:
-        WindowProperties(std::string_view name = "kaTe Engine", std::int32_t width = 1920, std::int32_t height = 1080)
+        explicit WindowProperties(std::string_view name = "kaTe Engine", std::int32_t width = 1920, std::int32_t height = 1080)
             :   m_Title{ name }, m_Width{ width }, m_Height{ height }
         {}
 
@@ -29,6 +29,9 @@ namespace kT {
 
         [[nodiscard]]
         auto getHeight() const -> std::int32_t { return m_Height; }
+
+        auto setWidth(std::int32_t width) -> void { m_Width = width; }
+        auto setHeight(std::int32_t height) -> void { m_Height = height; }
 
     private:
         std::string m_Title{};
@@ -49,11 +52,11 @@ namespace kT {
             :   m_Properties{ properties }
         {}
 
-        Window(Window&& other)
+        Window(Window&& other) noexcept
             :   m_Properties{ std::move(other.m_Properties) }
         {}
 
-        auto operator=(Window&& other) -> Window& {
+        auto operator=(Window&& other) noexcept -> Window& {
             m_Properties = std::move(other.m_Properties);
             return *this;
         }
