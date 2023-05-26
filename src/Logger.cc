@@ -1,5 +1,5 @@
-#include "../include/core/logger.hh"
-#include "../include/core/assert.hh"
+#include "../include/Core/Logger.hh"
+#include "../include/Core/Assert.hh"
 
 namespace kT {
     // Initialize sLogger

@@ -1,0 +1,218 @@
+//
+// Created by kate on 5/25/23.
+//
+
+#ifndef KATE_ENGINE_EVENT_HH
+#define KATE_ENGINE_EVENT_HH
+
+#include <string_view>
+#include <type_traits>
+#include <functional>
+
+#include "../../Core.hh"
+
+namespace kT {
+    /**
+     * Simply specifies the type of an Event
+     * */
+    enum class EventType {
+        EMPTY_EVENT,
+
+        // Window events.
+        // Category [WINDOW_EVENT_CATEGORY]
+        WINDOW_RESIZE_EVENT,
+        WINDOW_CLOSE_EVENT,
+        WINDOW_MOVED_EVENT,
+
+        // Application events.
+        // Category [APPLICATION_EVENT_CATEGORY]
+        APP_RENDER_EVENT,
+        APP_UPDATE_EVENT,
+        APP_TICK_EVENT,
+
+        // Key Events.
+        // Category [KEYBOARD_EVENT_CATEGORY]
+        KEY_PRESSED_EVENT,
+        KEY_RELEASED_EVENT,
+
+        // Mouse button events.
+        // Category [MOUSE_EVENT_CATEGORY]
+        MOUSE_BUTTON_PRESSED_EVENT,
+        MOUSE_BUTTON_RELEASED_EVENT,
+
+        // Mouse events.
+        // Category [MOUSE_BUTTON_EVENT_CATEGORY]
+        MOUSE_MOVED_EVENT,
+        MOUSE_SCROLLED_EVENT,
+
+        EVENT_TYPE_COUNT,
+    };
+
+    /**
+     * Specifies the group of an event. This is defined
+     * if and event handler may need to filter certain events,
+     * this is an easy way to group all of our events into one set.
+     * Bear in mind an event can be of different categories at the same time,
+     * for this purpose we may want to query the category flags later by using a
+     * bit wise OR which is supported by integers, for simplicity sake, this structure
+     * is not declared as an enum class
+     * */
+    enum EventCategory {
+        EMPTY_EVENT_CATEGORY            =  BIT_SET(0),
+
+        INPUT_EVENT_CATEGORY            =  BIT_SET(1),
+        APPLICATION_EVENT_CATEGORY      =  BIT_SET(2),
+        KEY_EVENT_CATEGORY              =  BIT_SET(3),
+        MOUSE_EVENT_CATEGORY            =  BIT_SET(4),
+        MOUSE_BUTTON_EVENT_CATEGORY     =  BIT_SET(5),
+
+        EVENT_CATEGORY_COUNT            =  BIT_SET(6),
+    };
+
+
+    /**
+     * Defines the general interface for all types of events.
+     *
+     * At the moment kaTe events are blocking, meaning when an event
+     * occurs it is notified and must be handled at that moment. An alternative
+     * system is Even queueing where we dispatch events to a queue and can
+     * handle them when we consider appropriate
+     * */
+    class Event {
+    public:
+        /**
+         * Creates a new event. The event is not handled on creation.
+         * By default they are part the of the category APPLICATION_EVENT_CATEGORY
+         * */
+        Event(EventType type, EventCategory categories)
+            :   m_Type{ type }, m_Categories{ categories }, m_Handled{ false } {}
+
+
+        Event(const Event& other)
+            :   m_Type{ other.m_Type }, m_Categories{ other.m_Categories }, m_Handled{ other.m_Handled } {}
+
+        /**
+         * Returns the type of this event. Can be used to query the type of
+         * this event in scenarios where polymorphism is used
+         * */
+        [[nodiscard]]
+        virtual auto getType() const -> EventType = 0;
+
+        [[nodiscard]]
+        virtual auto getCategoryFlags() const -> EventCategory { return m_Categories; };
+
+        /**
+         * Returns the string representation of this Event.
+         * Mainly for debugging purposes
+         * */
+        [[nodiscard]]
+        auto getNameStr() const -> std::string_view { return toString(); };
+
+        [[nodiscard]]
+        auto isInCategory(EventCategory cat) const -> bool { return getCategoryFlags() & cat; }
+    private:
+        friend class EventDispatcher;
+        EventType m_Type;
+        EventCategory m_Categories;
+    protected:
+        /**
+         * This function should not be called directly by the user.
+         * It is to be defined by the type of event that specializes this
+         * interface
+         * */
+        [[nodiscard]]
+        virtual auto toString() const -> std::string_view = 0;
+
+        /**
+         * In case we want to avoid propagating an Event we mark it as handled.
+         * It is under protected because we want the specializations of this
+         * interface to be able to directly access it, otherwise we may need
+         * a sort of public interface to control this member
+         * */
+         bool m_Handled{};
+    };
+
+    /**
+     * This concept ensures type safety determining
+     * if the event defines the static member function getStaticType()
+     * (Ideally all events should implement it)
+     * */
+    template<typename EventClassType>
+    concept HasStaticGetType = requires (EventClassType) { EventClassType::getStaticType(); };
+
+    class EventDispatcher {
+    public:
+        /**
+         * Alias for event function.
+         * @tparam T type of event, is supposed to be a class type like <code>kT::KeyPressedEvent</code>, etc
+         * */
+        template<typename T>
+        using EventFuncType = std::function<bool(T&)>;
+
+        explicit EventDispatcher(Event& event)
+            :   m_Event{ event } {}
+
+        template<typename EventClassType>
+            requires HasStaticGetType<EventClassType>
+        [[nodiscard]]
+        auto dispatch(EventFuncType<EventClassType> func) -> bool {
+            if (m_Event.getType() == EventClassType::getStaticType()) {
+                m_Event.m_Handled = func(*(static_cast<EventClassType*>(&m_Event)));
+                return true;
+            }
+            return false;
+        }
+
+    private:
+        /**
+         * Using a reference instead of pointer because a pointer
+         * would require to construct an Event which an abstract class
+         * */
+        Event& m_Event;
+    };
+
+    [[nodiscard]]
+    constexpr auto getFormattedStr(EventType type) -> std::string_view {
+        switch(type) {
+            case EventType::EMPTY_EVENT: return "EMPTY_EVENT";
+
+            // Window events.
+            // Category [WINDOW_EVENT_CATEGORY]
+            case EventType::WINDOW_RESIZE_EVENT: return "WINDOW_RESIZE_EVENT";
+            case EventType::WINDOW_CLOSE_EVENT: return "WINDOW_CLOSE_EVENT";
+            case EventType::WINDOW_MOVED_EVENT: return "WINDOW_MOVED_EVENT";
+
+            // Application events.
+            // Category [APPLICATION_EVENT_CATEGORY]
+            case EventType::APP_RENDER_EVENT: return "APP_RENDER_EVENT";
+            case EventType::APP_UPDATE_EVENT: return "APP_UPDATE_EVENT";
+            case EventType::APP_TICK_EVENT: return "APP_TICK_EVENT";
+
+            // Key Events.
+            // Category [KEYBOARD_EVENT_CATEGORY]
+            case EventType::KEY_PRESSED_EVENT: return "KEY_PRESSED_EVENT";
+            case EventType::KEY_RELEASED_EVENT: return "KEY_RELEASED_EVENT";
+
+            // Mouse button events.
+            // Category [MOUSE_EVENT_CATEGORY]
+            case EventType::MOUSE_BUTTON_PRESSED_EVENT: return "MOUSE_BUTTON_PRESSED_EVENT";
+            case EventType::MOUSE_BUTTON_RELEASED_EVENT: return "MOUSE_BUTTON_RELEASED_EVENT";
+
+            // Mouse events.
+            // Category [MOUSE_BUTTON_EVENT_CATEGORY]
+            case EventType::MOUSE_MOVED_EVENT: return "MOUSE_MOVED_EVENT";
+            case EventType::MOUSE_SCROLLED_EVENT: return "MOUSE_SCROLLED_EVENT";
+
+            default: return "EVENT_TYPE_COUNT";
+        }
+    }
+
+    /**
+     * for usage with std::cout
+     * */
+    inline std::ostream& operator<<(std::ostream& out, const Event& e) {
+        return out << "Type: " << e.getNameStr();
+    }
+}
+
+#endif // KATE_ENGINE_EVENT_HH
