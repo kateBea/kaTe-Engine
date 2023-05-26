@@ -15,6 +15,7 @@
 
 #include "Core/Events/Event.hh"
 #include "Core/Events/AppEvents.hh"
+#include "Core/Layers/LayerStack.hh"
 
 namespace kT {
     class Application {
@@ -28,6 +29,9 @@ namespace kT {
         ~Application() = default;
 
         auto onEvent(Event& event) -> void;
+
+        auto pushLayer(LayerStack::LayerPtr layer) -> void;
+        auto pushOverlay(LayerStack::LayerPtr overlay) -> void;
 
         auto init() -> void;
         auto loop() -> void;
@@ -46,6 +50,8 @@ namespace kT {
         // Member variables
         State m_State{};
         std::unique_ptr<Window> m_Window{};
+        LayerStack m_LayerStack{};
+
 
     };
 }

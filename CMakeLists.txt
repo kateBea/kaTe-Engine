@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(GLEW_CMAKE_DIR lib/glew/build/cmake)
 set(GLFW_CMAKE_DIR lib/glfw)
 
-set(CORE_SOURCES src/Logger.cc)
+set(CORE_SOURCES src/Logger.cc src/LayerStack.cc)
 set(PLATFORM_SOURCES src/Application.cc src/LinuxWindow.cc src/Win32Window.cc)
 
 set(SOURCES ${CORE_SOURCES} ${PLATFORM_SOURCES})
@@ -35,5 +35,3 @@ include_directories(
 
 add_executable(kaTe_Engine src/EntryPoint.cc ${SOURCES})
 target_link_libraries(kaTe_Engine ${LIBRARIES})
-target_compile_definitions(kaTe_Engine PRIVATE KT_ENABLE_ASSERTIONS)
-target_compile_definitions(kaTe_Engine PRIVATE KT_ENABLE_LOGGING)

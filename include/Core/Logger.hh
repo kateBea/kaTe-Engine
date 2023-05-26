@@ -20,29 +20,51 @@ namespace kT {
         static auto init() -> void;
 
         static auto getCoreLogger() -> const std::shared_ptr<spdlog::logger>&;
+        static auto getAppLogger() -> const std::shared_ptr<spdlog::logger>&;
 
 
     private:
-        static std::shared_ptr<spdlog::logger> sLogger;
+        static std::shared_ptr<spdlog::logger> sCoreLogger;
+        static std::shared_ptr<spdlog::logger> sAppLogger;
     };
 }
 
-// Log macros
-
-#if defined(KT_ENABLE_LOGGING)
-    #define KATE_LOGGER_ERROR(...) kT::Logger::getCoreLogger()->error(__VA_ARGS__)
-    #define KATE_LOGGER_WARN(...) kT::Logger::getCoreLogger()->warn(__VA_ARGS__)
-    #define KATE_LOGGER_CRITICAL(...) kT::Logger::getCoreLogger()->critical(__VA_ARGS__)
-    #define KATE_LOGGER_TRACE(...) kT::Logger::getCoreLogger()->trace(__VA_ARGS__)
-    #define KATE_LOGGER_INFO(...) kT::Logger::getCoreLogger()->info(__VA_ARGS__)
-    #define KATE_LOGGER_DEBUG(...) kT::Logger::getCoreLogger()->debug(__VA_ARGS__)
+#if defined(NDEBUG) || defined(_DEBUG)
+    #define KT_ENABLE_LOGGING
 #else
-    #define KATE_LOGGER_ERROR(...)
-    #define KATE_LOGGER_WARN(...)
-    #define KATE_LOGGER_CRITICAL(...)
-    #define KATE_LOGGER_TRACE(...)
-    #define KATE_LOGGER_INFO(...)
-#define KATE_LOGGER_DEBUG(...)
+    #undef KT_ENABLE_LOGGING
+#endif
+
+// Log macros
+#if defined(KT_ENABLE_LOGGING)
+
+    #define KATE_CORE_LOGGER_ERROR(...) kT::Logger::getCoreLogger()->error(__VA_ARGS__)
+    #define KATE_CORE_LOGGER_WARN(...) kT::Logger::getCoreLogger()->warn(__VA_ARGS__)
+    #define KATE_CORE_LOGGER_CRITICAL(...) kT::Logger::getCoreLogger()->critical(__VA_ARGS__)
+    #define KATE_CORE_LOGGER_TRACE(...) kT::Logger::getCoreLogger()->trace(__VA_ARGS__)
+    #define KATE_CORE_LOGGER_INFO(...) kT::Logger::getCoreLogger()->info(__VA_ARGS__)
+    #define KATE_CORE_LOGGER_DEBUG(...) kT::Logger::getCoreLogger()->debug(__VA_ARGS__)
+
+    #define KATE_APP_LOGGER_ERROR(...) kT::Logger::getAppLogger()->error(__VA_ARGS__)
+    #define KATE_APP_LOGGER_WARN(...) kT::Logger::getAppLogger()->warn(__VA_ARGS__)
+    #define KATE_APP_LOGGER_CRITICAL(...) kT::Logger::getAppLogger()->critical(__VA_ARGS__)
+    #define KATE_APP_LOGGER_TRACE(...) kT::Logger::getAppLogger()->trace(__VA_ARGS__)
+    #define KATE_APP_LOGGER_INFO(...) kT::Logger::getAppLogger()->info(__VA_ARGS__)
+    #define KATE_APP_LOGGER_DEBUG(...) kT::Logger::getAppLogger()->debug(__VA_ARGS__)
+#else
+    #define KATE_CORE_LOGGER_ERROR(...)
+    #define KATE_CORE_LOGGER_WARN(...)
+    #define KATE_CORE_LOGGER_CRITICAL(...)
+    #define KATE_CORE_LOGGER_TRACE(...)
+    #define KATE_CORE_LOGGER_INFO(...)
+    #define KATE_CORE_LOGGER_DEBUG(...)
+
+    #define KATE_APP_LOGGER_ERROR(...)
+    #define KATE_APP_LOGGER_WARN(...)
+    #define KATE_APP_LOGGER_CRITICAL(...)
+    #define KATE_APP_LOGGER_TRACE(...)
+    #define KATE_APP_LOGGER_INFO(...)
+    #define KATE_APP_LOGGER_DEBUG(...)
 #endif
 
 

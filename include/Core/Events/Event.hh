@@ -10,7 +10,7 @@
 #include <functional>
 #include <string>
 
-#include "../../Core.hh"
+#include "../../Common.hh"
 
 namespace kT {
     /**
@@ -108,6 +108,8 @@ namespace kT {
          * */
         [[nodiscard]]
         auto getNameStr() const -> std::string_view { return toString(); };
+
+        auto isHandled() const -> bool { return m_Handled; }
 
         [[nodiscard]]
         auto isInCategory(EventCategory cat) const -> bool { return getCategoryFlags() & cat; }

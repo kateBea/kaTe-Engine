@@ -34,25 +34,22 @@ namespace kT {
 
 
     auto LinuxWindow::spawn() -> std::unique_ptr<LinuxWindow> {
-        KATE_LOGGER_INFO("Spawning new Window");
+        KATE_CORE_LOGGER_INFO("Spawning new Window");
         return std::make_unique<LinuxWindow>();
     }
 
     auto LinuxWindow::startUp() -> void {
-        KATE_LOGGER_DEBUG("Creating Linux Window with name '{}' and dimension [{}, {}]",
-                          m_Data.properties.getName(), m_Data.properties.getWidth(), m_Data.properties.getHeight());
+        KATE_CORE_LOGGER_DEBUG("Creating Linux Window with name '{}' and dimension [{}, {}]",
+                               m_Data.properties.getName(), m_Data.properties.getWidth(), m_Data.properties.getHeight());
 
         // Init GLFW
         if (!s_GLFWInitSuccess) {
             auto ret{ glfwInit() };
-
-            if (ret == GLFW_FALSE)
-                KT_ASSERT(false && "Failed to initialized the GLFW library");
+            KT_ASSERT(ret == GLFW_TRUE, "Failed to initialized the GLFW library");
 
             s_GLFWInitSuccess = true;
-
             glfwSetErrorCallback([](std::int32_t errCode, const char* desc) {
-                    KATE_LOGGER_ERROR("GLFW error code: {} Description: {}", errCode, desc);
+                    KATE_CORE_LOGGER_ERROR("GLFW error code: {} Description: {}", errCode, desc);
                 }
             );
         }
@@ -144,8 +141,8 @@ namespace kT {
     }
 
     auto LinuxWindow::shutDown() -> void {
-        KATE_LOGGER_DEBUG("Shutting down Linux Window with name '{}' and dimension [{}, {}]",
-                          m_Data.properties.getName(), m_Data.properties.getWidth(), m_Data.properties.getHeight());
+        KATE_CORE_LOGGER_DEBUG("Shutting down Linux Window with name '{}' and dimension [{}, {}]",
+                               m_Data.properties.getName(), m_Data.properties.getWidth(), m_Data.properties.getHeight());
         glfwDestroyWindow(m_Window);
         glfwTerminate();
     }
