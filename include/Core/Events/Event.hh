@@ -110,6 +110,8 @@ namespace kT {
 
         [[nodiscard]]
         auto isInCategory(EventCategory cat) const -> bool { return getCategoryFlags() & cat; }
+
+        virtual ~Event() = default;
     private:
         friend class EventDispatcher;
         EventType m_Type;

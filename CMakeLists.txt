@@ -6,7 +6,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CORE_SOURCES src/Logger.cc)
 
-set(SOURCES ${CORE_SOURCES} src/Application.cc)
+set(SOURCES ${CORE_SOURCES} src/Application.cc src/LinuxWindow.cc src/Win32Window.cc)
+set(LIBRARIES glfw)
+
+add_subdirectory(lib/glfw)
 
 # Compiler flags
 if (MSVC)
@@ -21,6 +24,10 @@ endif()
 include_directories(
         include/
         lib/spdlog/include
+        lib/glfw/include
 )
 
 add_executable(kaTe_Engine src/EntryPoint.cc ${SOURCES})
+target_link_libraries(kaTe_Engine ${LIBRARIES})
+target_compile_definitions(kaTe_Engine PRIVATE KT_ENABLE_ASSERTIONS)
+target_compile_definitions(kaTe_Engine PRIVATE KT_ENABLE_LOGGING)
