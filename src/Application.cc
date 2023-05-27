@@ -1,33 +1,25 @@
-#include <iostream>
 #include <string>
 #include <utility>
 #include <functional>
-#include <algorithm>
 #include <memory>
 #include <cmath>
 
 // Third-party libraries
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <list>
 
 // Project headers
-#include "Core/Events/Event.hh"
 #include "Core/Events/AppEvents.hh"
 #include "Core/Events/KeyEvents.hh"
 #include "Core/Events/MouseEvents.hh"
-
-
-#include "Core/Assert.hh"
 #include "Core/Logger.hh"
 
 #include "../include/Common.hh"
 #include "../include/Application.hh"
 
-#include "Core/Layers/ExampleLayer.hh"
-
 // just useful for the Application class for now
-#define BIND_EVENT_FUNC(x) std::bind(&Application::x, this, std::placeholders::_1)
+#define BIND_EVENT_FUNC(x) \
+    std::bind(&Application::x, this, std::placeholders::_1)
 
 namespace kT {
     Application::Application()
@@ -43,6 +35,10 @@ namespace kT {
 
         m_Window = LinuxWindow::spawn();
         m_Window->setEventCallback(BIND_EVENT_FUNC(onEvent));
+
+        // Display OpenGL versions being used
+        KT_DISPLAY_OPENGL_TARGET_VERSION();
+        KT_DISPLAY_OPENGL_VENDOR_VERSION();
     }
 
     auto Application::loop() -> void {

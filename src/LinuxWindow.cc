@@ -45,7 +45,6 @@ namespace kT {
     auto LinuxWindow::startUp() -> void {
         KATE_CORE_LOGGER_DEBUG("Creating Linux Window with name '{}' and dimension [{}, {}]",
                                m_Data.properties.getName(), m_Data.properties.getWidth(), m_Data.properties.getHeight());
-
         // Init GLFW
         if (!s_GLFWInitSuccess) {
             auto ret{ glfwInit() };
@@ -65,6 +64,9 @@ namespace kT {
 
         m_Window = glfwCreateWindow(m_Data.properties.getWidth(), m_Data.properties.getHeight(),
                                     m_Data.properties.getName().c_str(), nullptr, nullptr);
+        m_WindowCreateSuccess = m_Window != nullptr;
+        KT_ASSERT(m_WindowCreateSuccess, "Failed to create the window");
+
         glfwMakeContextCurrent(m_Window);
 
         // Init GLEW

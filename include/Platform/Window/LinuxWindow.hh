@@ -30,7 +30,7 @@ namespace kT {
         using EventCallbackFunc = std::function<void(Event&)>;
 
         explicit LinuxWindow(const WindowProperties& properties = WindowProperties{})
-            :   m_Data{ .properties{ properties }, .callback{}, .VSync{ true } }, m_Window{ nullptr }
+            :   Window{}, m_Data{ .properties{ properties }, .callback{}, .VSync{ true } }, m_Window{ nullptr }
         {
             startUp();
         }
@@ -43,6 +43,7 @@ namespace kT {
         }
 
         auto operator=(LinuxWindow&& other) noexcept -> LinuxWindow& {
+
             m_Data = std::move(other.m_Data);
             m_Window = std::move(other.m_Window);
 
@@ -74,6 +75,11 @@ namespace kT {
         auto startUp() -> void override;
         auto shutDown() -> void override;
 
+        /**
+         * This struct exists so we can store a pointer to it via
+         * glfwGetWindowUserPointer() and retrieve the data contained with in
+         * inside the function callbacks
+         * */
         struct WindowData {
             WindowProperties properties{};
             EventCallbackFunc callback{};

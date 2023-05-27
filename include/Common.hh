@@ -212,7 +212,24 @@
         glClearColor(red, green, blue, blue * 2);           \
         glClear(GL_COLOR_BUFFER_BIT);
 #else
-#define SWAP_BG_COLOR_INTERVAL(__SEC)
+    #define SWAP_BG_COLOR_INTERVAL(__SEC)
+#endif
+
+#if defined(NDEBUG) || defined(_DEBUG)
+    #define KT_DISPLAY_OPENGL_TARGET_VERSION()                                            \
+        KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Target OpenGL Ver. {}.{}\n",         \
+                                 KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR)
+#else
+    #define KT_DISPLAY_OPENGL_TARGET_VERSION()
+#endif
+
+#if defined(NDEBUG) || defined(_DEBUG)
+    #define KT_DISPLAY_OPENGL_VENDOR_VERSION()                                            \
+            auto str{ glGetString(GL_VERSION) };                                          \
+            KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Vendor OpenGL Ver. {}\n", (const char*)str)
+
+#else
+    #define KT_DISPLAY_OPENGL_VENDOR_VERSION()
 #endif
 
 #endif // KATE_ENGINE_COMMON_HH

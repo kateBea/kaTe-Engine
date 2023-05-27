@@ -49,14 +49,14 @@ namespace kT {
         using EventCallbackFunc = std::function<void(Event&)>;
 
         explicit Window(const WindowProperties& properties = WindowProperties{})
-            :   m_Properties{ properties }
+            :   m_Properties{ properties }, m_WindowCreateSuccess{ false }
         {}
 
         Window(Window&& other) noexcept
             :   m_Properties{ std::move(other.m_Properties) }
         {}
 
-        auto operator=(Window&& other) noexcept -> Window& {
+        virtual auto operator=(Window&& other) noexcept -> Window& {
             m_Properties = std::move(other.m_Properties);
             return *this;
         }
@@ -80,7 +80,13 @@ namespace kT {
     protected:
         virtual auto startUp() -> void = 0;
         virtual auto shutDown() -> void = 0;
+
+        bool m_WindowCreateSuccess{};
     private:
+        /**
+         * Might get deleted in the future, the specializations
+         * already store the Window properties, essentially duplicating data
+         * */
         WindowProperties m_Properties{};
     };
 }
