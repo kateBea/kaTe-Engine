@@ -5,9 +5,14 @@
 #ifndef KATE_ENGINE_MOUSE_EVENTS_HH
 #define KATE_ENGINE_MOUSE_EVENTS_HH
 
-#include <sstream>
+// C++ Standard Library
 #include <string_view>
+#include <array>
 
+// Third-Party Libraries
+#include <fmt/format.h>
+
+// Project headers
 #include "Event.hh"
 
 
@@ -36,9 +41,7 @@ namespace kT {
         static auto getStaticType() -> EventType { return EventType::MOUSE_MOVED_EVENT; }
 
         auto displayData() const -> std::string override {
-            std::stringstream ss{ getFormattedStr(getType()).data() };
-            ss << " POS: [" << m_PositionX << ',' << m_PositionY << "]";
-            return ss.str();
+            return fmt::format("{} POS [{}, {}]", getFormattedStr(getType()).data(), m_PositionX, m_PositionY);
         }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
@@ -78,9 +81,9 @@ namespace kT {
         static auto getStaticType() -> EventType { return EventType::MOUSE_BUTTON_PRESSED_EVENT; }
 
         auto displayData() const -> std::string override {
-            std::stringstream ss{ getFormattedStr(getType()).data() };
-            ss << " BUTTON: [" << m_Button << ']';
-            return ss.str();
+            constexpr static std::array<std::string_view, 3> NAME{ "LEFT_CLICK", "RIGHT_CLICK", "SCROLL_WHEEL_CLICK" };
+            // we are just testing with a mouse with three buttons for now
+            return fmt::format("{} BUTTON {}", getFormattedStr(getType()).data(), NAME[m_Button]);
         }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
@@ -108,9 +111,9 @@ namespace kT {
         static auto getStaticType() -> EventType { return EventType::MOUSE_BUTTON_RELEASED_EVENT; }
 
         auto displayData() const -> std::string override {
-            std::stringstream ss{ getFormattedStr(getType()).data() };
-            ss << " BUTTON: [" << m_Button << ']';
-            return ss.str();
+            constexpr static std::array<std::string_view, 3> NAME{ "LEFT_CLICK", "RIGHT_CLICK", "SCROLL_WHEEL_CLICK" };
+            // we are just testing with a mouse with three buttons for now
+            return fmt::format("{} BUTTON {}", getFormattedStr(getType()).data(), NAME[m_Button]);
         }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
@@ -139,9 +142,7 @@ namespace kT {
         static auto getStaticType() -> EventType { return EventType::MOUSE_SCROLLED_EVENT; }
 
         auto displayData() const -> std::string override {
-            std::stringstream ss{ getFormattedStr(getType()).data() };
-            ss << " OFFSETS: [" << m_OffsetX << ',' << m_OffsetY << ']';
-            return ss.str();
+            return fmt::format("{} OFFSETS [{}, {}]", getFormattedStr(getType()).data(), m_OffsetX, m_OffsetY);
         }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }

@@ -4,12 +4,19 @@
 #include <functional>
 #include <algorithm>
 #include <memory>
+#include <cmath>
 
-// Events
+// Third-party libraries
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <list>
+
+// Project headers
 #include "Core/Events/Event.hh"
 #include "Core/Events/AppEvents.hh"
 #include "Core/Events/KeyEvents.hh"
 #include "Core/Events/MouseEvents.hh"
+
 
 #include "Core/Assert.hh"
 #include "Core/Logger.hh"
@@ -40,13 +47,10 @@ namespace kT {
 
     auto Application::loop() -> void {
         KATE_CORE_LOGGER_INFO("Entering main loop kaTe Engine");
+
         while (m_State == State::RUNNING) {
-            // Poll Events
-
-            glClearColor(0.3f, 0.8f, 0.45f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            SWAP_BG_COLOR_INTERVAL();
             m_Window->onUpdate();
-
             for (auto& layer : m_LayerStack)
                 layer->onUpdate();
         }

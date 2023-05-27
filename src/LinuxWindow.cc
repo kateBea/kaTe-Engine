@@ -2,6 +2,8 @@
 // Created by kate on 5/26/23.
 //
 
+#include <GL/glew.h>
+
 #include "../include/Core/Assert.hh"
 #include "../include/Core/Logger.hh"
 
@@ -11,6 +13,8 @@
 #include "../include/Core/Events/MouseEvents.hh"
 
 #include "../include/Platform/Window/LinuxWindow.hh"
+
+#include "../include/Common.hh"
 
 namespace kT {
     auto LinuxWindow::onUpdate() -> void {
@@ -52,11 +56,24 @@ namespace kT {
                     KATE_CORE_LOGGER_ERROR("GLFW error code: {} Description: {}", errCode, desc);
                 }
             );
+
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, KT_OPENGL_VERSION_MAJOR);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, KT_OPENGL_VERSION_MINOR);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
         }
 
         m_Window = glfwCreateWindow(m_Data.properties.getWidth(), m_Data.properties.getHeight(),
                                     m_Data.properties.getName().c_str(), nullptr, nullptr);
         glfwMakeContextCurrent(m_Window);
+
+        // Init GLEW
+        glewExperimental = GL_TRUE;
+        // Using temporal variable because KATE_CORE_LOGGER_ERROR gets stripped
+        // in non-DEBUG builds, so glewInit() would not be executed
+        auto ret{ glewInit() == GLEW_OK };
+        KT_ASSERT(ret, "Failed to initialize GLEW");
+
         glfwSetWindowUserPointer(m_Window, &m_Data);
         enableVSync();
 

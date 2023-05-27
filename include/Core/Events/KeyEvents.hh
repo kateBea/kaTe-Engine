@@ -5,11 +5,16 @@
 #ifndef KATE_ENGINE_KEY_EVENTS_HH
 #define KATE_ENGINE_KEY_EVENTS_HH
 
+// C++ Standard Library
 #include <cstdint>
 #include <string_view>
-#include <sstream>
 #include <iomanip>
+#include <cstdio>
 
+// Third-Party Libraries
+#include <fmt/format.h>
+
+// Project headers
 #include "Event.hh"
 
 namespace kT {
@@ -50,9 +55,7 @@ namespace kT {
         static auto getStaticType() -> EventType { return EventType::KEY_PRESSED_EVENT; }
 
         auto displayData() const -> std::string override {
-            std::stringstream ss{ getFormattedStr(getType()).data() };
-            ss << " KEY:" << m_KeyCode << " REPEATED: " << std::boolalpha << std::uppercase << m_Repeated;
-            return ss.str();
+            return fmt::format("{} KEY: {} REPEATED: {}", getFormattedStr(getType()).data(), m_KeyCode, m_Repeated ? "TRUE" : "FALSE");
         }
 
     private:
@@ -76,9 +79,7 @@ namespace kT {
         static auto getStaticType() -> EventType { return EventType::KEY_RELEASED_EVENT; }
 
         auto displayData() const -> std::string override {
-            std::stringstream ss{ getFormattedStr(getType()).data() };
-            ss << " KEY:" << m_KeyCode;
-            return ss.str();
+            return fmt::format("{} KEY: {}", getFormattedStr(getType()).data(), m_KeyCode);
         }
     private:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }

@@ -2,8 +2,8 @@
 // Created by kate on 5/27/23.
 //
 
-#ifndef KATE_ENGINE_EXAMPLELAYER_HH
-#define KATE_ENGINE_EXAMPLELAYER_HH
+#ifndef KATE_ENGINE_EXAMPLE_LAYER_HH
+#define KATE_ENGINE_EXAMPLE_LAYER_HH
 
 #include "Layer.hh"
 #include "../Logger.hh"
@@ -22,4 +22,4 @@ namespace kT {
 
     };
 }
-#endif //KATE_ENGINE_EXAMPLELAYER_HH
+#endif // KATE_ENGINE_EXAMPLE_LAYER_HH
