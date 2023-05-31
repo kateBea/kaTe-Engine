@@ -10,6 +10,20 @@ The following libraries are required on Linux:
     
 1. OpenGL
 
+This project is done thanks to various third-party libraries:
+
+1. [FMT (Modern formatting library)](https://github.com/fmtlib/fmt)
+2. [GLEW (Open GL extension Wrangler)](https://glew.sourceforge.net/)
+3. [GLFW (Multiplatform Library for Window, Event handling, etc.)](https://github.com/glfw/glfw)
+4. [GLM (Open GL Mathematics Library for C++)](https://github.com/g-truc/glm)
+5. [ImGui (Graphical User interface Library for C++)](https://github.com/ocornut/imgui)
+6. [Spdlog (Fast C++ Logging Library)](https://github.com/gabime/spdlog)
+
+The following tools are required on Linux:
+
+1. G++ (GNU C++ Compiler)
+2. CMake (Cross platform build system)
+
 The GLFW library is not necessary to be installed on the system since it 
 is included as a submodule and build along with the project.
 

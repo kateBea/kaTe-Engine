@@ -1,18 +1,19 @@
-//
-// Created by kate on 5/27/23.
-//
+/**
+ * ExampleLayer.hh
+ * Created by kate on 5/27/23.
+ * */
 
 #ifndef KATE_ENGINE_EXAMPLE_LAYER_HH
 #define KATE_ENGINE_EXAMPLE_LAYER_HH
 
-#include "Layer.hh"
-#include "../Logger.hh"
+#include <Core/Layers/Layer.hh>
+#include <Core/Logger.hh>
 
 namespace kT {
     class ExampleLayer : public Layer {
     public:
         ExampleLayer()
-                : Layer{ "Example" } {}
+            : Layer{ "Example" } {}
 
         auto onAttach() -> void override {}
         auto onDetach() -> void override {}
@@ -21,5 +22,7 @@ namespace kT {
     private:
 
     };
-}
+
+}   // END NAMESPACE kT
+
 #endif // KATE_ENGINE_EXAMPLE_LAYER_HH

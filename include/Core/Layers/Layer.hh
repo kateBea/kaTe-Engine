@@ -1,14 +1,17 @@
-//
-// Created by kate on 5/26/23.
-//
+/**
+ * Layer.hh
+ * Created by kate on 5/26/23.
+ * */
 
 #ifndef KATE_ENGINE_LAYER_HH
 #define KATE_ENGINE_LAYER_HH
 
+// C++ Standard Library
 #include <string_view>
 #include <string>
 
-#include "Core/Events/Event.hh"
+// Project Headers
+#include <Core/Events/Event.hh>
 
 namespace kT {
 
@@ -41,7 +44,8 @@ namespace kT {
 
         std::string m_Name{};
     };
-}
+
+}   // END NAMESPACE kT
 
 
 #endif // KATE_ENGINE_LAYER_HH

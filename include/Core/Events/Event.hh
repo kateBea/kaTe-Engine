@@ -1,16 +1,19 @@
-//
-// Created by kate on 5/25/23.
-//
+/**
+ * Event.hh
+ * Created by kate on 5/25/23.
+ * */
 
 #ifndef KATE_ENGINE_EVENT_HH
 #define KATE_ENGINE_EVENT_HH
 
+// C++ Standard Library
 #include <string_view>
 #include <type_traits>
 #include <functional>
 #include <string>
 
-#include "../../Common.hh"
+// Project Headers
+#include <kaTe/Common.hh>
 
 namespace kT {
     /**
@@ -35,6 +38,7 @@ namespace kT {
         // Category [KEYBOARD_EVENT_CATEGORY]
         KEY_PRESSED_EVENT,
         KEY_RELEASED_EVENT,
+        KEY_CHAR_EVENT,
 
         // Mouse button events.
         // Category [MOUSE_EVENT_CATEGORY]
@@ -138,28 +142,41 @@ namespace kT {
          * In case we want to avoid propagating an Event we mark it as handled.
          * It is under protected because we want the specializations of this
          * interface to be able to directly access it, otherwise we may need
-         * a sort of public interface to control this member
+         * a sort of public interface to control this member.
+         *
+         * If this event has been handled this variables holds true,
+         * false if this Event has not been handled yet
          * */
          bool m_Handled{};
     };
 
     /**
-     * This concept ensures type safety determining
-     * if the event defines the static member function getStaticType()
+     * This concept ensures type safety determining in for the dispatcher method.
+     * If the event defines the static member function getStaticType()
      * (Ideally all events should implement it)
      * */
     template<typename EventClassType>
     concept HasStaticGetType = requires (EventClassType) { EventClassType::getStaticType(); };
 
+    /**
+     * This a mechanism that handles the distribution and routing of events
+     * to appropriate event handlers. It acts as a central hub or manager
+     * for events and facilitates communication between different parts of our system.
+     *
+     * When it receives an Event it forwards or propagates it to the appropriate
+     * handler (essentially calls the handler with the provided event). If the
+     * Handler function does not want to propagate the Event, it marks it as handled,
+     * that is why the handler returns a boolean that indicates this state.
+     * */
     class EventDispatcher {
     public:
         /**
          * Alias for event function. The function is supposed to return true if the
-         * event has been handled successfully, false otherwise
+         * event has been handled successfully, false otherwise.
          * @tparam T type of event, is supposed to be a class type like <code>kT::KeyPressedEvent</code>, etc
          * */
         template<typename T>
-        using EventFuncType = std::function<bool(T&)>;
+        using EventFunc_T = std::function<bool(T&)>;
 
         explicit EventDispatcher(Event& event)
             :   m_Event{ event } {}
@@ -167,7 +184,7 @@ namespace kT {
         template<typename EventClassType>
             requires HasStaticGetType<EventClassType>
         [[nodiscard]]
-        auto dispatch(EventFuncType<EventClassType> func) -> bool {
+        auto forward(EventFunc_T<EventClassType> func) -> bool {
             if (m_Event.getType() == EventClassType::getStaticType()) {
                 m_Event.m_Handled = func(*(static_cast<EventClassType*>(&m_Event)));
                 return true;
@@ -183,6 +200,10 @@ namespace kT {
         Event& m_Event;
     };
 
+    /**
+     * Returns the exact string representation of the given EventType enum
+     * @returns EventType string representation
+     * */
     [[nodiscard]]
     constexpr auto getFormattedStr(EventType type) -> std::string_view {
         switch(type) {
@@ -204,6 +225,7 @@ namespace kT {
             // Category [KEYBOARD_EVENT_CATEGORY]
             case EventType::KEY_PRESSED_EVENT: return "KEY_PRESSED_EVENT";
             case EventType::KEY_RELEASED_EVENT: return "KEY_RELEASED_EVENT";
+            case EventType::KEY_CHAR_EVENT: return "KEY_CHAR_EVENT";
 
             // Mouse button events.
             // Category [MOUSE_EVENT_CATEGORY]
@@ -220,11 +242,12 @@ namespace kT {
     }
 
     /**
-     * for usage with std::cout
+     * Helper to print event to console
      * */
     inline std::ostream& operator<<(std::ostream& out, const Event& e) {
         return out << "Type: " << e.getNameStr();
     }
-}
+
+}   // END NAMESPACE kT
 
 #endif // KATE_ENGINE_EVENT_HH

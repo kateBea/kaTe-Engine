@@ -1,9 +1,12 @@
-//
-// Created by kate on 5/26/23.
-//
+/**
+ * LayerStack.cc
+ * Created by kate on 5/26/23.
+ * */
 
+// C++ Standard Library
 #include <algorithm>
 
+// Project headers
 #include "Core/Layers/LayerStack.hh"
 
 namespace kT {
@@ -30,4 +33,5 @@ namespace kT {
             m_Layers.erase(targetIt);
 
     }
-} // kT
+
+}   // END NAMESPACE kT

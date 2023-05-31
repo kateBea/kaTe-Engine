@@ -1,6 +1,7 @@
-//
-// Created by kate on 5/25/23.
-//
+/**
+ * KeyEvents.hh
+ * Created by kate on 5/25/23.
+ * */
 
 #ifndef KATE_ENGINE_KEY_EVENTS_HH
 #define KATE_ENGINE_KEY_EVENTS_HH
@@ -14,8 +15,9 @@
 // Third-Party Libraries
 #include <fmt/format.h>
 
-// Project headers
-#include "Event.hh"
+// Project Headers
+#include <Core/Events/Event.hh>
+#include <kaTe/Common.hh>
 
 namespace kT {
     /**
@@ -23,14 +25,14 @@ namespace kT {
      * */
     class KeyEvent : public Event {
     public:
-        auto getKeyCode() const -> std::int32_t { return m_KeyCode; }
+        auto getKeyCode() const -> Int32_T { return m_KeyCode; }
 
     protected:
         /**
          * Only specializations may create events
          * */
-        KeyEvent(EventType type, std::int32_t code)
-            :   Event{ type, static_cast<EventCategory>(INPUT_EVENT_CATEGORY | KEY_EVENT_CATEGORY) }, m_KeyCode{ code }
+        KeyEvent(EventType type, Int32_T keyCode)
+            :   Event{ type, static_cast<EventCategory>(INPUT_EVENT_CATEGORY | KEY_EVENT_CATEGORY) }, m_KeyCode{ keyCode }
         {}
 
         std::int32_t m_KeyCode{};
@@ -38,8 +40,8 @@ namespace kT {
 
     class KeyPressedEvent : public KeyEvent {
     public:
-        KeyPressedEvent(std::int32_t code, bool repeated)
-            :   KeyEvent{ EventType::KEY_PRESSED_EVENT, code }, m_Repeated{ repeated }
+        KeyPressedEvent(Int32_T keyCode, bool repeated)
+            :   KeyEvent{ EventType::KEY_PRESSED_EVENT, keyCode }, m_Repeated{ repeated }
         {}
 
         [[nodiscard]]
@@ -65,7 +67,7 @@ namespace kT {
 
     class KeyReleasedEvent : public KeyEvent {
     public:
-        KeyReleasedEvent(std::int32_t code)
+        KeyReleasedEvent(Int32_T code)
             :   KeyEvent{ EventType::KEY_RELEASED_EVENT, code }
         {}
 
@@ -84,6 +86,35 @@ namespace kT {
     private:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
     };
-}
+
+    class KeyCharEvent : public Event {
+    public:
+        KeyCharEvent(UInt32_T charCode)
+            :   Event{ EventType::KEY_CHAR_EVENT, static_cast<EventCategory>(INPUT_EVENT_CATEGORY | KEY_EVENT_CATEGORY) }
+            ,   m_KeyChar{ charCode }
+        {}
+
+        [[nodiscard]]
+        auto getType() const -> EventType override { return getStaticType(); }
+
+        [[nodiscard]]
+        auto getChar() -> UInt32_T { return m_KeyChar; }
+
+        /**
+         * Useful if we need to query the type of this event.
+         * See <code>kT::EventDispatcher</code> for usage
+         * */
+        static auto getStaticType() -> EventType { return EventType::KEY_CHAR_EVENT; }
+
+        auto displayData() const -> std::string override {
+            return fmt::format("{} KEY: {}", getFormattedStr(getType()).data(), m_KeyChar);
+        }
+    private:
+        auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
+
+        UInt32_T m_KeyChar{};
+    };
+
+}   // END NAMESPACE kT
 
 #endif //KATE_ENGINE_KEY_EVENTS_HH

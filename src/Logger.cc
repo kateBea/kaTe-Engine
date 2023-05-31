@@ -2,37 +2,39 @@
 #include "../include/Core/Assert.hh"
 
 namespace kT {
-    // Initialize loggers
-    std::shared_ptr<spdlog::logger> Logger::sCoreLogger{};
-    std::shared_ptr<spdlog::logger> Logger::sAppLogger{};
-
-    // Don't forget to call this function before using the loggers
     auto Logger::init() -> void {
-        sCoreLogger = spdlog::stdout_color_mt("KATE_CORE_LOGGER");
-        sAppLogger = spdlog::stdout_color_mt("KATE_APP_LOGGER");
+        m_CoreLogger = spdlog::stdout_color_mt("KATE_CORE_LOGGER");
+        m_AppLogger = spdlog::stdout_color_mt("KATE_APP_LOGGER");
 
-        // Set sLogger pattern.
+        // Set m_CoreLogger pattern.
         // Check out the wiki for info about formatting
         // https://github.com/gabime/spdlog/wiki/3.-Custom-formatting
-        sCoreLogger->set_pattern("%^[%X] CORE LOG [thread %t] %v%$");
-        sCoreLogger->set_level(spdlog::level::trace);
+        m_CoreLogger->set_pattern("%^[%X] CORE LOG [thread %t] %v%$");
 
-        // Set sLogger pattern.
+        // Log every message from the current level onwards.
+        // If trace is used, all messages are logged including critical ones,
+        // if debug is used, trace messages aren't logged and so on.
+        m_CoreLogger->set_level(spdlog::level::trace);
+
+        // Set m_AppLogger pattern.
         // Check out the wiki for info about formatting
         // https://github.com/gabime/spdlog/wiki/3.-Custom-formatting
-        sAppLogger->set_pattern("%^[%X] APP LOG [thread %t] %v%$");
-        sAppLogger->set_level(spdlog::level::trace);
+        m_AppLogger->set_pattern("%^[%X] APP LOG [thread %t] %v%$");
+        m_AppLogger->set_level(spdlog::level::trace);
+
+        // Auto flush when "debug" or higher level message is logged on all loggers.
+        // Check the FAQ for more about this matter.
+        // https://github.com/gabime/spdlog/wiki/0.-FAQ
+        spdlog::flush_on(spdlog::level::debug);
     }
 
     auto Logger::getCoreLogger() -> const std::shared_ptr<spdlog::logger>& {
-        KT_ASSERT(sCoreLogger, "CORE LOGGER is NULL. Forgot to call kT::Logger::init()?");
-
-        return sCoreLogger;
+        return m_CoreLogger;
     }
 
     auto Logger::getAppLogger() -> const std::shared_ptr<spdlog::logger>& {
-        KT_ASSERT(sAppLogger, "APP LOGGER is NULL. Forgot to call kT::Logger::init()?");
 
-        return sAppLogger;
+
+        return m_AppLogger;
     }
 }

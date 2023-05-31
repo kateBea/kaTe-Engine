@@ -1,12 +1,15 @@
-#include <memory>
-#include <Application.hh>
+/**
+ * EntryPoint.cc
+ * */
+
+#include <kaTe/Application.hh>
 
 int main(int, char**) {
-    auto app{ std::make_unique<kT::Application>(kT::Application()) };
+    auto& app { kT::Application::get() };
 
-    app->init();
-    app->loop();
-    app->shutdown();
+    app.init();
+    app.loop();
+    app.shutDown();
 
     return 0;
 }

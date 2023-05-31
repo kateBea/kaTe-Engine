@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.21)
 project(kaTe_Engine)
 
 # CXX Lang Requirements
@@ -11,10 +11,31 @@ set(GLFW_CMAKE_DIR lib/glfw)
 set(FMT_CMAKE_DIR lib/fmt)
 
 # Projects source files
-set(CORE_SOURCES src/Logger.cc src/LayerStack.cc)
-set(PLATFORM_SOURCES src/Application.cc src/LinuxWindow.cc src/Win32Window.cc)
+set(CORE_SOURCES
+        src/Logger.cc
+        src/LayerStack.cc
+        src/ImGuiLayer.cc
+        )
 
-set(SOURCES ${CORE_SOURCES} ${PLATFORM_SOURCES})
+set(PLATFORM_SOURCES
+        src/Application.cc
+        src/LinuxWindow.cc
+        src/WinWindow.cc
+        src/ImGuiOpenGLRenderer.cc
+        src/LinuxInputManager.cc)
+
+set(IMGUI_SOURCES
+        lib/imgui/imgui.cpp
+        lib/imgui/backends/imgui_impl_glfw.cpp
+        lib/imgui/imgui_widgets.cpp
+        lib/imgui/imgui_draw.cpp
+        lib/imgui/imgui_tables.cpp
+        lib/imgui/imgui_demo.cpp)
+
+set(SOURCES
+        ${CORE_SOURCES}
+        ${PLATFORM_SOURCES}
+        ${IMGUI_SOURCES})
 
 # External dependencies
 add_subdirectory(${GLEW_CMAKE_DIR})
@@ -22,7 +43,7 @@ add_subdirectory(${GLFW_CMAKE_DIR})
 add_subdirectory(${FMT_CMAKE_DIR})
 
 # Libraries to link against target
-set(LIBRARIES glfw glew_s fmt::fmt-header-only)
+set(LIBRARIES glfw glew_s fmt)
 
 # Compiler flags
 if (MSVC)
@@ -31,6 +52,13 @@ if (MSVC)
 else()
     # Compile commands for Linux
     add_compile_options(-fsanitize=address -D_DEBUG)
+
+    # For Key and Mouse Codes we use the GLFW ones
+    # On Linux systems
+    add_compile_definitions(USE_GLFW_KEY_CODES)
+    add_compile_definitions(USE_GLFW_MOUSE_CODES)
+
+    # Sanitize
     add_link_options(-fsanitize=address)
 endif()
 
@@ -39,6 +67,8 @@ include_directories(include/)
 include_directories(lib/spdlog/include)
 include_directories(lib/glfw/include)
 include_directories(lib/glew/include)
+include_directories(lib/imgui)
+include_directories(lib/imgui/backends)
 
 add_executable(kaTe_Engine src/EntryPoint.cc ${SOURCES})
 target_link_libraries(kaTe_Engine ${LIBRARIES})

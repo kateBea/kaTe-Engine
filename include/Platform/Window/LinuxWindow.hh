@@ -1,6 +1,7 @@
-//
-// Created by kate on 5/26/23.
-//
+/**
+ * LinuxWindow.hh
+ * Created by kate on 5/26/23.
+ * */
 
 #ifndef KATE_ENGINE_LINUX_WINDOW_HH
 #define KATE_ENGINE_LINUX_WINDOW_HH
@@ -9,71 +10,67 @@
 #include <memory>
 #include <utility>
 
-// Third-Party Library
+// Third-Party Libraries
 #include <GLFW/glfw3.h>
 
-// Project
-#include "Window.hh"
+// Project Headers
+#include <Platform/Window/Window.hh>
+#include <kaTe/Common.hh>
 
 namespace kT {
     /**
      * Tells whether the GLFW was initialized successfully.
      * Needed before creating windows
      * */
-    static bool s_GLFWInitSuccess{ false };
+    inline bool g_GLFWInitSuccess{ false };
 
     /**
      * Window specialization for Linux.
      * */
     class LinuxWindow : public Window {
     public:
-        using EventCallbackFunc = std::function<void(Event&)>;
+        explicit LinuxWindow(const WindowProperties& properties = WindowProperties{});
 
-        explicit LinuxWindow(const WindowProperties& properties = WindowProperties{})
-            :   Window{}, m_Data{ .properties{ properties }, .callback{}, .VSync{ true } }, m_Window{ nullptr }
-        {
-            startUp();
-        }
+        /**
+         * Constructs and initializes this LinuxWindow using move semantics.
+         * If this call is successful, <code>other</code> is put into an invalid
+         * state thus accessing its data may result in undefined behaviour.
+         * @param other moved from object
+         * */
+        LinuxWindow(LinuxWindow&& other);
 
-        LinuxWindow(LinuxWindow&& other)
-            :   Window{ std::move(other) }, m_Data{ std::move(other.m_Data) }, m_Window{ other.m_Window }
-        {
-            other.m_Window = nullptr;
-            startUp();
-        }
+        /**
+         * Assigns <code>other</code> to this LinuxWindow using move semantics.
+         * If this call is successful, <code>other</code> is put into an invalid
+         * state thus accessing its data may result in undefined behaviour.
+         * @param other moved from object
+         * */
+        auto operator=(LinuxWindow&& other) noexcept -> LinuxWindow&;
 
-        auto operator=(LinuxWindow&& other) noexcept -> LinuxWindow& {
+        [[nodiscard]]
+        auto getWidth() const -> Int32_T override { return m_Data.properties.getWidth(); }
+        [[nodiscard]]
+        auto getHeight() const -> Int32_T override { return m_Data.properties.getHeight(); }
+        /**
+         * Returns a pointer to a structure containing the
+         * native Window structure
+         * */
+        [[nodiscard]]
+        auto getNativeWindow() -> std::any override { return m_Window; }
 
-            m_Data = std::move(other.m_Data);
-            m_Window = std::move(other.m_Window);
-
-            other.m_Window = nullptr;
-
-            return *this;
-        }
-
+        auto init() -> void override;
         auto onUpdate() -> void override;
-
+        auto shutDown() -> void override;
+        auto setEventCallback(EventCallbackFunc_T func) -> void override { m_Data.callback = func; }
         [[nodiscard]]
-        auto getWidth() const -> std::int32_t override { return m_Data.properties.getWidth(); }
-        [[nodiscard]]
-        auto getHeight() const -> std::int32_t override { return m_Data.properties.getHeight(); }
-
-        auto setEventCallback(EventCallbackFunc func) -> void override { m_Data.callback = func; }
-
+        auto isVSyncEnabled() const -> bool override { return m_Data.VSync; }
         auto enableVSync() -> void override;
         auto disableVSync() -> void override;
 
-        [[nodiscard]]
-        auto isVSyncEnabled() const -> bool override { return m_Data.VSync; }
+        ~LinuxWindow() override = default;
 
-        ~LinuxWindow() override;
-
-        [[nodiscard]]
-        static auto spawn() -> std::unique_ptr<LinuxWindow>;
     private:
-        auto startUp() -> void override;
-        auto shutDown() -> void override;
+        auto setCallbacks() -> void;
 
         /**
          * This struct exists so we can store a pointer to it via
@@ -82,13 +79,14 @@ namespace kT {
          * */
         struct WindowData {
             WindowProperties properties{};
-            EventCallbackFunc callback{};
+            EventCallbackFunc_T callback{};
             bool VSync{};
         };
 
         GLFWwindow* m_Window{};
         WindowData m_Data;
     };
-}
+
+}   // END NAMESPACE kT
 
 #endif // KATE_ENGINE_LINUX_WINDOW_HH

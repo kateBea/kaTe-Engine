@@ -1,26 +1,32 @@
-//
-// Created by kate on 5/26/23.
-//
+/**
+ * AppEvents.hh
+ * Created by kate on 5/26/23.
+ * */
 
 #ifndef KATE_ENGINE_APP_EVENTS_HH
 #define KATE_ENGINE_APP_EVENTS_HH
 
-#include <sstream>
+// C++ Standard Library
 #include <string_view>
 
-#include "Event.hh"
+// Third-Party Libraries
+#include <fmt/core.h>
+
+// Project Headers
+#include <Core/Events/Event.hh>
+#include <kaTe/Common.hh>
 
 namespace kT {
-    class WindowResizedEvent: public Event {
+    class WindowResizedEvent : public Event {
     public:
-        WindowResizedEvent(std::int32_t newWidth, std::int32_t newHeight)
+        WindowResizedEvent(Int32_T newWidth, Int32_T newHeight)
             :   Event{ EventType::WINDOW_RESIZE_EVENT, APPLICATION_EVENT_CATEGORY }, m_Width{ newWidth }, m_Height{ newHeight } {}
 
         [[nodiscard]]
-        auto getWidth() const -> std::int32_t { return m_Width; }
+        auto getWidth() const -> Int32_T { return m_Width; }
 
         [[nodiscard]]
-        auto getHeight() const -> std::int32_t { return m_Height; }
+        auto getHeight() const -> Int32_T { return m_Height; }
 
         auto getType() const -> EventType override { return getStaticType(); }
 
@@ -31,16 +37,14 @@ namespace kT {
         static auto getStaticType() -> EventType { return EventType::WINDOW_RESIZE_EVENT; }
 
         auto displayData() const -> std::string override {
-            std::stringstream ss{ getFormattedStr(getType()).data() };
-            ss << " NEW DIMENSIONS: [" << m_Width << ',' << m_Height << ']';
-            return ss.str();
+            return fmt::format("{} NEW DIMENSIONS: [{}, {}]", getFormattedStr(getType()).data(), m_Width, m_Height);
         }
 
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
-        std::int32_t m_Width{};
-        std::int32_t m_Height{};
+        Int32_T m_Width{};
+        Int32_T m_Height{};
     };
 
     class WindowCloseEvent: public Event {
@@ -56,8 +60,7 @@ namespace kT {
         static auto getStaticType() -> EventType { return EventType::WINDOW_CLOSE_EVENT; }
 
         auto displayData() const -> std::string override {
-            std::stringstream ss{ getFormattedStr(getType()).data() };
-            return ss.str();
+            return fmt::format("{}", getFormattedStr(getType()).data());
         }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
@@ -76,8 +79,7 @@ namespace kT {
         static auto getStaticType() -> EventType { return EventType::APP_TICK_EVENT; }
 
         auto displayData() const -> std::string override {
-            std::stringstream ss{ getFormattedStr(getType()).data() };
-            return ss.str();
+            return fmt::format("{}", getFormattedStr(getType()).data());
         }
 
     protected:
@@ -97,8 +99,7 @@ namespace kT {
         static auto getStaticType() -> EventType { return EventType::APP_UPDATE_EVENT; }
 
         auto displayData() const -> std::string override {
-            std::stringstream ss{ getFormattedStr(getType()).data() };
-            return ss.str();
+            return fmt::format("{}", getFormattedStr(getType()).data());
         }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
@@ -117,11 +118,13 @@ namespace kT {
         static auto getStaticType() -> EventType { return EventType::APP_RENDER_EVENT; }
 
         auto displayData() const -> std::string override {
-            std::stringstream ss{ getFormattedStr(getType()).data() };
-            return ss.str();
+            return fmt::format("{}", getFormattedStr(getType()).data());
         }
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
     };
-}
+
+
+}   // END NAMESPACE kT
+
 #endif // KATE_ENGINE_APP_EVENTS_HH

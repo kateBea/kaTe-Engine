@@ -1,6 +1,7 @@
-//
-// Created by kate on 5/25/23.
-//
+/**
+ * MouseEvents.hh
+ * Created by kate on 5/25/23.
+ * */
 
 #ifndef KATE_ENGINE_MOUSE_EVENTS_HH
 #define KATE_ENGINE_MOUSE_EVENTS_HH
@@ -12,12 +13,13 @@
 // Third-Party Libraries
 #include <fmt/format.h>
 
-// Project headers
-#include "Event.hh"
+// Project Headers
+#include <Core/Events/Event.hh>
+#include <kaTe/Common.hh>
 
 
 namespace kT {
-    class MouseMovedEvent: public Event {
+    class MouseMovedEvent : public Event {
     public:
         MouseMovedEvent(double x, double y)
             :   Event{ EventType::MOUSE_MOVED_EVENT, static_cast<EventCategory>(INPUT_EVENT_CATEGORY | MOUSE_EVENT_CATEGORY) }
@@ -51,11 +53,6 @@ namespace kT {
     };
 
     class MouseEvent : public Event {
-    public:
-        /**
-         * Useful if we need to query the type of this event.
-         * See <code>kT::EventDispatcher</code> for usage
-         * */
     protected:
         explicit MouseEvent(EventType type, EventCategory categories = EMPTY_EVENT_CATEGORY)
             :   Event{ type, static_cast<EventCategory>(MOUSE_EVENT_CATEGORY | INPUT_EVENT_CATEGORY | categories) } {}
@@ -63,13 +60,13 @@ namespace kT {
 
     class MouseButtonPressedEvent : public MouseEvent {
     public:
-        MouseButtonPressedEvent(std::int32_t button)
-                :   MouseEvent{ EventType::MOUSE_BUTTON_PRESSED_EVENT, MOUSE_BUTTON_EVENT_CATEGORY }
+        MouseButtonPressedEvent(Int32_T button)
+                :   MouseEvent{ EventType::MOUSE_BUTTON_PRESSED_EVENT, MOUSE_BUTTON_EVENT_CATEGORY}
                 ,   m_Button{ button }
         {}
 
         [[nodiscard]]
-        auto getMouseButton() -> std::int32_t { return m_Button; }
+        auto getMouseButton() -> Int32_T { return m_Button; }
 
         [[nodiscard]]
         auto getType() const -> EventType override { return getStaticType(); }
@@ -88,18 +85,18 @@ namespace kT {
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
-        std::int32_t m_Button{};
+        Int32_T m_Button{};
     };
 
     class MouseButtonReleasedEvent : public MouseEvent {
     public:
-        MouseButtonReleasedEvent(std::int32_t button)
-                :   MouseEvent{ EventType::MOUSE_BUTTON_RELEASED_EVENT, MOUSE_BUTTON_EVENT_CATEGORY }
-                ,   m_Button{ button }
+        MouseButtonReleasedEvent(Int32_T button)
+            :    MouseEvent{ EventType::MOUSE_BUTTON_RELEASED_EVENT, MOUSE_BUTTON_EVENT_CATEGORY }
+            ,    m_Button{ button }
         {}
 
         [[nodiscard]]
-        auto getMouseButton() -> std::int32_t { return m_Button; }
+        auto getMouseButton() -> Int32_T { return m_Button; }
 
         [[nodiscard]]
         auto getType() const -> EventType override { return getStaticType(); }
@@ -118,13 +115,14 @@ namespace kT {
     protected:
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
-        std::int32_t m_Button{};
+        Int32_T m_Button{};
     };
 
     class MouseScrollEvent : public MouseEvent {
     public:
         MouseScrollEvent(double xOffset, double yOffset)
-                :   MouseEvent{ EventType::MOUSE_SCROLLED_EVENT }, m_OffsetX{ xOffset }, m_OffsetY{ yOffset }
+            :   MouseEvent{ EventType::MOUSE_SCROLLED_EVENT }
+            ,   m_OffsetX{ xOffset }, m_OffsetY{ yOffset }
         {}
 
         [[nodiscard]]
@@ -150,6 +148,7 @@ namespace kT {
         double m_OffsetX{};
         double m_OffsetY{};
     };
-}
+
+}   // END NAMESPACE kT
 
 #endif // KATE_ENGINE_MOUSE_EVENTS_HH

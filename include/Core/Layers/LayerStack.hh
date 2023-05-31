@@ -1,13 +1,16 @@
-//
-// Created by kate on 5/26/23.
-//
+/**
+ * LayerStack.hh
+ * Created by kate on 5/26/23.
+ * */
 
 #ifndef KATE_ENGINE_LAYER_STACK_HH
 #define KATE_ENGINE_LAYER_STACK_HH
 
+// C++ Standard Library
 #include <memory>
 
-#include "Layer.hh"
+// Project Headers
+#include <Core/Layers/Layer.hh>
 
 namespace kT {
     /**
@@ -30,7 +33,9 @@ namespace kT {
         using LayerContainerReverseIter = std::vector<LayerPtr>::reverse_iterator;
 
         explicit LayerStack() : m_Layers{}, m_LayerIndex{ m_Layers.begin() } {}
-        ~LayerStack() = default;
+
+        auto init() -> void { /*Empty for now */ }
+        auto shutDown() -> void { /*Empty for now */ }
 
         auto addLayer(LayerPtr layer) -> void;
         auto addOverlay(LayerPtr overlay) -> void;
@@ -49,6 +54,6 @@ namespace kT {
         LayerContainerIter m_LayerIndex{};
     };
 
-} // kT
+} // END NAMESPACE kT
 
 #endif // KATE_ENGINE_LAYER_STACK_HH

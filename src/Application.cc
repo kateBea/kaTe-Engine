@@ -1,5 +1,3 @@
-#include <string>
-#include <utility>
 #include <functional>
 #include <memory>
 #include <cmath>
@@ -9,36 +7,26 @@
 #include <GLFW/glfw3.h>
 
 // Project headers
-#include "Core/Events/AppEvents.hh"
-#include "Core/Events/KeyEvents.hh"
-#include "Core/Events/MouseEvents.hh"
-#include "Core/Logger.hh"
+#include <Core/Events/AppEvents.hh>
+#include <Core/Logger.hh>
 
-#include "../include/Common.hh"
-#include "../include/Application.hh"
+#include <kaTe/Application.hh>
+#include <kaTe/Common.hh>
 
-// just useful for the Application class for now
-#define BIND_EVENT_FUNC(x) \
-    std::bind(&Application::x, this, std::placeholders::_1)
+#include <Core/Layers/ImGuiLayer.hh>
+#include <Platform/Window/LinuxInputManager.hh>
 
 namespace kT {
-    Application::Application()
-        :   m_Window{}, m_State{ State::RUNNING }
-    {}
-
     auto Application::init() -> void {
-#if defined(KT_ENABLE_LOGGING)
-        kT::Logger::init();
-#endif
         KATE_APP_LOGGER_INFO("Initializing kaTe Engine");
-        KATE_APP_LOGGER_INFO("Initializing new window kaTe Engine");
-
-        m_Window = LinuxWindow::spawn();
-        m_Window->setEventCallback(BIND_EVENT_FUNC(onEvent));
-
+        // Allocate and Initialize members
+        initWindow();
+        initLayerStack();
+        initInputManager();
         // Display OpenGL versions being used
         KT_DISPLAY_OPENGL_TARGET_VERSION();
         KT_DISPLAY_OPENGL_VENDOR_VERSION();
+        KATE_APP_LOGGER_DEBUG("Finished kaTe Engine initialization");
     }
 
     auto Application::loop() -> void {
@@ -46,24 +34,48 @@ namespace kT {
 
         while (m_State == State::RUNNING) {
             SWAP_BG_COLOR_INTERVAL();
-            m_Window->onUpdate();
-            for (auto& layer : m_LayerStack)
+            for (auto& layer : *m_LayerStack) {
                 layer->onUpdate();
+            }
+
+            m_Window->onUpdate();
         }
     }
 
-    auto Application::shutdown() -> void {
-        KATE_APP_LOGGER_INFO("Shutting down kaTe Engine");
+    auto Application::initWindow() -> void {
+        KATE_APP_LOGGER_INFO("Initializing Application::Window kaTe Engine");
+        m_Window = std::make_unique<LinuxWindow>();
+        KT_ASSERT(m_Window != nullptr, "Window is NULL");
+
+        m_Window->init();
+        m_Window->setEventCallback(KT_BIND_EVENT_FUNC(Application::onEvent));
     }
+
+    auto Application::initLayerStack() -> void {
+        KATE_APP_LOGGER_INFO("Initializing Application::LayerStack kaTe Engine");
+        m_LayerStack = std::make_unique<LayerStack>();
+        KT_ASSERT(m_LayerStack != nullptr, "Layer Stack is NULL");
+
+        m_LayerStack->init();
+
+        pushOverlay(std::make_unique<ImGuiLayer>());
+    }
+
+    auto Application::initInputManager() -> void {
+        KATE_APP_LOGGER_INFO("Initializing Application::InputManager kaTe Engine");
+        m_InputManager = std::make_unique<LinuxInputManager>();
+        KT_ASSERT(m_InputManager != nullptr, "Input Manager is NULL");
+    }
+
 
     auto Application::onEvent(Event& event) -> void {
         KATE_APP_LOGGER_TRACE("{}", event.displayData());
 
         EventDispatcher evDis{ event };
-        if (evDis.dispatch<WindowCloseEvent>(BIND_EVENT_FUNC(onWindowClose)))
+        if (evDis.forward<WindowCloseEvent>(KT_BIND_EVENT_FUNC(Application::onWindowClose)))
             KATE_APP_LOGGER_TRACE("HANDLED {}", event.displayData());
 
-        for (auto it{ m_LayerStack.rbegin() }; it != m_LayerStack.rend(); ++it) {
+        for (auto it{ m_LayerStack->rbegin() }; it != m_LayerStack->rend(); ++it) {
             (*it)->onEvent(event);
             if (event.isHandled())
                 break;
@@ -76,10 +88,28 @@ namespace kT {
     }
 
     auto Application::pushLayer(LayerStack::LayerPtr layer) -> void {
-        m_LayerStack.addLayer(layer);
+        m_LayerStack->addLayer(layer);
+        layer->onAttach();
     }
 
     auto Application::pushOverlay(LayerStack::LayerPtr overlay) -> void {
-        m_LayerStack.addOverlay(overlay);
+        m_LayerStack->addOverlay(overlay);
+        overlay->onAttach();
+    }
+
+    auto Application::shutDown() -> void {
+        KATE_APP_LOGGER_INFO("Shutting down kaTe Engine");
+
+        m_LayerStack->shutDown();
+        m_Window->shutDown();
+    }
+
+    auto Application::getWindow() -> Window & {
+        KT_ASSERT(m_Window, "Application main window is NULL");
+        return *m_Window;
+    }
+    auto Application::getInputManager() -> InputManager & {
+        KT_ASSERT(m_InputManager, "Input manager is null");
+        return *m_InputManager;
     }
 }
