@@ -20,7 +20,7 @@
 // Project Headers
 #include <kaTe/Singleton.hh>
 
-namespace kT {
+namespace kaTe {
     /**
      * Holds the CORE logger and the APP logger. The CORE logger
      * logs information about the current state of the Core systems of the engine.
@@ -51,19 +51,19 @@ namespace kT {
 // Log macros
 #if defined(KT_ENABLE_LOGGING)
 
-    #define KATE_CORE_LOGGER_ERROR(...) kT::Logger::get().getCoreLogger()->error(fmt::format(__VA_ARGS__))
+    #define KATE_CORE_LOGGER_ERROR(...) kaTe::Logger::get().getCoreLogger()->error(fmt::format(__VA_ARGS__))
     #define KATE_CORE_LOGGER_WARN(...) kT::Logger::get().getCoreLogger()->warn(fmt::format(__VA_ARGS__))
     #define KATE_CORE_LOGGER_CRITICAL(...) kT::Logger::get().getCoreLogger()->critical(fmt::format(__VA_ARGS__))
     #define KATE_CORE_LOGGER_TRACE(...) kT::Logger::get().getCoreLogger()->trace(fmt::format(__VA_ARGS__))
-    #define KATE_CORE_LOGGER_INFO(...) kT::Logger::get().getCoreLogger()->info(fmt::format(__VA_ARGS__))
-    #define KATE_CORE_LOGGER_DEBUG(...) kT::Logger::get().getCoreLogger()->debug(fmt::format(__VA_ARGS__))
+    #define KATE_CORE_LOGGER_INFO(...) kaTe::Logger::get().getCoreLogger()->info(fmt::format(__VA_ARGS__))
+    #define KATE_CORE_LOGGER_DEBUG(...) kaTe::Logger::get().getCoreLogger()->debug(fmt::format(__VA_ARGS__))
 
-    #define KATE_APP_LOGGER_ERROR(...) kT::Logger::get().getAppLogger()->error(fmt::format(__VA_ARGS__))
+    #define KATE_APP_LOGGER_ERROR(...) kaTe::Logger::get().getAppLogger()->error(fmt::format(__VA_ARGS__))
     #define KATE_APP_LOGGER_WARN(...) kT::Logger::get().getAppLogger()->warn(fmt::format(__VA_ARGS__))
     #define KATE_APP_LOGGER_CRITICAL(...) kT::Logger::get().getAppLogger()->critical(fmt::format(__VA_ARGS__))
-    #define KATE_APP_LOGGER_TRACE(...) kT::Logger::get().getAppLogger()->trace(fmt::format(__VA_ARGS__))
-    #define KATE_APP_LOGGER_INFO(...) kT::Logger::get().getAppLogger()->info(fmt::format(__VA_ARGS__))
-    #define KATE_APP_LOGGER_DEBUG(...) kT::Logger::get().getAppLogger()->debug(fmt::format(__VA_ARGS__))
+    #define KATE_APP_LOGGER_TRACE(...) kaTe::Logger::get().getAppLogger()->trace(fmt::format(__VA_ARGS__))
+    #define KATE_APP_LOGGER_INFO(...) kaTe::Logger::get().getAppLogger()->info(fmt::format(__VA_ARGS__))
+    #define KATE_APP_LOGGER_DEBUG(...) kaTe::Logger::get().getAppLogger()->debug(fmt::format(__VA_ARGS__))
 #else
     #define KATE_CORE_LOGGER_ERROR(...)
     #define KATE_CORE_LOGGER_WARN(...)

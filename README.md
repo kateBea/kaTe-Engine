@@ -1,6 +1,8 @@
 # kaTe-Engine
 Simple engine written in moder C++
 
+![kaTe Engine](assets/image/img1.png)
+
 # Building
 
 Clone the repository, at the moment I only tested building on Linux. 

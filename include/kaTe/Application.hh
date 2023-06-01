@@ -18,6 +18,7 @@
 
 #include <kaTe/Singleton.hh>
 
+#include "Core/Layers/ImGuiLayer.hh"
 #include <Core/Assert.hh>
 #include <Core/Events/AppEvents.hh>
 #include <Core/Events/Event.hh>
@@ -25,7 +26,7 @@
 #include <Platform/Window/InputManager.hh>
 
 
-namespace kT {
+namespace kaTe {
     /**
      * This class is essentially a wrapper around all the subsystems of our
      * application, and it serves as a way of communicating the different
@@ -147,11 +148,14 @@ namespace kT {
 
         auto initInputManager() -> void;
 
+        auto initImGuiLayer() -> void;
+
         // MEMBER VARIABLES ----------------------------
         State m_State{ State::RUNNING };
 
         Ptr_T<Window> m_Window{ nullptr };
         Ptr_T<LayerStack> m_LayerStack{ nullptr };
+        SPtr_T<ImGuiLayer> m_ImGuiLayer{ nullptr };
 
         // For now, there's one instance of InputManager in our application
         // In case we may want to poll input from multiple Windows, this

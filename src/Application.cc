@@ -16,13 +16,17 @@
 #include <Core/Layers/ImGuiLayer.hh>
 #include <Platform/Window/LinuxInputManager.hh>
 
-namespace kT {
+namespace kaTe {
     auto Application::init() -> void {
         KATE_APP_LOGGER_INFO("Initializing kaTe Engine");
         // Allocate and Initialize members
         initWindow();
         initLayerStack();
         initInputManager();
+        initImGuiLayer();
+
+        pushLayer(m_ImGuiLayer);
+
         // Display OpenGL versions being used
         KT_DISPLAY_OPENGL_TARGET_VERSION();
         KT_DISPLAY_OPENGL_VENDOR_VERSION();
@@ -34,9 +38,16 @@ namespace kT {
 
         while (m_State == State::RUNNING) {
             SWAP_BG_COLOR_INTERVAL();
-            for (auto& layer : *m_LayerStack) {
+            for (auto& layer : *m_LayerStack)
                 layer->onUpdate();
-            }
+
+            m_ImGuiLayer->beginFrame();
+            for (auto& layer : *m_LayerStack)
+                // CAUTION. JUST FOR TESTING PURPOSES FOR NOW
+                // UB if the layer is not an ImGuiLayer
+                reinterpret_cast<ImGuiLayer*>(&layer)->imGuiPushRenderElements();
+            m_ImGuiLayer->endFrame();
+
 
             m_Window->onUpdate();
         }
@@ -57,8 +68,6 @@ namespace kT {
         KT_ASSERT(m_LayerStack != nullptr, "Layer Stack is NULL");
 
         m_LayerStack->init();
-
-        pushOverlay(std::make_unique<ImGuiLayer>());
     }
 
     auto Application::initInputManager() -> void {
@@ -108,8 +117,14 @@ namespace kT {
         KT_ASSERT(m_Window, "Application main window is NULL");
         return *m_Window;
     }
-    auto Application::getInputManager() -> InputManager & {
+
+    auto Application::getInputManager() -> InputManager& {
         KT_ASSERT(m_InputManager, "Input manager is null");
         return *m_InputManager;
+    }
+    auto Application::initImGuiLayer() -> void {
+        KATE_APP_LOGGER_INFO("Initializing Application::ImGuiLayer kaTe Engine");
+        m_ImGuiLayer = std::make_shared<ImGuiLayer>();
+        KT_ASSERT(m_InputManager != nullptr, "ImGui Layer is NULL");
     }
 }

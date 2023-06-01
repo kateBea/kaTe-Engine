@@ -21,7 +21,6 @@ set(PLATFORM_SOURCES
         src/Application.cc
         src/LinuxWindow.cc
         src/WinWindow.cc
-        src/ImGuiOpenGLRenderer.cc
         src/LinuxInputManager.cc)
 
 set(IMGUI_SOURCES
@@ -30,7 +29,8 @@ set(IMGUI_SOURCES
         lib/imgui/imgui_widgets.cpp
         lib/imgui/imgui_draw.cpp
         lib/imgui/imgui_tables.cpp
-        lib/imgui/imgui_demo.cpp)
+        lib/imgui/imgui_demo.cpp
+        lib/imgui/backends/imgui_impl_opengl3.cpp)
 
 set(SOURCES
         ${CORE_SOURCES}

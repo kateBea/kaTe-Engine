@@ -17,7 +17,11 @@
 #include <Core/Events/MouseEvents.hh>
 #include <Core/Events/KeyEvents.hh>
 
-namespace kT {
+namespace kaTe {
+    /**
+     * ImGuiLayer interface for ImGui GUI elements
+     * Uses OpenGL/GLFW
+     * */
     class ImGuiLayer : public Layer {
     public:
         explicit ImGuiLayer() noexcept;
@@ -26,26 +30,13 @@ namespace kT {
         auto onAttach() -> void override;
         auto onDetach() -> void override;
         auto onUpdate() -> void override;
-        auto onEvent(Event& event) -> void override;
 
+        auto beginFrame() -> void;
+        auto endFrame() -> void;
+        auto imGuiPushRenderElements() -> void;
     private:
-        /*
-         * EVENT HANDLERS
-         * */
-        auto onMouseMovedEvent(MouseMovedEvent& event) -> bool;
-        auto onMouseButtonPressedEvent(MouseButtonPressedEvent& event) -> bool;
-        auto onMouseButtonReleasedEvent(MouseButtonReleasedEvent& event) -> bool;
-        auto onMouseScrollEvent(MouseScrollEvent& event) -> bool;
-        auto onKeyPressedEvent(KeyPressedEvent& event) -> bool;
-        auto onKeyReleasedEvent(KeyReleasedEvent& event) -> bool;
-        auto onKeyTypedEvent(KeyCharEvent& event) -> bool;
-        auto onWindowResizedEvent(WindowResizedEvent& event) -> bool;
+        static auto setupCustomImGuiStyle() -> void;
 
-        /*
-         * Helper functions
-         * */
-        auto updateModifierState() const -> void;
-        auto ImGuiToKtKey(Int32_T key) const -> ImGuiKey;
     };
 
 }   // END NAMESPACE kT

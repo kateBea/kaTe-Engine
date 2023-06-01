@@ -1,7 +1,7 @@
-#include "../include/Core/Logger.hh"
-#include "../include/Core/Assert.hh"
+#include <Core/Logger.hh>
+#include <Core/Assert.hh>
 
-namespace kT {
+namespace kaTe {
     auto Logger::init() -> void {
         m_CoreLogger = spdlog::stdout_color_mt("KATE_CORE_LOGGER");
         m_AppLogger = spdlog::stdout_color_mt("KATE_APP_LOGGER");

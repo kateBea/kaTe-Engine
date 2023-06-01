@@ -17,7 +17,7 @@
 #include <Platform/Window/Window.hh>
 #include <kaTe/Common.hh>
 
-namespace kT {
+namespace kaTe {
     /**
      * Tells whether the GLFW was initialized successfully.
      * Needed before creating windows

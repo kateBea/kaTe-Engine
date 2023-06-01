@@ -8,7 +8,7 @@
 
 #include <Platform/Window/Window.hh>
 
-namespace kT {
+namespace kaTe {
     /**
      * Window specialization for MS Windows. May be changed
      * */

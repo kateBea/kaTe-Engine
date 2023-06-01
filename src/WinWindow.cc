@@ -1,9 +1,10 @@
-//
-// Created by kate on 5/26/23.
-//
+/**
+ * WinWindow.cc
+ * Created by kate on 5/26/23.
+ * */
 
-#include "../include/Platform/Window/WinWindow.hh"
+#include <Platform/Window/WinWindow.hh>
 
-namespace kT {
+namespace kaTe {
 
 }

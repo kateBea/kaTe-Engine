@@ -11,7 +11,7 @@
 #include <Platform/Window/Window.hh>
 #include <Platform/Window/LinuxWindow.hh>
 
-namespace kT {
+namespace kaTe {
     class LinuxInputManager : public InputManager {
     public:
         [[nodiscard]]

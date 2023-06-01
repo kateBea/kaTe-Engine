@@ -19,7 +19,7 @@
 #include <Core/Events/Event.hh>
 #include <kaTe/Common.hh>
 
-namespace kT {
+namespace kaTe {
     /**
      * Common interface for Key Events
      * */
@@ -115,6 +115,6 @@ namespace kT {
         UInt32_T m_KeyChar{};
     };
 
-}   // END NAMESPACE kT
+}   // END NAMESPACE kaTe
 
 #endif //KATE_ENGINE_KEY_EVENTS_HH

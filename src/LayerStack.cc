@@ -7,11 +7,12 @@
 #include <algorithm>
 
 // Project headers
-#include "Core/Layers/LayerStack.hh"
+#include <Core/Layers/LayerStack.hh>
 
-namespace kT {
+namespace kaTe {
     auto LayerStack::addLayer(LayerPtr layer) -> void {
-        m_LayerIndex = m_Layers.emplace(m_LayerIndex, layer);
+        m_Layers.emplace(m_Layers.begin() + m_LayerIndex, layer);
+        ++m_LayerIndex;
     }
 
     auto LayerStack::addOverlay(LayerPtr overlay) -> void {

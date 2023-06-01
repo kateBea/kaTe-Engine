@@ -15,7 +15,7 @@
 // Project Headers
 #include <kaTe/Common.hh>
 
-namespace kT {
+namespace kaTe {
     /**
      * Simply specifies the type of an Event
      * */

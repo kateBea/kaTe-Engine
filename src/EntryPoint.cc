@@ -5,7 +5,7 @@
 #include <kaTe/Application.hh>
 
 int main(int, char**) {
-    auto& app { kT::Application::get() };
+    auto& app { kaTe::Application::get() };
 
     app.init();
     app.loop();

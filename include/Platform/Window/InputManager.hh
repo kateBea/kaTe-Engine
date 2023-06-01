@@ -11,12 +11,12 @@
 #include <utility>
 
 // Project Headers
+#include <Core/Assert.hh>
 #include <Platform/Window/Window.hh>
 #include <kaTe/Singleton.hh>
 #include <kaTe/Common.hh>
-#include <Core/Assert.hh>
 
-namespace kT {
+namespace kaTe {
     class InputManager : public Singleton<InputManager> {
     public:
         using Pos_T = std::pair<double, double>;

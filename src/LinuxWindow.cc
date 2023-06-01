@@ -10,17 +10,17 @@
 #include <GL/glew.h>
 
 // Projects headers
-#include "../include/Core/Assert.hh"
-#include "../include/Core/Logger.hh"
+#include <Core/Assert.hh>
+#include <Core/Logger.hh>
 
-#include "../include/Core/Events/Event.hh"
-#include "../include/Core/Events/AppEvents.hh"
-#include "../include/Core/Events/KeyEvents.hh"
-#include "../include/Core/Events/MouseEvents.hh"
+#include <Core/Events/Event.hh>
+#include <Core/Events/AppEvents.hh>
+#include <Core/Events/KeyEvents.hh>
+#include <Core/Events/MouseEvents.hh>
 
-#include "../include/Platform/Window/LinuxWindow.hh"
+#include <Platform/Window/LinuxWindow.hh>
 
-namespace kT {
+namespace kaTe {
     LinuxWindow::LinuxWindow(const WindowProperties& properties)
         :   Window{}, m_Data{ .properties{ properties }, .callback{}, .VSync{ true } }, m_Window{ nullptr }
     {}

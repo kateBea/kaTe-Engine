@@ -16,7 +16,7 @@
 #include <Core/Events/Event.hh>
 #include <kaTe/Common.hh>
 
-namespace kT {
+namespace kaTe {
     class WindowResizedEvent : public Event {
     public:
         WindowResizedEvent(Int32_T newWidth, Int32_T newHeight)

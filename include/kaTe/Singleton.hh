@@ -8,7 +8,7 @@
 
 #include <Core/Assert.hh>
 
-namespace kT {
+namespace kaTe {
     /**
      * Defines a general interface for classes that require global single instance.
      * @tparam Derived The type that requires a single instance

@@ -13,7 +13,7 @@
 // Project Headers
 #include <Core/Events/Event.hh>
 
-namespace kT {
+namespace kaTe {
 
     /**
      * Describes a modular entity that helps encapsulate and organize
@@ -32,7 +32,7 @@ namespace kT {
         virtual auto onAttach() -> void = 0;
         virtual auto onDetach() -> void = 0;
         virtual auto onUpdate() -> void = 0;
-        virtual auto onEvent(Event& event) -> void = 0;
+        virtual auto onEvent(Event& event) -> void {}
 
         /**
          * For debugging purposes

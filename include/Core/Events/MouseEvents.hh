@@ -18,7 +18,7 @@
 #include <kaTe/Common.hh>
 
 
-namespace kT {
+namespace kaTe {
     class MouseMovedEvent : public Event {
     public:
         MouseMovedEvent(double x, double y)

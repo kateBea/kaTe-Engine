@@ -16,7 +16,7 @@
 #include <Core/Logger.hh>
 #include <Platform/Window/LinuxInputManager.hh>
 
-namespace kT {
+namespace kaTe {
     auto LinuxInputManager::isKeyPressedNative(Int32_T keyCode) -> bool {
         GLFWwindow* window{ nullptr };
 

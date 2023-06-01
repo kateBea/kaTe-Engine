@@ -11,8 +11,9 @@
 
 // Project Headers
 #include <Core/Layers/Layer.hh>
+#include <kaTe/Common.hh>
 
-namespace kT {
+namespace kaTe {
     /**
      * Defines the order of handling of the attached layers.
      * This helps task to be done in their appropriate order.
@@ -32,7 +33,7 @@ namespace kT {
         using LayerContainerIter = std::vector<LayerPtr>::iterator;
         using LayerContainerReverseIter = std::vector<LayerPtr>::reverse_iterator;
 
-        explicit LayerStack() : m_Layers{}, m_LayerIndex{ m_Layers.begin() } {}
+        explicit LayerStack() : m_Layers{}, m_LayerIndex{} {}
 
         auto init() -> void { /*Empty for now */ }
         auto shutDown() -> void { /*Empty for now */ }
@@ -51,7 +52,7 @@ namespace kT {
 
     private:
         std::vector<LayerPtr> m_Layers{};
-        LayerContainerIter m_LayerIndex{};
+        UInt32_T m_LayerIndex{};
     };
 
 } // END NAMESPACE kT

@@ -18,7 +18,7 @@
 #include <Core/Events/Event.hh>
 #include <kaTe/Common.hh>
 
-namespace kT {
+namespace kaTe {
     class WindowProperties {
     public:
         explicit WindowProperties(std::string_view name = "kaTe Engine", std::int32_t width = 1280, std::int32_t height = 720)
