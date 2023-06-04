@@ -4,14 +4,14 @@
 
 #include <any>
 
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include "GL/glew.h"
+#include "GLFW/glfw3.h"
 
-#include <Core/Logger.hh>
-#include <Core/Assert.hh>
-#include <Tools/Common.hh>
-#include <Tools/Application.hh>
-#include <Core/Renderer/OpenGLContext.hh>
+#include "Core/Assert.hh"
+#include "Core/Logger.hh"
+#include "Renderer/OpenGL/OpenGLContext.hh"
+#include "Tools/Application.hh"
+#include "Tools/Common.hh"
 
 namespace kaTe {
 

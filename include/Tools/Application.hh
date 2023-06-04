@@ -13,7 +13,7 @@
 #if defined(_WIN64) || defined(_WIN32)
     #include <Platform/Window/WinWindow.hh>
 #else
-    #include <Platform/Window/ktGLFWwindow.hh>
+    #include <Platform/Window/kaTeGLFWwindow.hh>
 #endif
 
 #include <Tools/Singleton.hh>
@@ -24,8 +24,8 @@
 #include <Core/Layers/LayerStack.hh>
 #include <Platform/Window/InputManager.hh>
 
-
-#include <Platform/OpenGL/Shader.hh>
+// TODO: Temporary just to try shader class
+#include <Renderer/OpenGL/Shader.hh>
 
 
 namespace kaTe {

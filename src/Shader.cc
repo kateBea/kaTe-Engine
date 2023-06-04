@@ -11,7 +11,7 @@
 #include <Core/Assert.hh>
 #include <Core/Logger.hh>
 
-#include <Platform/OpenGL/Shader.hh>
+#include <Renderer/OpenGL/Shader.hh>
 
 namespace kaTe {
     Shader::Shader(const std::filesystem::path &vertexSourceDir, const std::filesystem::path &fragmentSourceDir) {

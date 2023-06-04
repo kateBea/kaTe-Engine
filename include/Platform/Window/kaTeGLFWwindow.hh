@@ -16,7 +16,7 @@
 // Project Headers
 #include <Platform/Window/Window.hh>
 #include <Tools/Common.hh>
-#include <Core/Renderer/RenderContext.hh>
+#include <Renderer/RenderContext.hh>
 
 namespace kaTe {
     /**

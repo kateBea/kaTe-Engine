@@ -7,8 +7,8 @@
 
 #include <any>
 
-#include <Core/Renderer/RenderContext.hh>
-#include <Platform/Window/ktGLFWwindow.hh>
+#include "Platform/Window/kaTeGLFWwindow.hh"
+#include "Renderer/RenderContext.hh"
 
 namespace kaTe {
     class OpenGLContext : public RenderContext {

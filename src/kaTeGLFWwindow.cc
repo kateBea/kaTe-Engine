@@ -18,13 +18,12 @@
 #include <Core/Events/KeyEvents.hh>
 #include <Core/Events/MouseEvents.hh>
 
-#include <Core/Renderer/OpenGLContext.hh>
-#include <Platform/Window/ktGLFWwindow.hh>
+#include <Platform/Window/kaTeGLFWwindow.hh>
+#include <Renderer/OpenGL/OpenGLContext.hh>
 
 namespace kaTe {
     kateGLFWwindow::kateGLFWwindow(const WindowProperties& properties)
-        :   Window{}, m_Window{ nullptr }, m_Callback{}, m_VSync{ true }
-    {}
+        :   Window{}, m_Window{ nullptr }, m_Callback{}, m_VSync{ true } {}
 
     auto kateGLFWwindow::onUpdate() -> void {
         glfwPollEvents();

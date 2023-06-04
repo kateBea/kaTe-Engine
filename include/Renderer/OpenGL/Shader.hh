@@ -11,12 +11,12 @@
 #include <filesystem>
 
 // Third-Party Libraries
-#include <GL/glew.h>
+#include "GL/glew.h"
 
 #include <glm/glm.hpp>
 
 // Project headers
-#include <Tools/Common.hh>
+#include "Tools/Common.hh"
 
 namespace kaTe {
     class Shader {
@@ -25,18 +25,6 @@ namespace kaTe {
          * Default initialization for Shader. DOES NOT Create a valid shader program
          * */
         explicit Shader() = default;
-
-        /**
-         * Copy constructor. Marked as delete to avoid Shader aliasing
-         * Ensure one Shader resources are held by single Shader object
-         * */
-        Shader(const Shader& other) = delete;
-
-        /**
-         * Copy assigment. Marked as delete to avoid Shader aliasing
-         * Ensure one Shader resources are held by single Shader object
-         * */
-        Shader& operator=(const Shader& other) = delete;
 
         /**
          * Move constructor
@@ -138,6 +126,10 @@ namespace kaTe {
          * Perform cleanup
          * */
         ~Shader() { glDeleteProgram(getProgram()); }
+    private:
+        // Forbidden operations
+        Shader(const Shader&) = delete;
+        Shader& operator=(const Shader&) = delete;
 
     private:
         /**

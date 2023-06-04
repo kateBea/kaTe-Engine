@@ -130,6 +130,7 @@ namespace kaTe {
         ImGui::ShowDemoWindow(&bl);
         ImGui::Begin("Test");
         ImGui::SetWindowSize("Test", { 128, 64 });
+        ImGui::Text("Framerate: %.1f", ImGui::GetIO().Framerate);
         ImGui::End();
     }
 

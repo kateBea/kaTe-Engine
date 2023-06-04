@@ -9,7 +9,7 @@
 // Project Headers
 #include <Platform/Window/InputManager.hh>
 #include <Platform/Window/Window.hh>
-#include <Platform/Window/ktGLFWwindow.hh>
+#include <Platform/Window/kaTeGLFWwindow.hh>
 #include <Tools/Common.hh>
 
 namespace kaTe {

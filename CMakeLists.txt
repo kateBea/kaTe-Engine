@@ -15,11 +15,11 @@ set(CORE_SOURCES
         src/Logger.cc
         src/LayerStack.cc
         src/ImGuiLayer.cc
-        include/Core/Renderer/OpenGLContext.cc)
+        src/OpenGLContext.cc)
 
 set(PLATFORM_SOURCES
         src/Application.cc
-        src/ktGLFWwindow.cc
+        src/kaTeGLFWwindow.cc
         src/WinWindow.cc
         src/LinuxInputManager.cc
         src/Shader.cc)
