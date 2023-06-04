@@ -16,6 +16,8 @@
 #include <cstdint>
 
 // Third-Party Libraries
+#include <GL/glew.h>
+
 #include <fmt/color.h>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
@@ -235,21 +237,25 @@
     #define SWAP_BG_COLOR_INTERVAL(__SEC)
 #endif
 
+// OpenGL's info check. May need OpenGL valid context
 #if defined(NDEBUG) || defined(_DEBUG)
-    #define KT_DISPLAY_OPENGL_TARGET_VERSION()                                            \
-        KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Target OpenGL Ver. {}.{}\n",         \
+    #define KT_DISPLAY_OPENGL_TARGET_VERSION()                                                                          \
+        KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Target OpenGL: {}.{}\n",                                       \
                                  KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR)
+
+    #define KT_DISPLAY_OPENGL_VENDOR()                                                                                  \
+            KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Vendor OpenGL: {}\n", (const char*)glGetString(GL_VENDOR))
+
+    #define KT_DISPLAY_OPENGL_VERSION()                                                                                 \
+            KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Version OpenGL available: {}\n", (const char*)glGetString(GL_VERSION))
+
+    #define KT_DISPLAY_OPENGL_RENDERER()                                                                                \
+            KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Renderer OpenGL: {}\n", (const char*)glGetString(GL_RENDERER))
+
 #else
     #define KT_DISPLAY_OPENGL_TARGET_VERSION()
-#endif
-
-#if defined(NDEBUG) || defined(_DEBUG)
-    #define KT_DISPLAY_OPENGL_VENDOR_VERSION()                                            \
-            auto str{ glGetString(GL_VERSION) };                                          \
-            KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Vendor OpenGL Ver. {}\n", (const char*)str)
-
-#else
     #define KT_DISPLAY_OPENGL_VENDOR_VERSION()
+    #define KT_DISPLAY_OPENGL_RENDERER()
 #endif
 
 #define KT_BIND_EVENT_FUNC(func) \

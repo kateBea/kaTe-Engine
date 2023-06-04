@@ -13,7 +13,7 @@
 #if defined(_WIN64) || defined(_WIN32)
     #include <Platform/Window/WinWindow.hh>
 #else
-    #include <Platform/Window/kateGLFWwindow.hh>
+    #include <Platform/Window/ktGLFWwindow.hh>
 #endif
 
 #include <Tools/Singleton.hh>
@@ -23,6 +23,9 @@
 #include <Core/Events/Event.hh>
 #include <Core/Layers/LayerStack.hh>
 #include <Platform/Window/InputManager.hh>
+
+
+#include <Platform/OpenGL/Shader.hh>
 
 
 namespace kaTe {
@@ -134,6 +137,13 @@ namespace kaTe {
         // In case we may want to poll input from multiple Windows, this
         // could become part of the Window itself as an aggregation
         Ptr_T<InputManager> m_InputManager{ nullptr };
+
+        // Temporary, will be abstracted
+        UInt32_T m_Vao;
+        UInt32_T m_Vbo;
+        UInt32_T m_Veo;
+        Shader m_Shader{};
+
     };
 }
 

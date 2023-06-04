@@ -18,7 +18,8 @@
 #include <Core/Events/KeyEvents.hh>
 #include <Core/Events/MouseEvents.hh>
 
-#include <Platform/Window/kateGLFWwindow.hh>
+#include <Core/Renderer/OpenGLContext.hh>
+#include <Platform/Window/ktGLFWwindow.hh>
 
 namespace kaTe {
     kateGLFWwindow::kateGLFWwindow(const WindowProperties& properties)
@@ -27,7 +28,7 @@ namespace kaTe {
 
     auto kateGLFWwindow::onUpdate() -> void {
         glfwPollEvents();
-        glfwSwapBuffers(m_Window);
+        m_Context->swapBuffers();
     }
 
     auto kateGLFWwindow::enableVSync() -> void {
@@ -54,25 +55,15 @@ namespace kaTe {
                 }
             );
 
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, KT_OPENGL_VERSION_MAJOR);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, KT_OPENGL_VERSION_MINOR);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         }
 
-        m_Window = glfwCreateWindow(m_Properties.getWidth(), m_Properties.getHeight(),
-                                    m_Properties.getName().c_str(), nullptr, nullptr);
+        m_Window = glfwCreateWindow(m_Properties.getWidth(), m_Properties.getHeight(), m_Properties.getName().c_str(), nullptr, nullptr);
         m_WindowCreateSuccess = m_Window != nullptr;
         KT_ASSERT(m_WindowCreateSuccess, "Failed to create the Linux_Window");
 
-        glfwMakeContextCurrent(m_Window);
-
-        // Init GLEW
-        glewExperimental = GL_TRUE;
-        // Using temporal variable because KATE_CORE_LOGGER_ERROR gets stripped
-        // in non-DEBUG builds, so glewInit() would not be executed
-        auto ret{ glewInit() == GLEW_OK };
-        KT_ASSERT(ret, "Failed to initialize GLEW");
+        m_Context = new OpenGLContext();
+        m_Context->init(getNativeWindow());
 
         glfwSetWindowUserPointer(m_Window, this);
         enableVSync();

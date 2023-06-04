@@ -16,17 +16,46 @@
 #include <Core/Layers/ImGuiLayer.hh>
 #include <Platform/Window/LinuxInputManager.hh>
 
+
 namespace kaTe {
+    static auto initOpenGLStuff(UInt32_T& vao, UInt32_T& vbo, UInt32_T& veo) -> void {
+        float data[] {
+            -0.5f, -0.5f, 0.0f,
+            0.5f, -0.5f, 0.0f,
+            0.0f, 0.5f, 0.0f
+        };
+
+        UInt32_T indices[]{ 0, 1, 2 };
+
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
+
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+
+        glGenBuffers(1, &veo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, veo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+
+    }
+
     auto Application::init() -> void {
         KATE_APP_LOGGER_INFO("Initializing kaTe Engine");
-        // Allocate and Initialize members
+
         initWindow();
         initLayerStack();
         initInputManager();
 
-        // Display OpenGL versions being used
-        KT_DISPLAY_OPENGL_TARGET_VERSION();
-        KT_DISPLAY_OPENGL_VENDOR_VERSION();
+        // temporary. may be done by the renderer
+        initOpenGLStuff(m_Vao, m_Vbo, m_Veo);
+
+        m_Shader.load("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/debugShaderFrag.glsl");
+
+
         KATE_APP_LOGGER_DEBUG("Finished kaTe Engine initialization");
     }
 
@@ -35,6 +64,11 @@ namespace kaTe {
 
         while (m_State == State::RUNNING) {
             SWAP_BG_COLOR_INTERVAL();
+
+            m_Shader.use();
+            glBindVertexArray(m_Vao);
+            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+
             for (auto& layer : *m_LayerStack)
                 layer->onUpdate();
             m_Window->onUpdate();

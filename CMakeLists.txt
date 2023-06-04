@@ -15,13 +15,14 @@ set(CORE_SOURCES
         src/Logger.cc
         src/LayerStack.cc
         src/ImGuiLayer.cc
-        )
+        include/Core/Renderer/OpenGLContext.cc)
 
 set(PLATFORM_SOURCES
         src/Application.cc
-        src/kateGLFWwindow.cc
+        src/ktGLFWwindow.cc
         src/WinWindow.cc
-        src/LinuxInputManager.cc)
+        src/LinuxInputManager.cc
+        src/Shader.cc)
 
 set(IMGUI_SOURCES
         lib/imgui/imgui.cpp

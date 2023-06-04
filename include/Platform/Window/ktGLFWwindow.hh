@@ -16,6 +16,7 @@
 // Project Headers
 #include <Platform/Window/Window.hh>
 #include <Tools/Common.hh>
+#include <Core/Renderer/RenderContext.hh>
 
 namespace kaTe {
     /**
@@ -56,6 +57,7 @@ namespace kaTe {
     private:
         auto setCallbacks() -> void;
 
+        RawPtr_T<RenderContext> m_Context{};
         RawPtr_T<GLFWwindow> m_Window{};
         EventCallbackFunc_T m_Callback{};
         bool m_VSync{};
