@@ -19,7 +19,7 @@ set(CORE_SOURCES
 
 set(PLATFORM_SOURCES
         src/Application.cc
-        src/LinuxWindow.cc
+        src/kateGLFWwindow.cc
         src/WinWindow.cc
         src/LinuxInputManager.cc)
 

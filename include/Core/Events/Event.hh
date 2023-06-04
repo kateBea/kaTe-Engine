@@ -7,13 +7,14 @@
 #define KATE_ENGINE_EVENT_HH
 
 // C++ Standard Library
+#include <iostream>
 #include <string_view>
 #include <type_traits>
 #include <functional>
 #include <string>
 
 // Project Headers
-#include <kaTe/Common.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
     /**
@@ -87,7 +88,6 @@ namespace kaTe {
     public:
         /**
          * Creates a new event. The event is not handled on creation.
-         * By default they are part the of the category APPLICATION_EVENT_CATEGORY
          * */
         Event(EventType type, EventCategory categories)
             :   m_Type{ type }, m_Categories{ categories }, m_Handled{ false } {}
@@ -100,33 +100,43 @@ namespace kaTe {
          * Returns the type of this event. Can be used to query the type of
          * this event in scenarios where polymorphism is used
          * */
-        [[nodiscard]]
+        KT_NODISCARD
         virtual auto getType() const -> EventType = 0;
 
-        [[nodiscard]]
+        KT_NODISCARD
         virtual auto getCategoryFlags() const -> EventCategory { return m_Categories; };
 
         /**
          * Returns the string representation of this Event.
          * Mainly for debugging purposes
          * */
-        [[nodiscard]]
+        KT_NODISCARD
         auto getNameStr() const -> std::string_view { return toString(); };
 
+        /**
+         * Tells whether this event has been handled or not
+         * @returns true if the event has been handled, false otherwise
+         * */
+        KT_NODISCARD
         auto isHandled() const -> bool { return m_Handled; }
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto isInCategory(EventCategory cat) const -> bool { return getCategoryFlags() & cat; }
 
         /**
          * Returns a formatted string representing the data, if any,
          * that this event holds. Used for debugging purposes
          * */
+        KT_NODISCARD
         virtual auto displayData() const -> std::string = 0;
 
         virtual ~Event() = default;
     private:
+        /**
+         * For easy access to Event private data
+         * */
         friend class EventDispatcher;
+
         EventType m_Type;
         EventCategory m_Categories;
     protected:
@@ -135,7 +145,7 @@ namespace kaTe {
          * It is to be defined by the type of event that specializes this
          * interface
          * */
-        [[nodiscard]]
+        KT_NODISCARD
         virtual auto toString() const -> std::string_view = 0;
 
         /**
@@ -183,7 +193,7 @@ namespace kaTe {
 
         template<typename EventClassType>
             requires HasStaticGetType<EventClassType>
-        [[nodiscard]]
+        KT_NODISCARD
         auto forward(EventFunc_T<EventClassType> func) -> bool {
             if (m_Event.getType() == EventClassType::getStaticType()) {
                 m_Event.m_Handled = func(*(static_cast<EventClassType*>(&m_Event)));
@@ -204,7 +214,7 @@ namespace kaTe {
      * Returns the exact string representation of the given EventType enum
      * @returns EventType string representation
      * */
-    [[nodiscard]]
+    KT_NODISCARD
     constexpr auto getFormattedStr(EventType type) -> std::string_view {
         switch(type) {
             case EventType::EMPTY_EVENT: return "EMPTY_EVENT";
@@ -242,12 +252,12 @@ namespace kaTe {
     }
 
     /**
-     * Helper to print event to console
+     * Helper to print an Event to console
      * */
     inline std::ostream& operator<<(std::ostream& out, const Event& e) {
         return out << "Type: " << e.getNameStr();
     }
 
-}   // END NAMESPACE kT
+}   // END NAMESPACE kaTe
 
 #endif // KATE_ENGINE_EVENT_HH

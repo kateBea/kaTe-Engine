@@ -10,8 +10,8 @@
 #include <Core/Events/AppEvents.hh>
 #include <Core/Logger.hh>
 
-#include <kaTe/Application.hh>
-#include <kaTe/Common.hh>
+#include <Tools/Application.hh>
+#include <Tools/Common.hh>
 
 #include <Core/Layers/ImGuiLayer.hh>
 #include <Platform/Window/LinuxInputManager.hh>
@@ -23,9 +23,6 @@ namespace kaTe {
         initWindow();
         initLayerStack();
         initInputManager();
-        initImGuiLayer();
-
-        pushLayer(m_ImGuiLayer);
 
         // Display OpenGL versions being used
         KT_DISPLAY_OPENGL_TARGET_VERSION();
@@ -40,22 +37,13 @@ namespace kaTe {
             SWAP_BG_COLOR_INTERVAL();
             for (auto& layer : *m_LayerStack)
                 layer->onUpdate();
-
-            m_ImGuiLayer->beginFrame();
-            for (auto& layer : *m_LayerStack)
-                // CAUTION. JUST FOR TESTING PURPOSES FOR NOW
-                // UB if the layer is not an ImGuiLayer
-                reinterpret_cast<ImGuiLayer*>(&layer)->imGuiPushRenderElements();
-            m_ImGuiLayer->endFrame();
-
-
             m_Window->onUpdate();
         }
     }
 
     auto Application::initWindow() -> void {
         KATE_APP_LOGGER_INFO("Initializing Application::Window kaTe Engine");
-        m_Window = std::make_unique<LinuxWindow>();
+        m_Window = std::make_unique<kateGLFWwindow>();
         KT_ASSERT(m_Window != nullptr, "Window is NULL");
 
         m_Window->init();
@@ -68,6 +56,10 @@ namespace kaTe {
         KT_ASSERT(m_LayerStack != nullptr, "Layer Stack is NULL");
 
         m_LayerStack->init();
+
+        SPtr_T<ImGuiLayer> temp{ std::make_shared<ImGuiLayer>() };
+        temp->onAttach();
+        m_LayerStack->addLayer(temp);
     }
 
     auto Application::initInputManager() -> void {
@@ -121,10 +113,5 @@ namespace kaTe {
     auto Application::getInputManager() -> InputManager& {
         KT_ASSERT(m_InputManager, "Input manager is null");
         return *m_InputManager;
-    }
-    auto Application::initImGuiLayer() -> void {
-        KATE_APP_LOGGER_INFO("Initializing Application::ImGuiLayer kaTe Engine");
-        m_ImGuiLayer = std::make_shared<ImGuiLayer>();
-        KT_ASSERT(m_InputManager != nullptr, "ImGui Layer is NULL");
     }
 }

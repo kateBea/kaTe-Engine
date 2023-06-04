@@ -15,7 +15,8 @@
 
 // Project Headers
 #include <Core/Events/Event.hh>
-#include <kaTe/Common.hh>
+
+#include <Tools/Common.hh>
 
 
 namespace kaTe {
@@ -27,25 +28,28 @@ namespace kaTe {
             ,   m_PositionY{ y }
         {}
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getPositionX() -> double { return m_PositionX; }
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getPositionY() -> double { return m_PositionY; }
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getType() const -> EventType override { return getStaticType(); }
 
         /**
          * Useful if we need to query the type of this event.
          * See <code>kT::EventDispatcher</code> for usage
          * */
+        KT_NODISCARD
         static auto getStaticType() -> EventType { return EventType::MOUSE_MOVED_EVENT; }
 
+        KT_NODISCARD
         auto displayData() const -> std::string override {
             return fmt::format("{} POS [{}, {}]", getFormattedStr(getType()).data(), m_PositionX, m_PositionY);
         }
     protected:
+        KT_NODISCARD
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
         double m_PositionX{};
@@ -65,24 +69,27 @@ namespace kaTe {
                 ,   m_Button{ button }
         {}
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getMouseButton() -> Int32_T { return m_Button; }
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getType() const -> EventType override { return getStaticType(); }
 
         /**
          * Useful if we need to query the type of this event.
          * See <code>kT::EventDispatcher</code> for usage
          * */
+        KT_NODISCARD
         static auto getStaticType() -> EventType { return EventType::MOUSE_BUTTON_PRESSED_EVENT; }
 
+        KT_NODISCARD
         auto displayData() const -> std::string override {
             constexpr static std::array<std::string_view, 3> NAME{ "LEFT_CLICK", "RIGHT_CLICK", "SCROLL_WHEEL_CLICK" };
             // we are just testing with a mouse with three buttons for now
             return fmt::format("{} BUTTON {}", getFormattedStr(getType()).data(), NAME[m_Button]);
         }
     protected:
+        KT_NODISCARD
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
         Int32_T m_Button{};
@@ -105,14 +112,17 @@ namespace kaTe {
          * Useful if we need to query the type of this event.
          * See <code>kT::EventDispatcher</code> for usage
          * */
+        KT_NODISCARD
         static auto getStaticType() -> EventType { return EventType::MOUSE_BUTTON_RELEASED_EVENT; }
 
+        KT_NODISCARD
         auto displayData() const -> std::string override {
             constexpr static std::array<std::string_view, 3> NAME{ "LEFT_CLICK", "RIGHT_CLICK", "SCROLL_WHEEL_CLICK" };
             // we are just testing with a mouse with three buttons for now
             return fmt::format("{} BUTTON {}", getFormattedStr(getType()).data(), NAME[m_Button]);
         }
     protected:
+        KT_NODISCARD
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
         Int32_T m_Button{};
@@ -125,30 +135,34 @@ namespace kaTe {
             ,   m_OffsetX{ xOffset }, m_OffsetY{ yOffset }
         {}
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getOffsetX() -> double { return m_OffsetX; }
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getOffsetY() -> double { return m_OffsetY; }
 
+        KT_NODISCARD
         auto getType() const -> EventType override { return getStaticType(); }
 
         /**
          * Useful if we need to query the type of this event.
          * See <code>kT::EventDispatcher</code> for usage
          * */
+        KT_NODISCARD
         static auto getStaticType() -> EventType { return EventType::MOUSE_SCROLLED_EVENT; }
 
+        KT_NODISCARD
         auto displayData() const -> std::string override {
             return fmt::format("{} OFFSETS [{}, {}]", getFormattedStr(getType()).data(), m_OffsetX, m_OffsetY);
         }
     protected:
+        KT_NODISCARD
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
         double m_OffsetX{};
         double m_OffsetY{};
     };
 
-}   // END NAMESPACE kT
+}   // END NAMESPACE kaTe
 
 #endif // KATE_ENGINE_MOUSE_EVENTS_HH

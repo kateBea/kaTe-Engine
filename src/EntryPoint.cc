@@ -2,7 +2,7 @@
  * EntryPoint.cc
  * */
 
-#include <kaTe/Application.hh>
+#include <Tools/Application.hh>
 
 int main(int, char**) {
     auto& app { kaTe::Application::get() };

@@ -11,7 +11,7 @@
 
 // Project Headers
 #include <Core/Layers/Layer.hh>
-#include <kaTe/Common.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
     /**
@@ -44,11 +44,11 @@ namespace kaTe {
         auto popLayer(LayerPtr layer) -> void;
         auto popOverlay(LayerPtr overlay) -> void;
 
-        auto begin() -> LayerContainerIter { return m_Layers.begin(); }
-        auto end() -> LayerContainerIter { return m_Layers.end(); }
+        KT_NODISCARD auto begin() -> LayerContainerIter { return m_Layers.begin(); }
+        KT_NODISCARD auto end() -> LayerContainerIter { return m_Layers.end(); }
 
-        auto rbegin() -> LayerContainerReverseIter { return m_Layers.rbegin(); }
-        auto rend() -> LayerContainerReverseIter { return m_Layers.rend(); }
+        KT_NODISCARD auto rbegin() -> LayerContainerReverseIter { return m_Layers.rbegin(); }
+        KT_NODISCARD auto rend() -> LayerContainerReverseIter { return m_Layers.rend(); }
 
     private:
         std::vector<LayerPtr> m_Layers{};

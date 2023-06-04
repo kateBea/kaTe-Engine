@@ -12,40 +12,42 @@
 
 // Project Headers
 #include <Core/Assert.hh>
+
 #include <Platform/Window/Window.hh>
-#include <kaTe/Singleton.hh>
-#include <kaTe/Common.hh>
+
+#include <Tools/Singleton.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
     class InputManager : public Singleton<InputManager> {
     public:
         using Pos_T = std::pair<double, double>;
 
-        [[nodiscard]]
+        KT_NODISCARD
         inline static auto isKeyPressed(Int32_T keyCode) -> bool {
             KT_ASSERT(getPtr(), "InputManager singleton ptr is NULL");
             return getPtr()->isKeyPressedNative(keyCode);
         }
 
-        [[nodiscard]]
+        KT_NODISCARD
         inline static auto isMouseKeyPressed(Int32_T button) -> bool {
             KT_ASSERT(getPtr(), "InputManager singleton ptr is NULL");
             return getPtr()->isMouseKeyPressedNative(button);
         }
 
-        [[nodiscard]]
+        KT_NODISCARD
         inline static auto getMouseX() -> double {
             KT_ASSERT(getPtr(), "InputManager singleton ptr is NULL");
             return getPtr()->getMouseXNative();
         }
 
-        [[nodiscard]]
+        KT_NODISCARD
         inline static auto getMouseY() -> double {
             KT_ASSERT(getPtr(), "InputManager singleton ptr is NULL");
             return getPtr()->getMouseYNative();
         }
 
-        [[nodiscard]]
+        KT_NODISCARD
         inline static auto getMousePos() -> Pos_T {
             KT_ASSERT(getPtr(), "InputManager singleton ptr is NULL");
             return getPtr()->getMousePosNative();
@@ -53,17 +55,17 @@ namespace kaTe {
 
     protected:
         /* Keyboard Input */
-        [[nodiscard]]
+        KT_NODISCARD
         virtual auto isKeyPressedNative(Int32_T keyCode) -> bool = 0;
 
         /* Mouse Input */
-        [[nodiscard]]
+        KT_NODISCARD
         virtual auto isMouseKeyPressedNative(Int32_T button) -> bool = 0;
-        [[nodiscard]]
+        KT_NODISCARD
         virtual auto getMouseXNative() -> double = 0;
-        [[nodiscard]]
+        KT_NODISCARD
         virtual auto getMouseYNative() -> double = 0;
-        [[nodiscard]]
+        KT_NODISCARD
         virtual auto getMousePosNative() -> Pos_T = 0;
     };
 

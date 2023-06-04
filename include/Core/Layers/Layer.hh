@@ -12,6 +12,7 @@
 
 // Project Headers
 #include <Core/Events/Event.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
 
@@ -37,7 +38,7 @@ namespace kaTe {
         /**
          * For debugging purposes
          * */
-        [[nodiscard]]
+        KT_NODISCARD
         auto getName() const -> const std::string& { return m_Name; }
 
     private:
@@ -45,7 +46,7 @@ namespace kaTe {
         std::string m_Name{};
     };
 
-}   // END NAMESPACE kT
+}   // END NAMESPACE kaTe
 
 
 #endif // KATE_ENGINE_LAYER_HH

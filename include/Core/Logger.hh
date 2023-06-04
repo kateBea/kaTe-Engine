@@ -18,7 +18,8 @@
 #include <fmt/format.h>
 
 // Project Headers
-#include <kaTe/Singleton.hh>
+#include <Tools/Singleton.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
     /**

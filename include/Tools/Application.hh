@@ -13,12 +13,11 @@
 #if defined(_WIN64) || defined(_WIN32)
     #include <Platform/Window/WinWindow.hh>
 #else
-    #include <Platform/Window/LinuxWindow.hh>
+    #include <Platform/Window/kateGLFWwindow.hh>
 #endif
 
-#include <kaTe/Singleton.hh>
+#include <Tools/Singleton.hh>
 
-#include "Core/Layers/ImGuiLayer.hh"
 #include <Core/Assert.hh>
 #include <Core/Events/AppEvents.hh>
 #include <Core/Events/Event.hh>
@@ -57,10 +56,10 @@ namespace kaTe {
          * Returns a reference to the Application main window
          * @returns main window
          * */
-        [[nodiscard]]
+        KT_NODISCARD
         auto getWindow() -> Window&;
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getInputManager() -> InputManager&;
 
         /**
@@ -96,29 +95,6 @@ namespace kaTe {
             COUNT,
         };
 
-        /**
-         * Pointer to a T. Owns the held instance
-         * @tparam T held type
-         * */
-        template<typename T>
-        using Ptr_T = std::unique_ptr<T>;
-
-        /**
-         * Pointer to a T. May shares the held instance
-         * @tparam T held type
-         * */
-        template<typename T>
-        using SPtr_T = std::shared_ptr<T>;
-
-        /**
-         * Raw pointer to a T.
-         * @tparam T held type
-         * */
-        template<typename T>
-        using RawPtr_T = T*;
-
-
-
         /*************************************************************
          * APPLICATION CALLBACK HANDLERS -----------------------------
          * ********************************************************+ */
@@ -148,14 +124,11 @@ namespace kaTe {
 
         auto initInputManager() -> void;
 
-        auto initImGuiLayer() -> void;
-
         // MEMBER VARIABLES ----------------------------
         State m_State{ State::RUNNING };
 
         Ptr_T<Window> m_Window{ nullptr };
         Ptr_T<LayerStack> m_LayerStack{ nullptr };
-        SPtr_T<ImGuiLayer> m_ImGuiLayer{ nullptr };
 
         // For now, there's one instance of InputManager in our application
         // In case we may want to poll input from multiple Windows, this

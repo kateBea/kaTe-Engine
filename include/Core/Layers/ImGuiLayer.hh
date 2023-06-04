@@ -20,7 +20,7 @@
 namespace kaTe {
     /**
      * ImGuiLayer interface for ImGui GUI elements
-     * Uses OpenGL/GLFW
+     * Uses OpenGL for rendering and GLFW for event handling
      * */
     class ImGuiLayer : public Layer {
     public:
@@ -31,15 +31,18 @@ namespace kaTe {
         auto onDetach() -> void override;
         auto onUpdate() -> void override;
 
-        auto beginFrame() -> void;
-        auto endFrame() -> void;
+    protected:
         auto imGuiPushRenderElements() -> void;
+
     private:
         static auto setupCustomImGuiStyle() -> void;
 
+        auto beginFrame() -> void;
+        auto endFrame() -> void;
+
     };
 
-}   // END NAMESPACE kT
+}   // END NAMESPACE kaTe
 
 
 #endif //KATE_ENGINE_IMGUI_LAYER_HH

@@ -16,7 +16,7 @@
 
 // Project Headers
 #include <Core/Events/Event.hh>
-#include <kaTe/Common.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
     class WindowProperties {
@@ -25,13 +25,13 @@ namespace kaTe {
             :   m_Title{ name }, m_Width{ width }, m_Height{ height }
         {}
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getName() const -> const std::string& { return m_Title; }
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getWidth() const -> Int32_T { return m_Width; }
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getHeight() const -> Int32_T { return m_Height; }
 
         auto setWidth(Int32_T width) -> void { m_Width = width; }
@@ -61,27 +61,18 @@ namespace kaTe {
     public:
         using EventCallbackFunc_T = std::function<void(Event&)>;
 
-        explicit Window()
-            :   m_WindowCreateSuccess{ false } {}
+        explicit Window() :  m_WindowCreateSuccess{ false } {}
 
-        Window(Window&& other) noexcept
-            :   m_Properties{ std::move(other.m_Properties) } {}
-
-        virtual auto operator=(Window&& other) noexcept -> Window& {
-            m_Properties = std::move(other.m_Properties);
-            return *this;
-        }
-
-        [[nodiscard]]
+        KT_NODISCARD
         virtual auto getWidth() const -> Int32_T = 0;
-        [[nodiscard]]
+        KT_NODISCARD
         virtual auto getHeight() const -> Int32_T = 0;
 
         /**
          * Returns a pointer to a structure containing the
          * native Window structure
          * */
-        [[nodiscard]]
+        KT_NODISCARD
         virtual auto getNativeWindow() -> std::any = 0;
 
         virtual auto init() -> void = 0;
@@ -89,16 +80,20 @@ namespace kaTe {
         virtual auto shutDown() -> void = 0;
         virtual auto setEventCallback(EventCallbackFunc_T func) -> void = 0;
 
-        [[nodiscard]]
+        KT_NODISCARD
         virtual auto isVSyncEnabled() const -> bool = 0;
         virtual auto enableVSync() -> void = 0;
         virtual auto disableVSync() -> void = 0;
 
         virtual ~Window() = default;
+    private:
+        Window(const Window&) = delete;
+        auto operator=(const Window&) noexcept -> Window& = delete;
+
+        Window(Window&&) = delete;
+        auto operator=(Window&&) noexcept -> Window& = delete;
     protected:
         bool m_WindowCreateSuccess{};
-
-    private:
         WindowProperties m_Properties{};
     };
 

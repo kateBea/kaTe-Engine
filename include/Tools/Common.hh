@@ -202,7 +202,7 @@
 #define KT_FMT_COLOR_YELLOW                     fmt::color::yellow
 #define KT_FMT_COLOR_YELLOW_GREEN               fmt::color::yellow_green
 
-
+#define  KT_NODISCARD [[nodiscard]]
 /**
  * Output style
  * */
@@ -260,22 +260,45 @@
 * TYPE ALIAS -------------------------------------------------
 * ********************************************************+ */
 
-using Int8_T = std::int8_t;
-using Int16_T = std::int16_t;
-using Int32_T = std::int32_t;
-using Int64_T = std::int64_t;
+namespace kaTe {
+    /**
+         * Pointer to a T. Owns the held instance
+         * @tparam T held type
+         * */
+    template<typename T>
+    using Ptr_T = std::unique_ptr<T>;
 
-using UInt8_T = std::uint8_t;
-using UInt16_T = std::uint16_t;
-using UInt32_T = std::uint32_t;
-using UInt64_T = std::uint64_t;
+    /**
+         * Pointer to a T. May shares the held instance
+         * @tparam T held type
+         * */
+    template<typename T>
+    using SPtr_T = std::shared_ptr<T>;
 
-using UShort_T = unsigned short;
-using ULong_T = unsigned short;
-using ULongLong_T = unsigned long long;
+    /**
+         * Raw pointer to a T.
+         * @tparam T held type
+         * */
+    template<typename T>
+    using RawPtr_T = T*;
 
-using Short_T = unsigned short;
-using Long_T = unsigned long;
-using LongLong_T = long long;
+    using Int8_T = std::int8_t;
+    using Int16_T = std::int16_t;
+    using Int32_T = std::int32_t;
+    using Int64_T = std::int64_t;
+
+    using UInt8_T = std::uint8_t;
+    using UInt16_T = std::uint16_t;
+    using UInt32_T = std::uint32_t;
+    using UInt64_T = std::uint64_t;
+
+    using UShort_T = unsigned short;
+    using ULong_T = unsigned short;
+    using ULongLong_T = unsigned long long;
+
+    using Short_T = unsigned short;
+    using Long_T = unsigned long;
+    using LongLong_T = long long;
+}
 
 #endif // KATE_ENGINE_COMMON_HH

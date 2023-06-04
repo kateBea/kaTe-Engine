@@ -9,20 +9,21 @@
 // Project Headers
 #include <Platform/Window/InputManager.hh>
 #include <Platform/Window/Window.hh>
-#include <Platform/Window/LinuxWindow.hh>
+#include <Platform/Window/kateGLFWwindow.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
     class LinuxInputManager : public InputManager {
     public:
-        [[nodiscard]]
+        KT_NODISCARD
         auto isKeyPressedNative(Int32_T keyCode) -> bool override;
-        [[nodiscard]]
+        KT_NODISCARD
         auto isMouseKeyPressedNative(Int32_T button) -> bool override;
-        [[nodiscard]]
+        KT_NODISCARD
         auto getMouseXNative() -> double override;
-        [[nodiscard]]
+        KT_NODISCARD
         auto getMouseYNative() -> double override;
-        [[nodiscard]]
+        KT_NODISCARD
         auto getMousePosNative() -> Pos_T override;
     };
 

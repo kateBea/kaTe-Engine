@@ -13,11 +13,11 @@
 
 // Project Headers
 #include <Core/Logger.hh>
-#include <kaTe/Application.hh>
 #include <Core/KeyCodes.hh>
 
+#include <Tools/Application.hh>
+#include <Tools/Common.hh>
 
-#include <kaTe/Common.hh>
 #include <Core/Layers/ImGuiLayer.hh>
 #include <Platform/Window/InputManager.hh>
 
@@ -50,7 +50,7 @@ namespace kaTe {
 
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*
-            GLFWwindow* window{ std::any_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow()) };
+            RawPtr_T<GLFWwindow> window{ std::any_cast<RawPtr_T<GLFWwindow>>(Application::get().getWindow().getNativeWindow()) };
 
             // Setup Platform/Renderer backends
             ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -152,7 +152,7 @@ namespace kaTe {
         // so we save/restore it to make it easier to paste this code elsewhere.
         //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-            GLFWwindow* backupCurrentContext = glfwGetCurrentContext();
+            RawPtr_T<GLFWwindow> backupCurrentContext = glfwGetCurrentContext();
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backupCurrentContext);

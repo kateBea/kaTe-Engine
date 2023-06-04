@@ -9,7 +9,7 @@
 #include <Core/Layers/Layer.hh>
 #include <Core/Logger.hh>
 
-namespace kT {
+namespace kaTe {
     class ExampleLayer : public Layer {
     public:
         ExampleLayer()

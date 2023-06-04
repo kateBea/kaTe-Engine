@@ -10,7 +10,11 @@
 #include <cstdlib>
 
 // Project Headers
-#include <kaTe/Common.hh>
+#include <Tools/Common.hh>
+
+#if defined(_WIND32) || defined(_WIN64)
+    #define __PRETTY_FUNCTION__  __FUNCTION__
+#endif
 
 #if defined(NDEBUG) || defined(_DEBUG)
     #define KT_ENABLE_ASSERTIONS

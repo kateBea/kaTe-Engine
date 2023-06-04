@@ -17,7 +17,7 @@
 
 // Project Headers
 #include <Core/Events/Event.hh>
-#include <kaTe/Common.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
     /**
@@ -25,17 +25,18 @@ namespace kaTe {
      * */
     class KeyEvent : public Event {
     public:
+        KT_NODISCARD
         auto getKeyCode() const -> Int32_T { return m_KeyCode; }
 
     protected:
         /**
-         * Only specializations may create events
+         * Only specializations may create KeyEvents
          * */
         KeyEvent(EventType type, Int32_T keyCode)
             :   Event{ type, static_cast<EventCategory>(INPUT_EVENT_CATEGORY | KEY_EVENT_CATEGORY) }, m_KeyCode{ keyCode }
         {}
 
-        std::int32_t m_KeyCode{};
+        Int32_T m_KeyCode{};
     };
 
     class KeyPressedEvent : public KeyEvent {
@@ -44,24 +45,28 @@ namespace kaTe {
             :   KeyEvent{ EventType::KEY_PRESSED_EVENT, keyCode }, m_Repeated{ repeated }
         {}
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto isRepeated() const -> bool { return m_Repeated; }
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getType() const -> EventType override { return getStaticType(); }
 
         /**
          * Useful if we need to query the type of this event.
          * See <code>kT::EventDispatcher</code> for usage
          * */
+        KT_NODISCARD
         static auto getStaticType() -> EventType { return EventType::KEY_PRESSED_EVENT; }
 
+        KT_NODISCARD
         auto displayData() const -> std::string override {
             return fmt::format("{} KEY: {} REPEATED: {}", getFormattedStr(getType()).data(), m_KeyCode, m_Repeated ? "TRUE" : "FALSE");
         }
 
     private:
+        KT_NODISCARD
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
+
         bool m_Repeated{};
     };
 
@@ -71,19 +76,22 @@ namespace kaTe {
             :   KeyEvent{ EventType::KEY_RELEASED_EVENT, code }
         {}
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getType() const -> EventType override { return getStaticType(); }
 
         /**
          * Useful if we need to query the type of this event.
          * See <code>kT::EventDispatcher</code> for usage
          * */
+        KT_NODISCARD
         static auto getStaticType() -> EventType { return EventType::KEY_RELEASED_EVENT; }
 
+        KT_NODISCARD
         auto displayData() const -> std::string override {
             return fmt::format("{} KEY: {}", getFormattedStr(getType()).data(), m_KeyCode);
         }
     private:
+        KT_NODISCARD
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
     };
 
@@ -94,22 +102,25 @@ namespace kaTe {
             ,   m_KeyChar{ charCode }
         {}
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getType() const -> EventType override { return getStaticType(); }
 
-        [[nodiscard]]
+        KT_NODISCARD
         auto getChar() -> UInt32_T { return m_KeyChar; }
 
         /**
          * Useful if we need to query the type of this event.
          * See <code>kT::EventDispatcher</code> for usage
          * */
+        KT_NODISCARD
         static auto getStaticType() -> EventType { return EventType::KEY_CHAR_EVENT; }
 
+        KT_NODISCARD
         auto displayData() const -> std::string override {
             return fmt::format("{} KEY: {}", getFormattedStr(getType()).data(), m_KeyChar);
         }
     private:
+        KT_NODISCARD
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
         UInt32_T m_KeyChar{};

@@ -11,8 +11,9 @@
 #include <GLFW/glfw3.h>
 
 // Project Headers
-#include <kaTe/Common.hh>
-#include <kaTe/Application.hh>
+#include <Tools/Common.hh>
+#include <Tools/Application.hh>
+
 #include <Core/Logger.hh>
 #include <Platform/Window/LinuxInputManager.hh>
 

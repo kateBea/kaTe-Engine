@@ -18,49 +18,31 @@
 #include <Core/Events/KeyEvents.hh>
 #include <Core/Events/MouseEvents.hh>
 
-#include <Platform/Window/LinuxWindow.hh>
+#include <Platform/Window/kateGLFWwindow.hh>
 
 namespace kaTe {
-    LinuxWindow::LinuxWindow(const WindowProperties& properties)
-        :   Window{}, m_Data{ .properties{ properties }, .callback{}, .VSync{ true } }, m_Window{ nullptr }
+    kateGLFWwindow::kateGLFWwindow(const WindowProperties& properties)
+        :   Window{}, m_Window{ nullptr }, m_Callback{}, m_VSync{ true }
     {}
 
-    LinuxWindow::LinuxWindow(LinuxWindow&& other)
-        :   Window{ std::move(other) }, m_Data{ std::move(other.m_Data) }, m_Window{ other.m_Window }
-    {
-        // Invalidate other
-        other.m_Window = nullptr;
-    }
-
-    auto LinuxWindow::operator=(LinuxWindow&& other) noexcept -> LinuxWindow& {
-        Window::operator=(std::move(other));
-        m_Data = std::move(other.m_Data);
-        m_Window = other.m_Window;
-
-        // Invalidate other
-        other.m_Window = nullptr;
-
-        return *this;
-    }
-
-    auto LinuxWindow::onUpdate() -> void {
+    auto kateGLFWwindow::onUpdate() -> void {
         glfwPollEvents();
         glfwSwapBuffers(m_Window);
     }
 
-    auto LinuxWindow::enableVSync() -> void {
+    auto kateGLFWwindow::enableVSync() -> void {
         glfwSwapInterval(1);
-        m_Data.VSync = true;
+        m_VSync = true;
     }
 
-    auto LinuxWindow::disableVSync() -> void {
+    auto kateGLFWwindow::disableVSync() -> void {
         glfwSwapInterval(0);
-        m_Data.VSync = false;
+        m_VSync = false;
     }
 
-    auto LinuxWindow::init() -> void {
+    auto kateGLFWwindow::init() -> void {
         KATE_CORE_LOGGER_DEBUG("Creating Linux_Window with name '{}' and dimension [{}, {}]",
-                               m_Data.properties.getName(), m_Data.properties.getWidth(), m_Data.properties.getHeight());
+                               m_Properties.getName(), m_Properties.getWidth(), m_Properties.getHeight());
         // Init GLFW
         if (!g_GLFWInitSuccess) {
             auto ret{ glfwInit() };
@@ -78,8 +60,8 @@ namespace kaTe {
             glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         }
 
-        m_Window = glfwCreateWindow(m_Data.properties.getWidth(), m_Data.properties.getHeight(),
-                                    m_Data.properties.getName().c_str(), nullptr, nullptr);
+        m_Window = glfwCreateWindow(m_Properties.getWidth(), m_Properties.getHeight(),
+                                    m_Properties.getName().c_str(), nullptr, nullptr);
         m_WindowCreateSuccess = m_Window != nullptr;
         KT_ASSERT(m_WindowCreateSuccess, "Failed to create the Linux_Window");
 
@@ -92,56 +74,56 @@ namespace kaTe {
         auto ret{ glewInit() == GLEW_OK };
         KT_ASSERT(ret, "Failed to initialize GLEW");
 
-        glfwSetWindowUserPointer(m_Window, &m_Data);
+        glfwSetWindowUserPointer(m_Window, this);
         enableVSync();
         setCallbacks();
     }
 
-    auto LinuxWindow::shutDown() -> void {
+    auto kateGLFWwindow::shutDown() -> void {
         KATE_CORE_LOGGER_DEBUG("Shutting down Linux Window with name '{}' and dimension [{}, {}]",
-                               m_Data.properties.getName(), m_Data.properties.getWidth(), m_Data.properties.getHeight());
+                               m_Properties.getName(), m_Properties.getWidth(), m_Properties.getHeight());
         glfwDestroyWindow(m_Window);
         glfwTerminate();
     }
 
-    auto LinuxWindow::setCallbacks() -> void {
+    auto kateGLFWwindow::setCallbacks() -> void {
         glfwSetWindowSizeCallback(m_Window,
-            [](GLFWwindow *window, std::int32_t width, std::int32_t height) {
-                WindowData &data{*static_cast<WindowData *>(glfwGetWindowUserPointer(window))};
-                data.properties.setWidth(width);
-                data.properties.setHeight(height);
+            [](GLFWwindow* window, Int32_T width, Int32_T height) {
+                kateGLFWwindow* data{ static_cast<kateGLFWwindow*>(glfwGetWindowUserPointer(window)) };
+                data->m_Properties.setWidth(width);
+                data->m_Properties.setHeight(height);
 
                 WindowResizedEvent wre{width, height};
-                data.callback(wre);
+                data->m_Callback(wre);
             }
         );
 
         glfwSetWindowCloseCallback(m_Window,
-            [](GLFWwindow *window) {
-                WindowData &data{*static_cast<WindowData *>(glfwGetWindowUserPointer(window))};
+            [](GLFWwindow* window) {
+                kateGLFWwindow* data{ static_cast<kateGLFWwindow*>(glfwGetWindowUserPointer(window)) };
                 WindowCloseEvent wce{};
-                data.callback(wce);
+                data->m_Callback(wce);
             }
         );
 
         glfwSetKeyCallback(m_Window,
-            [](GLFWwindow *window, std::int32_t key, std::int32_t scancode, std::int32_t action, std::int32_t mods) {
-                WindowData &data{*static_cast<WindowData *>(glfwGetWindowUserPointer(window))};
+            [](GLFWwindow *window, std::int32_t key, Int32_T scancode, Int32_T action, Int32_T mods) {
+                kateGLFWwindow* data{ static_cast<kateGLFWwindow*>(glfwGetWindowUserPointer(window)) };
 
                 switch (action) {
                     case GLFW_PRESS: {
                         KeyPressedEvent kpeNoRepeat{key, false};
-                        data.callback(kpeNoRepeat);
+                        data->m_Callback(kpeNoRepeat);
                         break;
                     }
                     case GLFW_RELEASE: {
                         KeyReleasedEvent kre{key};
-                        data.callback(kre);
+                        data->m_Callback(kre);
                         break;
                     }
                     case GLFW_REPEAT: {
                         KeyPressedEvent kpeRepeat{key, true};
-                        data.callback(kpeRepeat);
+                        data->m_Callback(kpeRepeat);
                         break;
                     }
                 }
@@ -149,18 +131,18 @@ namespace kaTe {
         );
 
         glfwSetMouseButtonCallback(m_Window,
-            [](GLFWwindow *window, std::int32_t button, std::int32_t action, std::int32_t mods) {
-                WindowData &data{*static_cast<WindowData *>(glfwGetWindowUserPointer(window))};
+            [](GLFWwindow* window, Int32_T button, Int32_T action, Int32_T mods) {
+                kateGLFWwindow* data{ static_cast<kateGLFWwindow*>(glfwGetWindowUserPointer(window)) };
 
                 switch (action) {
                     case GLFW_PRESS: {
                         MouseButtonPressedEvent mousePressed{button};
-                        data.callback(mousePressed);
+                        data->m_Callback(mousePressed);
                         break;
                     }
                     case GLFW_RELEASE: {
                         MouseButtonReleasedEvent mouseReleased{button};
-                        data.callback(mouseReleased);
+                        data->m_Callback(mouseReleased);
                         break;
                     }
                 }
@@ -169,25 +151,25 @@ namespace kaTe {
 
         glfwSetScrollCallback(m_Window,
             [](GLFWwindow* window, double xOffset, double yOffset) {
-                WindowData &data{ *static_cast<WindowData*>(glfwGetWindowUserPointer(window)) };
+                kateGLFWwindow* data{ static_cast<kateGLFWwindow*>(glfwGetWindowUserPointer(window)) };
                 MouseScrollEvent msc{ xOffset, yOffset };
-                data.callback(msc);
+                data->m_Callback(msc);
             }
         );
 
         glfwSetCursorPosCallback(m_Window,
             [](GLFWwindow* window, double x, double y) {
-                WindowData &data{ *static_cast<WindowData*>(glfwGetWindowUserPointer(window)) };
+                kateGLFWwindow* data{ static_cast<kateGLFWwindow*>(glfwGetWindowUserPointer(window)) };
                 MouseMovedEvent mme{x, y};
-                data.callback(mme);
+                data->m_Callback(mme);
             }
         );
 
         glfwSetCharCallback(m_Window,
             [](GLFWwindow* window, unsigned int codePoint) {
-                WindowData &data{ *static_cast<WindowData*>(glfwGetWindowUserPointer(window)) };
+                kateGLFWwindow* data{ static_cast<kateGLFWwindow*>(glfwGetWindowUserPointer(window)) };
                 KeyCharEvent kce{ codePoint };
-                data.callback(kce);
+                data->m_Callback(kce);
             }
         );
     }
