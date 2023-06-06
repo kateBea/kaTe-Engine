@@ -25,7 +25,9 @@
 #include <Platform/Window/InputManager.hh>
 
 // TODO: Temporary just to try shader class
-#include <Renderer/OpenGL/Shader.hh>
+#include "Renderer/Shader.hh"
+#include <Renderer/IndexBuffer.hh>
+#include <Renderer/VertexBuffer.hh>
 
 
 namespace kaTe {
@@ -139,10 +141,9 @@ namespace kaTe {
         Ptr_T<InputManager> m_InputManager{ nullptr };
 
         // Temporary, will be abstracted
-        UInt32_T m_Vao;
-        UInt32_T m_Vbo;
-        UInt32_T m_Veo;
-        Shader m_Shader{};
+        SPtr_T<VertexBuffer> m_VertexBuffer{};
+        SPtr_T<IndexBuffer> m_VertexIndexBuffer{};
+        SPtr_T<Shader> m_Shader{};
 
     };
 }

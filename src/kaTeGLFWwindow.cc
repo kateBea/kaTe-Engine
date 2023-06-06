@@ -7,7 +7,7 @@
 #include <utility>
 
 // Third-Party Libraries
-#include <GL/glew.h>
+
 
 // Projects headers
 #include <Core/Assert.hh>
@@ -23,7 +23,7 @@
 
 namespace kaTe {
     kateGLFWwindow::kateGLFWwindow(const WindowProperties& properties)
-        :   Window{}, m_Window{ nullptr }, m_Callback{}, m_VSync{ true } {}
+        :   Window{ properties }, m_Window{ nullptr }, m_Callback{}, m_VSync{ true } {}
 
     auto kateGLFWwindow::onUpdate() -> void {
         glfwPollEvents();

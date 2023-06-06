@@ -11,7 +11,7 @@
 #include <Core/Assert.hh>
 #include <Core/Logger.hh>
 
-#include <Renderer/OpenGL/Shader.hh>
+#include "Renderer/Shader.hh"
 
 namespace kaTe {
     Shader::Shader(const std::filesystem::path &vertexSourceDir, const std::filesystem::path &fragmentSourceDir) {
@@ -85,7 +85,7 @@ namespace kaTe {
     }
 
     auto Shader::setUniformBool(std::string_view name, bool value) const -> void {
-        use();
+        useProgram();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
@@ -94,7 +94,7 @@ namespace kaTe {
     }
 
     auto Shader::setUniformInt(std::string_view name, Int32_T value) const -> void {
-        use();
+        useProgram();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
@@ -103,7 +103,7 @@ namespace kaTe {
     }
 
     auto Shader::setUniformFloat(std::string_view name, float value) const -> void {
-        use();
+        useProgram();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
@@ -150,7 +150,7 @@ namespace kaTe {
     }
 
     auto Shader::setUniformMat4(std::string_view name, const glm::mat4& mat) const -> void {
-        use();
+        useProgram();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
@@ -171,7 +171,7 @@ namespace kaTe {
     }
 
     auto Shader::setUniformVec3(std::string_view name, const glm::vec3 &vec) const -> void {
-        use();
+        useProgram();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
@@ -182,7 +182,7 @@ namespace kaTe {
     }
 
     auto Shader::setUniformVec4(std::string_view name, const glm::vec4& vec) const -> void {
-        use();
+        useProgram();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
 
         if (ret == -1)

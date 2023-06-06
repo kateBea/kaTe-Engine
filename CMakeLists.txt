@@ -21,8 +21,19 @@ set(PLATFORM_SOURCES
         src/Application.cc
         src/kaTeGLFWwindow.cc
         src/WinWindow.cc
-        src/LinuxInputManager.cc
-        src/Shader.cc)
+        src/LinuxInputManager.cc)
+
+set(RENDERER_SOURCES
+        src/OpenGLVertexArray.cc
+        src/OpenGLVertexBuffer.cc
+        src/OpenGLIndexBuffer.cc
+        src/Renderer.cc
+        src/VertexBuffer.cc
+        src/IndexBuffer.cc
+        src/Shader.cc
+        src/OpenGLRenderer.cc
+        src/RendererAPI.cc
+        )
 
 set(IMGUI_SOURCES
         lib/imgui/imgui.cpp
@@ -36,7 +47,8 @@ set(IMGUI_SOURCES
 set(SOURCES
         ${CORE_SOURCES}
         ${PLATFORM_SOURCES}
-        ${IMGUI_SOURCES})
+        ${IMGUI_SOURCES}
+        ${RENDERER_SOURCES})
 
 # External dependencies
 add_subdirectory(${GLEW_CMAKE_DIR})
@@ -52,7 +64,7 @@ if (MSVC)
 
 else()
     # Compile commands for Linux
-    add_compile_options(-fsanitize=address -D_DEBUG)
+    add_compile_options(-fsanitize=address -D_DEBUG -Wall -Wextra -Wpedantic)
 
     # For Key and Mouse Codes we use the GLFW ones
     # On Linux systems

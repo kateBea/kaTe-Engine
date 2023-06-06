@@ -56,7 +56,7 @@ namespace kaTe {
         /**
          * Use this Shader program
          * */
-        auto use() const -> void { glUseProgram(m_Id); }
+        auto useProgram() const -> void { glUseProgram(m_Id); }
 
         /**
          * Get Shader program ID

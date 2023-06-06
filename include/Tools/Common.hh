@@ -224,19 +224,6 @@
 #define KT_COLOR_STYLE_PRINT_FORMATTED(__COLOR, __STYLE, ...)     \
     fmt::print(fmt::fg(__COLOR) | __STYLE, __VA_ARGS__)
 
-// Debugging utility to swap clear color (background color)
-#if defined(NDEBUG) || defined(_DEBUG)
-#define SWAP_BG_COLOR_INTERVAL()                            \
-        float time = glfwGetTime();                         \
-        float blue = 0.5f;                                  \
-        float red = (std::sin(time) + blue * 2) * blue;     \
-        float green = (std::cos(time) + blue * 2) * blue;   \
-        glClearColor(red, green, blue, blue * 2);           \
-        glClear(GL_COLOR_BUFFER_BIT)
-#else
-    #define SWAP_BG_COLOR_INTERVAL(__SEC)
-#endif
-
 // OpenGL's info check. May need OpenGL valid context
 #if defined(NDEBUG) || defined(_DEBUG)
     #define KT_DISPLAY_OPENGL_TARGET_VERSION()                                                                          \

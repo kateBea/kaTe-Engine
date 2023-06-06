@@ -61,7 +61,8 @@ namespace kaTe {
     public:
         using EventCallbackFunc_T = std::function<void(Event&)>;
 
-        explicit Window() :  m_WindowCreateSuccess{ false } {}
+        explicit Window(const WindowProperties& props = WindowProperties{})
+            :   m_WindowCreateSuccess{ false } {}
 
         KT_NODISCARD
         virtual auto getWidth() const -> Int32_T = 0;

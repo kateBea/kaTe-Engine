@@ -3,7 +3,6 @@
 #include <cmath>
 
 // Third-party libraries
-#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 // Project headers
@@ -16,33 +15,11 @@
 #include <Core/Layers/ImGuiLayer.hh>
 #include <Platform/Window/LinuxInputManager.hh>
 
+#include <Renderer/Renderer.hh>
+#include <Renderer/RenderCommand.hh>
+
 
 namespace kaTe {
-    static auto initOpenGLStuff(UInt32_T& vao, UInt32_T& vbo, UInt32_T& veo) -> void {
-        float data[] {
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f,
-            0.0f, 0.5f, 0.0f
-        };
-
-        UInt32_T indices[]{ 0, 1, 2 };
-
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
-
-        glGenBuffers(1, &vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
-
-        glGenBuffers(1, &veo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, veo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-
-    }
-
     auto Application::init() -> void {
         KATE_APP_LOGGER_INFO("Initializing kaTe Engine");
 
@@ -51,23 +28,65 @@ namespace kaTe {
         initInputManager();
 
         // temporary. may be done by the renderer
-        initOpenGLStuff(m_Vao, m_Vbo, m_Veo);
+        {
+            std::vector<float> data {
+                    // Positions                // Colors
+                -0.5f, -0.5f, 0.0f,         1.0f, 0.0f, 1.0f, 1.0f,
+                0.5f, -0.5f, 0.0f,          0.0f, 0.0f, 1.0f, 1.0f,
+                0.0f, 0.5f, 0.0f,           1.0f, 1.0f, 0.0f, 1.0f,
+            };
 
-        m_Shader.load("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/debugShaderFrag.glsl");
+            m_VertexBuffer.reset(VertexBuffer::createBuffer(data));
+            m_VertexIndexBuffer.reset(IndexBuffer::createBuffer({ 0, 1, 2} ));
 
+            m_Shader.reset(new Shader("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/debugShaderFrag.glsl"));
+        }
 
         KATE_APP_LOGGER_DEBUG("Finished kaTe Engine initialization");
     }
 
     auto Application::loop() -> void {
         KATE_CORE_LOGGER_INFO("Entering main loop kaTe Engine");
+        std::vector<float> data {
+                // Positions                // Colors
+                0.0f, 0.5f, 0.0f,         1.0f, 0.0f, 1.0f, 1.0f,
+                1.0f, 0.5f, 0.0f,          0.0f, 0.0f, 1.0f, 1.0f,
+                0.5f, 1.0f, 0.0f,           1.0f, 1.0f, 0.0f, 1.0f,
+        };
+
+        std::vector<float> data2 {
+                // Positions                // Colors
+                0.0f, 0.5f, 0.0f,         1.0f, 0.0f, 1.0f, 1.0f,
+                -1.0f, 0.5f, 0.0f,          0.0f, 0.0f, 1.0f, 1.0f,
+                -0.5f, 1.0f, 0.0f,           1.0f, 1.0f, 0.0f, 1.0f,
+        };
+
+        SPtr_T<VertexBuffer> vertexBuffer1{};
+        SPtr_T<VertexBuffer> vertexBuffer2{};
+        vertexBuffer1.reset(VertexBuffer::createBuffer(data));
+        vertexBuffer2.reset(VertexBuffer::createBuffer(data2));
+
+        m_VertexBuffer->setBufferLayout(BufferLayout{{ ShaderDataType::FLOAT3_TYPE, "a_Position" }, { ShaderDataType::FLOAT4_TYPE, "a_Color" }});
+        vertexBuffer1->setBufferLayout(BufferLayout{{ ShaderDataType::FLOAT3_TYPE, "a_Position" }, { ShaderDataType::FLOAT4_TYPE, "a_Color" }});
+        vertexBuffer2->setBufferLayout(BufferLayout{{ ShaderDataType::FLOAT3_TYPE, "a_Position" }, { ShaderDataType::FLOAT4_TYPE, "a_Color" }});
+
+        // Temporary
+        RenderCommand rc{};
 
         while (m_State == State::RUNNING) {
-            SWAP_BG_COLOR_INTERVAL();
+            float time = glfwGetTime();
+            float blue = 0.5f;
+            float red = (std::sin(time) + blue * 2) * blue;
+            float green = (std::cos(time) + blue * 2) * blue;
 
-            m_Shader.use();
-            glBindVertexArray(m_Vao);
-            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+            RenderCommand::setClearColor(red, green, blue, 1.0f);
+            RenderCommand::clear((RendererAPI::BufferBit)(RendererAPI::OPEN_GL_COLOR_BUFFER_BIT | RendererAPI::OPEN_GL_DEPTH_BUFFER_BIT));
+
+            Renderer::beginScene();
+            Renderer::submit(m_Shader, m_VertexBuffer, m_VertexIndexBuffer);
+            Renderer::submit(m_Shader, vertexBuffer1, m_VertexIndexBuffer);
+            Renderer::submit(m_Shader, vertexBuffer2, m_VertexIndexBuffer);
+            Renderer::endScene();
 
             for (auto& layer : *m_LayerStack)
                 layer->onUpdate();

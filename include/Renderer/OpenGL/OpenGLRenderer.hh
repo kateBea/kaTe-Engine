@@ -1,0 +1,76 @@
+//
+// Created by kate on 6/6/23.
+//
+
+#ifndef KATE_ENGINE_OPENGL_RENDERER_HH
+#define KATE_ENGINE_OPENGL_RENDERER_HH
+
+#include <glm/vec4.hpp>
+
+#include <Renderer/Renderer.hh>
+#include <Renderer/RendererAPI.hh>
+
+#include <Renderer/OpenGL/OpenGLVertexArray.hh>
+#include <Tools/Common.hh>
+
+namespace kaTe {
+    class OpenGLRenderer : public RendererAPI {
+    public:
+        explicit OpenGLRenderer() = default;
+
+        auto setClearColor(const glm::vec4& color) -> void override;
+        auto setClearColor(float red, float green, float blue, float alpha) -> void override;
+        auto clear(BufferBit bufferBits) -> void override;
+
+
+
+
+        virtual auto drawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        virtual auto drawIndexed(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+
+        // RendererAPI::draw() possible overloads
+        //
+        // virtual auto draw(const Mesh& mesh) -> void = 0;
+        virtual auto draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
+        virtual auto draw(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        // There's no reason to draw a mesh indexed as it may probably have its own indices
+
+        // virtual auto draw(const Shader& shader, const Mesh& mesh) -> void = 0;
+        virtual auto draw(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
+        virtual auto draw(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+
+    private:
+        // Forbidden operations
+        OpenGLRenderer(const OpenGLRenderer&) = delete;
+        auto operator=(const OpenGLRenderer&) -> OpenGLRenderer& = delete;
+
+        OpenGLRenderer(OpenGLRenderer&&) = delete;
+        auto operator=(OpenGLRenderer&&) -> OpenGLRenderer& = delete;
+    private:
+        /**
+		 * See: https://learnopengl.com/Getting-started/Hello-Triangle
+		 * A vertex array object (also known as VAO) can be bound just like a vertex buffer
+		 * object and any subsequent vertex attribute calls from that point on will be stored
+		 * inside the VAO. This has the advantage that when configuring vertex attribute pointers
+		 * you only have to make those calls once and whenever we want to draw the object, we can just
+		 * bind the corresponding VAO. This makes switching between different vertex data and attribute
+		 * configurations as easy as binding a different VAO. All the state we just set is stored inside the VAO.
+		 *
+		 * Currently we are using CORE_OPENGL_PROFILE which is specified when we create an OpenGL context
+		 * with the OpenGLContext class therefore OpenGL requires that we use a VAO so it knows what to do with
+		 * our vertex inputs. If we fail to bind a VAO, OpenGL will most likely refuse to draw anything.
+		 *
+		 * In compatibility mode, OpenGL already offers a default Vertex Array.
+		 * See: https://www.khronos.org/opengl/wiki/Vertex_Specification
+		 *
+		 * There's no need to have multiple VAO's really, we can just use a single one and setup the attributes properly before
+		 * a draw call with glEnableVertexAttribArray() && glVertexAttribPointer()
+		 * */
+
+        OpenGLVertexArray m_VertexArray{};
+
+    };
+}
+
+
+#endif//KATE_ENGINE_OPENGL_RENDERER_HH
