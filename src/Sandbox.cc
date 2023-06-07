@@ -67,11 +67,14 @@ namespace kaTe {
         engine->getRenderer()->getRenderCommand().clear((RendererAPI::BufferBit)(RendererAPI::OPEN_GL_COLOR_BUFFER_BIT |
                                                       RendererAPI::OPEN_GL_DEPTH_BUFFER_BIT));
         m_VertexBuffer->setBufferLayout(BufferLayout{ { ShaderDataType::FLOAT3_TYPE, "a_Position" }, { ShaderDataType::FLOAT4_TYPE, "a_Color" } });
+        m_SquareVertexBuffer->setBufferLayout(BufferLayout{ { ShaderDataType::FLOAT3_TYPE, "a_Position" }, { ShaderDataType::FLOAT4_TYPE, "a_Color" } });
     }
 
     auto Sandbox::renderScene() -> void {
         auto engine{ EngineManager::getPtr() };
         engine->getRenderer()->beginScene(engine->getOrthographicCamera());
+        // Currently submit draws our geometry
+        engine->getRenderer()->submit(m_Shader, m_SquareVertexBuffer, m_SquareIndexBuffer);
         engine->getRenderer()->submit(m_Shader, m_VertexBuffer, m_IndexBuffer);
         engine->getRenderer()->endScene();
         engine->updateLayers();
@@ -85,8 +88,20 @@ namespace kaTe {
                 0.0f, 0.5f, 0.0f,           1.0f, 1.0f, 0.0f, 1.0f,
         };
 
+        std::vector<float> squareData {
+                // Positions                // Colors
+                -0.5f, 0.5f, 0.0f,         1.0f, 0.0f, 1.0f, 1.0f,
+                0.5f, 0.5f, 0.0f,          0.0f, 0.0f, 1.0f, 1.0f,
+                -0.5f, -0.5f, 0.0f,           1.0f, 1.0f, 0.0f, 1.0f,
+                0.5f, -0.5f, 0.0f,           0.0f, 1.0f, 1.0f, 1.0f,
+        };
+
         m_VertexBuffer.reset(VertexBuffer::createBuffer(data));
-        m_IndexBuffer.reset(IndexBuffer::createBuffer({ 0, 1, 2} ));
+        m_IndexBuffer.reset(IndexBuffer::createBuffer({ 0, 1, 2 }));
+
+        m_SquareVertexBuffer.reset(VertexBuffer::createBuffer(squareData));
+        m_SquareIndexBuffer.reset(IndexBuffer::createBuffer({ 0, 1, 2, 1, 2, 3 }));
+
         m_Shader.reset(new Shader("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/debugShaderFrag.glsl"));
     }
 

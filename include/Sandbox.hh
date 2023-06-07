@@ -28,6 +28,9 @@ namespace kaTe {
         std::shared_ptr<Shader> m_Shader{};
         std::shared_ptr<VertexBuffer> m_VertexBuffer{};
         std::shared_ptr<IndexBuffer> m_IndexBuffer{};
+
+        std::shared_ptr<VertexBuffer> m_SquareVertexBuffer{};
+        std::shared_ptr<IndexBuffer> m_SquareIndexBuffer{};
         void swapBuffers();
     };
 }
