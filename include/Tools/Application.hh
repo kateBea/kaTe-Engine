@@ -107,6 +107,14 @@ namespace kaTe {
          * forward this event any further and handler it right away
          * */
         bool onWindowClose(WindowCloseEvent &ev);
+        
+        /**
+         * Callback function for WindowResizedEvent event. For now
+         * it always returns true as we have no needs to
+         * forward this event any further and handler it right away
+         * */
+        bool onResizeEvent(WindowResizedEvent &ev);
+       
 
 
 

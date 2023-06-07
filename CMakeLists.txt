@@ -76,6 +76,7 @@ include_directories(lib/glfw/include)
 include_directories(lib/glew/include)
 include_directories(lib/imgui)
 include_directories(lib/imgui/backends)
+include_directories(lib/glm/)
 
 add_executable(kaTe_Engine src/EntryPoint.cc ${SOURCES})
 target_link_libraries(kaTe_Engine ${LIBRARIES})

@@ -42,6 +42,7 @@ namespace kaTe {
 		virtual auto draw(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void = 0;
         virtual auto draw(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
 
+		virtual auto setViewPort(UInt32_T width, UInt32_T height) -> void = 0;
     private:
         // Forbidden operations
         RendererAPI(const RendererAPI&) = delete;

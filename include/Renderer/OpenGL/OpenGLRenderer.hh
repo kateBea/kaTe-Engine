@@ -22,7 +22,7 @@ namespace kaTe {
         auto setClearColor(float red, float green, float blue, float alpha) -> void override;
         auto clear(BufferBit bufferBits) -> void override;
 
-
+        auto setViewPort(UInt32_T width, UInt32_T height) -> void override;
 
 
         virtual auto drawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;

@@ -152,6 +152,8 @@ namespace kaTe {
         if (evDis.forward<WindowCloseEvent>(KT_BIND_EVENT_FUNC(Application::onWindowClose)))
             KATE_APP_LOGGER_TRACE("HANDLED {}", event.displayData());
 
+        if (evDis.forward<WindowResizedEvent>(KT_BIND_EVENT_FUNC(Application::onResizeEvent)))
+
         for (auto it{ m_LayerStack->rbegin() }; it != m_LayerStack->rend(); ++it) {
             (*it)->onEvent(event);
             if (event.isHandled())
@@ -161,6 +163,11 @@ namespace kaTe {
 
     bool Application::onWindowClose(WindowCloseEvent& ev) {
         m_State = State::STOPPED;
+        return true;
+    }
+
+    bool Application::onResizeEvent(WindowResizedEvent &ev) {
+        RenderCommand::refreshViewPort(ev.getWidth(), ev.getHeight());
         return true;
     }
 

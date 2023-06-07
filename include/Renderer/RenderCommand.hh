@@ -61,6 +61,10 @@ namespace kaTe {
             s_ActiveRendererAPI->draw(shader, vertexBuffer, indexBuffer);
         }
 
+        static auto refreshViewPort(UInt32_T width, UInt32_T height) -> void {
+            s_ActiveRendererAPI->setViewPort(width, height);
+        }
+
 	private:
 		// Non owning pointer to the currently active Graphics API
 		inline static RendererAPI* s_ActiveRendererAPI{ nullptr };

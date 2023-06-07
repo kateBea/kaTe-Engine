@@ -19,6 +19,10 @@ namespace kaTe {
         glClearColor(color.r, color.g, color.b, color.a);
     }
 
+    auto OpenGLRenderer::setViewPort(UInt32_T width, UInt32_T height) -> void {
+        glViewport(0, 0, width, height);
+    }
+
     auto OpenGLRenderer::drawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
 
 
