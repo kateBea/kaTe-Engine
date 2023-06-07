@@ -19,7 +19,6 @@
 #include "Core/Events/Event.hh"
 #include "Core/Layers/LayerStack.hh"
 #include "Platform/InputManager.hh"
-#include "Renderer/OrthographicCamera.hh"
 
 // TODO: Temporary just to try shader class
 #include "Renderer/IndexBuffer.hh"
@@ -67,15 +66,13 @@ namespace kaTe {
 
         auto getRenderer() ->  std::shared_ptr<Renderer> { KT_ASSERT(m_Renderer, "Renderer is NULL"); return m_Renderer; }
 
-        auto getOrthographicCamera() -> std::shared_ptr<OrthographicCamera> { KT_ASSERT(m_Camera, "Camera is NULL"); return m_Camera; }
-
         /**
          * Initializes the subsystems of the
          * application
          * */
         auto init() -> void;
 
-        auto updateLayers() -> void;
+        auto updateState() -> void;
 
         auto isRunning() -> bool;
 
@@ -119,41 +116,27 @@ namespace kaTe {
         bool onResizeEvent(WindowResizedEvent &ev);
        
 
-
-
         /*************************************************************
          *  HELPER FUNCTIONS -----------------------------------------
          * ********************************************************+ */
 
-        /**
-         * Initializes the main Window
-         * */
         auto initWindow() -> void;
-
-        /**
-         * Initializes the Layer Stack
-         * */
         auto initLayerStack() -> void;
-
         auto initInputManager() -> void;
+        auto initRenderer() -> void;
 
         // MEMBER VARIABLES ----------------------------
         State m_State{ State::RUNNING };
 
-        Ptr_T<Window> m_Window{ nullptr };
-        Ptr_T<LayerStack> m_LayerStack{ nullptr };
+        std::unique_ptr<Window> m_Window{ nullptr };
+        std::unique_ptr<LayerStack> m_LayerStack{ nullptr };
 
         // For now, there's one instance of InputManager in our application
         // In case we may want to poll input from multiple Windows, this
         // could become part of the Window itself as an aggregation
-        Ptr_T<InputManager> m_InputManager{ nullptr };
+        std::unique_ptr<InputManager> m_InputManager{ nullptr };
+        std::shared_ptr<Renderer> m_Renderer{ nullptr };
 
-        // Temporary, will be abstracted
-        SPtr_T<OrthographicCamera> m_Camera{};
-        std::shared_ptr<Renderer> m_Renderer{};
-
-        void initOrthographicCamera();
-        void initRenderer();
     };
 }
 

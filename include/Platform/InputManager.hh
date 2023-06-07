@@ -7,16 +7,15 @@
 #define KATE_ENGINE_INPUT_MANAGER_HH
 
 // C++ Standard Library
-#include "../../../../../../../usr/include/c++/12/cstdint"
-#include "../../../../../../../usr/include/c++/12/utility"
+#include <utility>
 
 // Project Headers
-#include "../Core/Assert.hh"
+#include <Core/Assert.hh>
 
-#include "Window/Window.hh"
+#include <Platform/Window/Window.hh>
 
-#include "../Tools/Singleton.hh"
-#include "../Tools/Common.hh"
+#include <Tools/Singleton.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
     class InputManager : public Singleton<InputManager> {

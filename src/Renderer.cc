@@ -18,6 +18,7 @@ namespace kaTe {
     }
 
     auto Renderer::submit(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
+        // Currently submit draws our geometry directly, not buffered
         shader->setUniformMat4("u_ProjectionView", m_SceneData.camera->getProjectionView());
         m_RenderCommand.drawIndexed(shader, vertexBuffer, indexBuffer);
     }

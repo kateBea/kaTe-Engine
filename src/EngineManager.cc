@@ -23,10 +23,9 @@ namespace kaTe {
         KATE_CORE_LOGGER_INFO("Initializing kaTe Engine ----------------------------------------");
 
         initWindow();
+        initRenderer();
         initLayerStack();
         initInputManager();
-        initRenderer();
-        initOrthographicCamera();
 
         KATE_CORE_LOGGER_DEBUG("Finished kaTe Engine initialization ----------------------------");
     }
@@ -35,9 +34,7 @@ namespace kaTe {
         KATE_CORE_LOGGER_INFO("kaTe Engine: Main Window initialization");
         m_Window = std::make_unique<WindowGLFW>();
         KT_ASSERT(m_Window != nullptr, "Window is NULL");
-
         m_Window->init();
-
         // Should probably not be done here
         m_Window->setEventCallback(KT_BIND_EVENT_FUNC(EngineManager::onEvent));
     }
@@ -46,12 +43,7 @@ namespace kaTe {
         KATE_CORE_LOGGER_INFO("kaTe Engine: Layer Stack initialization");
         m_LayerStack = std::make_unique<LayerStack>();
         KT_ASSERT(m_LayerStack != nullptr, "Layer Stack is NULL");
-
         m_LayerStack->init();
-
-        SPtr_T<ImGuiLayer> temp{ std::make_shared<ImGuiLayer>() };
-        temp->onAttach();
-        m_LayerStack->addLayer(temp);
     }
 
     auto EngineManager::initInputManager() -> void {
@@ -119,15 +111,11 @@ namespace kaTe {
         return m_State == State::RUNNING;
     }
 
-    auto EngineManager::updateLayers() -> void {
+    auto EngineManager::updateState() -> void {
         for (auto& layer : *m_LayerStack)
             layer->onUpdate();
-    }
 
-    void EngineManager::initOrthographicCamera() {
-        KATE_CORE_LOGGER_INFO("kaTe Engine: Orthographic camera startup");
-        m_Camera = std::make_unique<OrthographicCamera>(-1.0, 1.0, -1.0, 1.0);
-        KT_ASSERT(m_Camera != nullptr, "OrthographicCamera is NULL");
+        m_Window->onUpdate();
     }
 
     void EngineManager::initRenderer() {
