@@ -24,8 +24,10 @@ namespace kaTe {
 
         auto setFieldOfView(double fov) -> void{ m_FieldOfView = fov; recomputeViewMatrix(); }
         auto setAspectRatio(double ar) -> void{ m_AspectRatio = ar; recomputeViewMatrix(); }
+        // Takes rotations in degrees
         auto setRotation(double rotation) -> void { m_Rotation = rotation; recomputeViewMatrix(); }
         auto setPosition(const glm::vec3& pos) -> void{ m_Position = pos; recomputeViewMatrix(); }
+        auto setPosition(double x, double y) -> void{ m_Position = { x, y, 0.0 }; recomputeViewMatrix(); }
         auto setProjection(glm::mat4 proj) -> void{ m_Projection = proj; recomputeViewMatrix(); }
         auto setView(glm::mat4 view) -> void{ m_ViewMatrix = view; recomputeViewMatrix(); }
     private:
@@ -44,6 +46,8 @@ namespace kaTe {
 
         double m_FieldOfView{};
         double m_AspectRatio{};
+
+        // Rotation in degrees
         double m_Rotation{};
 
     };

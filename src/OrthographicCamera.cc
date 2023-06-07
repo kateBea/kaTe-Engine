@@ -24,7 +24,7 @@ namespace kaTe {
         constexpr glm::vec3 zAxis{ 0, 0, 1 };
 
         glm::mat4 transform{ glm::translate(identityMatrix, m_Position) *
-                                glm::rotate(identityMatrix, static_cast<float>(m_Rotation), zAxis) };
+                                glm::rotate(identityMatrix, static_cast<float>(glm::radians(m_Rotation)), zAxis) };
 
         m_ViewMatrix = glm::inverse(transform);
         // Important to do in this order

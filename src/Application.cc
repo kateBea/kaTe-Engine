@@ -80,9 +80,30 @@ namespace kaTe {
             float blue = 0.5f;
             float red = (std::sin(time) + blue * 2) * blue;
             float green = (std::cos(time) + blue * 2) * blue;
-
+            static float posX{ 0.0f };
+            static float posY{ 0.0f };
+            static float rota{ 0.0f };
             RenderCommand::setClearColor(red, green, blue, 1.0f);
             RenderCommand::clear((RendererAPI::BufferBit)(RendererAPI::OPEN_GL_COLOR_BUFFER_BIT | RendererAPI::OPEN_GL_DEPTH_BUFFER_BIT));
+
+            if (InputManager::isKeyPressed(KT_KEY_LEFT))
+                rota -= 1.0f;
+            if (InputManager::isKeyPressed(KT_KEY_RIGHT))
+                rota += 1.0f;
+
+
+            if (InputManager::isKeyPressed(KT_KEY_A))
+                posX += 0.01f;
+            if (InputManager::isKeyPressed(KT_KEY_D))
+                posX -= 0.01f;
+            if (InputManager::isKeyPressed(KT_KEY_W))
+                posY -= 0.01f;
+            if (InputManager::isKeyPressed(KT_KEY_S))
+                posY += 0.01f;
+
+
+            m_Camera->setPosition(posX, posY);
+            m_Camera->setRotation(rota);
 
             Renderer::beginScene(m_Camera);
             Renderer::submit(m_Shader, m_VertexBuffer, m_VertexIndexBuffer);
