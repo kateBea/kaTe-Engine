@@ -42,6 +42,8 @@ namespace kaTe {
             m_Shader.reset(new Shader("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/debugShaderFrag.glsl"));
         }
 
+        m_Camera.reset(new OrthographicCamera(-1.0, 1.0, -1.0, 1.0));
+
         KATE_APP_LOGGER_DEBUG("Finished kaTe Engine initialization");
     }
 
@@ -82,7 +84,7 @@ namespace kaTe {
             RenderCommand::setClearColor(red, green, blue, 1.0f);
             RenderCommand::clear((RendererAPI::BufferBit)(RendererAPI::OPEN_GL_COLOR_BUFFER_BIT | RendererAPI::OPEN_GL_DEPTH_BUFFER_BIT));
 
-            Renderer::beginScene();
+            Renderer::beginScene(m_Camera);
             Renderer::submit(m_Shader, m_VertexBuffer, m_VertexIndexBuffer);
             Renderer::submit(m_Shader, vertexBuffer1, m_VertexIndexBuffer);
             Renderer::submit(m_Shader, vertexBuffer2, m_VertexIndexBuffer);

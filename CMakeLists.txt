@@ -33,7 +33,7 @@ set(RENDERER_SOURCES
         src/Shader.cc
         src/OpenGLRenderer.cc
         src/RendererAPI.cc
-        )
+        src/OrthographicCamera.cc)
 
 set(IMGUI_SOURCES
         lib/imgui/imgui.cpp

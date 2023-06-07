@@ -19,6 +19,7 @@
 #include <Core/Events/Event.hh>
 #include <Core/Layers/LayerStack.hh>
 #include <Platform/Window/InputManager.hh>
+#include <Renderer/OrthographicCamera.hh>
 
 // TODO: Temporary just to try shader class
 #include "Renderer/Shader.hh"
@@ -139,6 +140,7 @@ namespace kaTe {
         // Temporary, will be abstracted
         SPtr_T<VertexBuffer> m_VertexBuffer{};
         SPtr_T<IndexBuffer> m_VertexIndexBuffer{};
+        SPtr_T<OrthographicCamera> m_Camera{};
         SPtr_T<Shader> m_Shader{};
 
     };

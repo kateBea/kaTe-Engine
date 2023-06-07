@@ -6,8 +6,8 @@
 #include <Renderer/RenderCommand.hh>
 
 namespace kaTe {
-    auto Renderer::beginScene() -> void {
-
+    auto Renderer::beginScene(std::shared_ptr<OrthographicCamera> camera) -> void {
+        s_SceneData.camera = camera;
     }
 
     auto Renderer::submit(std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
@@ -19,6 +19,7 @@ namespace kaTe {
     }
 
     auto Renderer::submit(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
+        shader->setUniformMat4("u_ProjectionView", s_SceneData.camera->getProjectionView());
         RenderCommand::drawIndexed(shader, vertexBuffer, indexBuffer);
     }
 

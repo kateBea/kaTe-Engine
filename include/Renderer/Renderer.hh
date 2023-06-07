@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include <Renderer/OrthographicCamera.hh>
 #include <Renderer/VertexBuffer.hh>
 #include <Renderer/IndexBuffer.hh>
 #include <Renderer/Shader.hh>
@@ -17,7 +18,7 @@ namespace kaTe {
             COUNT,
         };
 
-        static auto beginScene(/* With possible overloads supplying camera and other params*/) -> void;
+        static auto beginScene(std::shared_ptr<OrthographicCamera> camera) -> void;
 
         // Renderer::beginScene() possible overloads
         //
@@ -53,7 +54,12 @@ namespace kaTe {
         // to be static. In case we want to try different API at runtime, we may
         // have more than one Renderer API specific active
         inline static GraphicsAPI s_ActiveAPI{ GraphicsAPI::OPENGL_API };
+    private:
+        struct SceneData {
+            std::shared_ptr<OrthographicCamera> camera{};
+        };
 
+        inline static SceneData s_SceneData{ .camera{} };
     };
 }
 
