@@ -13,7 +13,7 @@
 #include <Tools/Common.hh>
 
 #include <Core/Layers/ImGuiLayer.hh>
-#include <Platform/Window/InputManagerGLFW.hh>
+#include "Platform/InputManagerGLFW.hh"
 
 #include <Renderer/Renderer.hh>
 #include <Renderer/RenderCommand.hh>
@@ -153,6 +153,7 @@ namespace kaTe {
             KATE_APP_LOGGER_TRACE("HANDLED {}", event.displayData());
 
         if (evDis.forward<WindowResizedEvent>(KT_BIND_EVENT_FUNC(Application::onResizeEvent)))
+            KATE_APP_LOGGER_TRACE("HANDLED {}", event.displayData());
 
         for (auto it{ m_LayerStack->rbegin() }; it != m_LayerStack->rend(); ++it) {
             (*it)->onEvent(event);

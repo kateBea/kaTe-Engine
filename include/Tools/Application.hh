@@ -18,7 +18,7 @@
 #include <Core/Events/AppEvents.hh>
 #include <Core/Events/Event.hh>
 #include <Core/Layers/LayerStack.hh>
-#include <Platform/Window/InputManager.hh>
+#include "Platform/InputManager.hh"
 #include <Renderer/OrthographicCamera.hh>
 
 // TODO: Temporary just to try shader class

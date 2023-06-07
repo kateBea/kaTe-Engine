@@ -7,10 +7,10 @@
 #define KATE_ENGINE_LINUX_INPUT_MANAGER_HH
 
 // Project Headers
-#include <Platform/Window/InputManager.hh>
-#include <Platform/Window/Window.hh>
-#include <Platform/Window/WindowGLFW.hh>
-#include <Tools/Common.hh>
+#include "InputManager.hh"
+#include "Window/Window.hh"
+#include "Window/WindowGLFW.hh"
+#include "../Tools/Common.hh"
 
 namespace kaTe {
     class InputManagerGLFW : public InputManager {

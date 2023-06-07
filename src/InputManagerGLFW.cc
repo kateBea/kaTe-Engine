@@ -15,7 +15,7 @@
 #include <Tools/Application.hh>
 
 #include <Core/Logger.hh>
-#include <Platform/Window/InputManagerGLFW.hh>
+#include "Platform/InputManagerGLFW.hh"
 
 namespace kaTe {
     auto InputManagerGLFW::isKeyPressedNative(Int32_T keyCode) -> bool {

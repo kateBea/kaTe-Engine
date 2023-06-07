@@ -19,7 +19,7 @@
 #include <Tools/Common.hh>
 
 #include <Core/Layers/ImGuiLayer.hh>
-#include <Platform/Window/InputManager.hh>
+#include "Platform/InputManager.hh"
 
 namespace kaTe {
     ImGuiLayer::ImGuiLayer() noexcept
