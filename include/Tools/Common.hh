@@ -12,6 +12,7 @@
 #define KATE_ENGINE_COMMON_HH
 
 // C++ Standard Libraries
+#include <memory>
 #include <functional>
 #include <cstdint>
 
@@ -238,14 +239,14 @@ namespace kaTe {
          * @tparam T held type
          * */
     template<typename T>
-    using Ptr_T = std::unique_ptr<T>;
+    using Scope_T = std::unique_ptr<T>;
 
     /**
-         * Pointer to a T. May shares the held instance
+         * Pointer to a T. May share the held instance
          * @tparam T held type
          * */
     template<typename T>
-    using SPtr_T = std::shared_ptr<T>;
+    using Ref_T = std::shared_ptr<T>;
 
     /**
          * Raw pointer to a T.
