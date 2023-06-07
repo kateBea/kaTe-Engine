@@ -65,12 +65,6 @@ if (MSVC)
 else()
     # Compile commands for Linux
     add_compile_options(-fsanitize=address -D_DEBUG -Wall -Wextra -Wpedantic)
-
-    # For Key and Mouse Codes we use the GLFW ones
-    # On Linux systems
-    add_compile_definitions(USE_GLFW_KEY_CODES)
-    add_compile_definitions(USE_GLFW_MOUSE_CODES)
-
     # Sanitize
     add_link_options(-fsanitize=address)
 endif()
@@ -93,3 +87,7 @@ target_compile_definitions(kaTe_Engine PRIVATE GLFW_INCLUDE_NONE)
 # one bundled with SPDLOG
 # For more: https://github.com/gabime/spdlog/wiki/0.-FAQ
 target_compile_definitions(kaTe_Engine PRIVATE SPDLOG_FMT_EXTERNAL)
+
+# For Key and Mouse Codes we use the GLFW ones
+target_compile_definitions(kaTe_Engine PRIVATE USE_GLFW_KEY_CODES)
+target_compile_definitions(kaTe_Engine PRIVATE USE_GLFW_MOUSE_CODES)

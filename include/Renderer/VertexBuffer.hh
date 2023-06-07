@@ -10,7 +10,6 @@
 #include <string_view>
 #include <utility>
 
-
 #include <Core/Assert.hh>
 #include <Tools/Common.hh>
 #include <Renderer/Vertex.hh>

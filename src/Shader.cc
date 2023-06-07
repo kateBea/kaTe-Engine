@@ -1,20 +1,23 @@
 #include <string>
-#include <array>
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
 
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <fmt/core.h>
 
+#include <Tools/Common.hh>
 #include <Core/Assert.hh>
 #include <Core/Logger.hh>
 
-#include "Renderer/Shader.hh"
+#include <Renderer/Shader.hh>
 
 namespace kaTe {
-    Shader::Shader(const std::filesystem::path &vertexSourceDir, const std::filesystem::path &fragmentSourceDir) {
+    Shader::Shader(const std::filesystem::path& vertexSourceDir, const std::filesystem::path& fragmentSourceDir) {
         m_Id = glCreateProgram();
         if (m_Id == 0)
             throw std::runtime_error("Error when creating shader program");
@@ -25,6 +28,8 @@ namespace kaTe {
 
     auto Shader::load(const std::filesystem::path& vShaderPath, const std::filesystem::path& fShaderPath) -> void {
         if (!m_ValidId) {
+            // Check, in case this shader does not contain a valid
+            // OpenGL Shader identifier
             m_Id = glCreateProgram();
             if (m_Id == 0)
                 throw std::runtime_error("Error when creating shader program");
@@ -163,7 +168,7 @@ namespace kaTe {
              * than 1 can be used to modify an array of matrices.
              * from: https://docs.gl/gl4/glUniform
              *
-             * we pass GL_FALSE because glm::mat4 has each row stored contiguously in memory by default
+             * we pass GL_FALSE because glm::mat4 has each row stored contiguously in memory by default,
              * meaning the elements of the first row are stored first, followed by the
              * elements of the second row, and so on.
              * */
@@ -196,7 +201,7 @@ namespace kaTe {
     Shader::Shader(Shader &&other) noexcept
         :   m_Id{ other.getProgram() }
     {
-        // assign 0 so that it can be safely passed to glDeleteProgram()
+        // Assign 0 so that it can be safely passed to glDeleteProgram()
         // when the destructor is called. We avoid deleting a valid program this way
         other.m_Id = 0;
     }

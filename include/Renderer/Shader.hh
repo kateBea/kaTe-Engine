@@ -11,12 +11,14 @@
 #include <filesystem>
 
 // Third-Party Libraries
-#include "GL/glew.h"
+#include <GL/glew.h>
 
-#include <glm/glm.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat4x4.hpp>
 
 // Project headers
-#include "Tools/Common.hh"
+#include <Tools/Common.hh>
 
 namespace kaTe {
     class Shader {
@@ -133,7 +135,8 @@ namespace kaTe {
 
     private:
         /**
-         * Identifies a type of shader
+         * Identifies a type of shader.
+         * For internal usage
          * */
         enum class ShaderType {
             NONE,

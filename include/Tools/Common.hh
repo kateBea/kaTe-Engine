@@ -36,7 +36,7 @@
 
 // OpenGL version
 #define KT_OPENGL_VERSION_MAJOR    4
-#define KT_OPENGL_VERSION_MINOR    1
+#define KT_OPENGL_VERSION_MINOR    3
 
 /**
  * Follow up there is a list of macros to simplify formatted output.

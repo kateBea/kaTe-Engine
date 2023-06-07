@@ -10,11 +10,7 @@
 #include <memory>
 
 // Project Headers
-#if defined(_WIN64) || defined(_WIN32)
-    #include <Platform/Window/WinWindow.hh>
-#else
-    #include <Platform/Window/kaTeGLFWwindow.hh>
-#endif
+#include <Platform/Window/kaTeGLFWwindow.hh>
 
 #include <Tools/Singleton.hh>
 

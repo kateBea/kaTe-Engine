@@ -1,6 +1,8 @@
 #ifndef KATE_ENGINE_RENDERER_API_HH
 #define KATE_ENGINE_RENDERER_API_HH
 
+#include <memory>
+
 #include <glm/vec4.hpp>
 
 #include <Renderer/Renderer.hh>

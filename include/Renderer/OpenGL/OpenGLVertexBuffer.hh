@@ -1,11 +1,11 @@
 /**
-* kateOpenGLVbo.hh
+* kateOpenGLVertexBuffer.hh
 * Created by kate on 6/4/23.
 * */
 
 
-#ifndef KATE_ENGINE_VBO_HH
-#define KATE_ENGINE_VBO_HH
+#ifndef KATE_ENGINE_OPENGL_VERTEX_BUFFER_HH
+#define KATE_ENGINE_OPENGL_VERTEX_BUFFER_HH
 
 // C++ Standard Library
 #include <vector>
@@ -69,6 +69,7 @@ namespace kaTe {
         auto load(const std::vector<float>& vertices, GLenum usage = GL_STATIC_DRAW) -> void;
 
         auto setBufferLayout(const BufferLayout& layout) -> void override { m_Layout = layout; }
+
         KT_NODISCARD
         auto getBufferLayout() const -> const BufferLayout& override { return m_Layout; }
         /**
@@ -90,4 +91,4 @@ namespace kaTe {
     };
 }
 
-#endif	// KATE_ENGINE_VBO_HH
+#endif	// KATE_ENGINE_OPENGL_VERTEX_BUFFER_HH
