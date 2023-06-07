@@ -13,7 +13,7 @@
 #include <Tools/Common.hh>
 
 #include <Core/Layers/ImGuiLayer.hh>
-#include <Platform/Window/LinuxInputManager.hh>
+#include <Platform/Window/InputManagerGLFW.hh>
 
 #include <Renderer/Renderer.hh>
 #include <Renderer/RenderCommand.hh>
@@ -119,7 +119,7 @@ namespace kaTe {
 
     auto Application::initWindow() -> void {
         KATE_APP_LOGGER_INFO("Initializing Application::Window kaTe Engine");
-        m_Window = std::make_unique<kateGLFWwindow>();
+        m_Window = std::make_unique<WindowGLFW>();
         KT_ASSERT(m_Window != nullptr, "Window is NULL");
 
         m_Window->init();
@@ -140,7 +140,7 @@ namespace kaTe {
 
     auto Application::initInputManager() -> void {
         KATE_APP_LOGGER_INFO("Initializing Application::InputManager kaTe Engine");
-        m_InputManager = std::make_unique<LinuxInputManager>();
+        m_InputManager = std::make_unique<InputManagerGLFW>();
         KT_ASSERT(m_InputManager != nullptr, "Input Manager is NULL");
     }
 

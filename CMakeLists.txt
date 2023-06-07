@@ -19,9 +19,9 @@ set(CORE_SOURCES
 
 set(PLATFORM_SOURCES
         src/Application.cc
-        src/kaTeGLFWwindow.cc
+        src/WindowGLFW.cc
         src/WinWindow.cc
-        src/LinuxInputManager.cc)
+        src/InputManagerGLFW.cc)
 
 set(RENDERER_SOURCES
         src/OpenGLVertexArray.cc

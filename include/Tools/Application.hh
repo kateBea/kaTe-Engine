@@ -10,7 +10,7 @@
 #include <memory>
 
 // Project Headers
-#include <Platform/Window/kaTeGLFWwindow.hh>
+#include <Platform/Window/WindowGLFW.hh>
 
 #include <Tools/Singleton.hh>
 

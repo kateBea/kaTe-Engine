@@ -9,11 +9,11 @@
 // Project Headers
 #include <Platform/Window/InputManager.hh>
 #include <Platform/Window/Window.hh>
-#include <Platform/Window/kaTeGLFWwindow.hh>
+#include <Platform/Window/WindowGLFW.hh>
 #include <Tools/Common.hh>
 
 namespace kaTe {
-    class LinuxInputManager : public InputManager {
+    class InputManagerGLFW : public InputManager {
     public:
         KT_NODISCARD
         auto isKeyPressedNative(Int32_T keyCode) -> bool override;

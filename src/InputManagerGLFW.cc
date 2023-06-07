@@ -15,10 +15,10 @@
 #include <Tools/Application.hh>
 
 #include <Core/Logger.hh>
-#include <Platform/Window/LinuxInputManager.hh>
+#include <Platform/Window/InputManagerGLFW.hh>
 
 namespace kaTe {
-    auto LinuxInputManager::isKeyPressedNative(Int32_T keyCode) -> bool {
+    auto InputManagerGLFW::isKeyPressedNative(Int32_T keyCode) -> bool {
         GLFWwindow* window{ nullptr };
 
         try {
@@ -35,7 +35,7 @@ namespace kaTe {
         return false;
     }
 
-    auto LinuxInputManager::isMouseKeyPressedNative(Int32_T button) -> bool {
+    auto InputManagerGLFW::isMouseKeyPressedNative(Int32_T button) -> bool {
         GLFWwindow* window{ nullptr };
 
         try {
@@ -52,7 +52,7 @@ namespace kaTe {
         return false;
     }
 
-    auto LinuxInputManager::getMousePosNative() -> Pos_T {
+    auto InputManagerGLFW::getMousePosNative() -> Pos_T {
         double posX{};
         double posY{};
         GLFWwindow* window{ nullptr };
@@ -69,12 +69,12 @@ namespace kaTe {
         return std::make_pair(posX, posY);
     }
 
-    auto LinuxInputManager::getMouseXNative() -> double {
+    auto InputManagerGLFW::getMouseXNative() -> double {
         auto [mouseX, mouseY]{ getMousePosNative() };
         return mouseX;
     }
 
-    auto LinuxInputManager::getMouseYNative() -> double {
+    auto InputManagerGLFW::getMouseYNative() -> double {
         auto [mouseX, mouseY]{ getMousePosNative() };
         return mouseY;
     }
