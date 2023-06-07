@@ -12,7 +12,6 @@
 
 #include <Core/Assert.hh>
 #include <Tools/Common.hh>
-#include <Renderer/Vertex.hh>
 
 namespace kaTe {
     enum class ShaderDataType {

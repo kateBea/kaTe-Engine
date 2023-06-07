@@ -18,7 +18,7 @@ set(CORE_SOURCES
         src/OpenGLContext.cc)
 
 set(PLATFORM_SOURCES
-        src/Application.cc
+        src/EngineManager.cc
         src/WindowGLFW.cc
         src/WinWindow.cc
         src/InputManagerGLFW.cc)
@@ -48,7 +48,8 @@ set(SOURCES
         ${CORE_SOURCES}
         ${PLATFORM_SOURCES}
         ${IMGUI_SOURCES}
-        ${RENDERER_SOURCES})
+        ${RENDERER_SOURCES}
+        src/Sandbox.cc)
 
 # External dependencies
 add_subdirectory(${GLEW_CMAKE_DIR})

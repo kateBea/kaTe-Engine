@@ -3,28 +3,29 @@
  * Created by kate on 5/25/23.
  * */
 
-#ifndef KATE_ENGINE_APPLICATION_HH
-#define KATE_ENGINE_APPLICATION_HH
+#ifndef KATE_ENGINE_ENGINE_MANAGER_HH
+#define KATE_ENGINE_ENGINE_MANAGER_HH
 
 // C++ Standard Library
 #include <memory>
 
 // Project Headers
-#include <Platform/Window/WindowGLFW.hh>
+#include "Platform/Window/WindowGLFW.hh"
 
-#include <Tools/Singleton.hh>
+#include "Tools/Singleton.hh"
 
-#include <Core/Assert.hh>
-#include <Core/Events/AppEvents.hh>
-#include <Core/Events/Event.hh>
-#include <Core/Layers/LayerStack.hh>
+#include "Assert.hh"
+#include "Core/Events/AppEvents.hh"
+#include "Core/Events/Event.hh"
+#include "Core/Layers/LayerStack.hh"
 #include "Platform/InputManager.hh"
-#include <Renderer/OrthographicCamera.hh>
+#include "Renderer/OrthographicCamera.hh"
 
 // TODO: Temporary just to try shader class
+#include "Renderer/IndexBuffer.hh"
+#include "Renderer/Renderer.hh"
 #include "Renderer/Shader.hh"
-#include <Renderer/IndexBuffer.hh>
-#include <Renderer/VertexBuffer.hh>
+#include "Renderer/VertexBuffer.hh"
 
 
 namespace kaTe {
@@ -33,7 +34,7 @@ namespace kaTe {
      * application, and it serves as a way of communicating the different
      * components of ours engine
      * */
-    class Application : public Singleton<Application> {
+    class EngineManager : public Singleton<EngineManager> {
     public:
         /**
          * This functions forwards the received event to the appropriate
@@ -59,10 +60,14 @@ namespace kaTe {
          * @returns main window
          * */
         KT_NODISCARD
-        auto getWindow() -> Window&;
+        auto getMainWindow() -> Window&;
 
         KT_NODISCARD
         auto getInputManager() -> InputManager&;
+
+        auto getRenderer() ->  std::shared_ptr<Renderer> { KT_ASSERT(m_Renderer, "Renderer is NULL"); return m_Renderer; }
+
+        auto getOrthographicCamera() -> std::shared_ptr<OrthographicCamera> { KT_ASSERT(m_Camera, "Camera is NULL"); return m_Camera; }
 
         /**
          * Initializes the subsystems of the
@@ -70,11 +75,9 @@ namespace kaTe {
          * */
         auto init() -> void;
 
-        /**
-         * Executes the main loop which keeps
-         * our application running
-         * */
-        auto loop() -> void;
+        auto updateLayers() -> void;
+
+        auto isRunning() -> bool;
 
         /**
          * Destroys this application freeing
@@ -146,13 +149,13 @@ namespace kaTe {
         Ptr_T<InputManager> m_InputManager{ nullptr };
 
         // Temporary, will be abstracted
-        SPtr_T<VertexBuffer> m_VertexBuffer{};
-        SPtr_T<IndexBuffer> m_VertexIndexBuffer{};
         SPtr_T<OrthographicCamera> m_Camera{};
-        SPtr_T<Shader> m_Shader{};
+        std::shared_ptr<Renderer> m_Renderer{};
 
+        void initOrthographicCamera();
+        void initRenderer();
     };
 }
 
 
-#endif //KATE_ENGINE_APPLICATION_HH
+#endif//KATE_ENGINE_ENGINE_MANAGER_HH

@@ -15,7 +15,6 @@
 
 // Project Libraries
 #include <Tools/Common.hh>
-#include <Renderer/Vertex.hh>
 #include <Renderer/IndexBuffer.hh>
 
 namespace kaTe {
@@ -52,9 +51,9 @@ namespace kaTe {
          * Move assigment
          * @param other moved from Vertex buffer
          * */
-        auto operator=(OpenGLIndexBuffer && other) noexcept -> OpenGLIndexBuffer &;
+        auto operator=(OpenGLIndexBuffer && other) noexcept -> OpenGLIndexBuffer&;
 
-        auto load(const std::vector<std::uint32_t> &indices, GLenum usage = GL_STATIC_DRAW) -> void;
+        auto load(const std::vector<UInt32_T> &indices, GLenum usage = GL_STATIC_DRAW) -> void;
 
         /**
          * Releases resources from this Vertex index buffer

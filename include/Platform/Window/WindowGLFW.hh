@@ -7,8 +7,7 @@
 #define KATE_ENGINE_LINUX_WINDOW_HH
 
 // C++ Standard Library
-#include <memory>
-#include <utility>
+#include <any>
 
 // Third-Party Libraries
 #include <GLFW/glfw3.h>
@@ -55,10 +54,14 @@ namespace kaTe {
         ~WindowGLFW() override = default;
 
     private:
+        // Helpers
         auto setCallbacks() -> void;
+        auto spawnOnCenter() const -> void;
+        static auto getActiveAPIContext() -> RenderContext*;
+        static auto initGLFW() -> void;
 
-        RawPtr_T<RenderContext> m_Context{};
-        RawPtr_T<GLFWwindow> m_Window{};
+        RenderContext* m_Context{};
+        GLFWwindow* m_Window{};
         EventCallbackFunc_T m_Callback{};
         bool m_VSync{};
     };

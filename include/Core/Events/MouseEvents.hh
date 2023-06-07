@@ -64,13 +64,16 @@ namespace kaTe {
 
     class MouseButtonPressedEvent : public MouseEvent {
     public:
-        MouseButtonPressedEvent(Int32_T button)
+        MouseButtonPressedEvent(Int32_T button, Int32_T modifiers = 0)
                 :   MouseEvent{ EventType::MOUSE_BUTTON_PRESSED_EVENT, MOUSE_BUTTON_EVENT_CATEGORY}
-                ,   m_Button{ button }
+                ,   m_Button{ button }, m_Modifiers{ modifiers }
         {}
 
         KT_NODISCARD
         auto getMouseButton() -> Int32_T { return m_Button; }
+
+        KT_NODISCARD
+        auto getModifiers() -> Int32_T { return m_Button; }
 
         KT_NODISCARD
         auto getType() const -> EventType override { return getStaticType(); }
@@ -93,6 +96,7 @@ namespace kaTe {
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
         Int32_T m_Button{};
+        Int32_T m_Modifiers{};
     };
 
     class MouseButtonReleasedEvent : public MouseEvent {

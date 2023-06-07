@@ -7,15 +7,15 @@
 
 #include <any>
 
-#include "Platform/Window/WindowGLFW.hh"
-#include "Renderer/RenderContext.hh"
+#include <Platform/Window/WindowGLFW.hh>
+#include <Renderer/RenderContext.hh>
 
 namespace kaTe {
     class OpenGLContext : public RenderContext {
     public:
         OpenGLContext() = default;
 
-        auto init(std::any handle) -> void;
+        auto init(std::any windowHandle) -> void;
         auto shutDown() -> void override;
         auto swapBuffers() -> void override;
 

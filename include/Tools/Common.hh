@@ -224,27 +224,6 @@
 #define KT_COLOR_STYLE_PRINT_FORMATTED(__COLOR, __STYLE, ...)     \
     fmt::print(fmt::fg(__COLOR) | __STYLE, __VA_ARGS__)
 
-// OpenGL's info check. May need OpenGL valid context
-#if defined(NDEBUG) || defined(_DEBUG)
-    #define KT_DISPLAY_OPENGL_TARGET_VERSION()                                                                          \
-        KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Target OpenGL: {}.{}\n",                                       \
-                                 KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR)
-
-    #define KT_DISPLAY_OPENGL_VENDOR()                                                                                  \
-            KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Vendor OpenGL: {}\n", (const char*)glGetString(GL_VENDOR))
-
-    #define KT_DISPLAY_OPENGL_VERSION()                                                                                 \
-            KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Version OpenGL available: {}\n", (const char*)glGetString(GL_VERSION))
-
-    #define KT_DISPLAY_OPENGL_RENDERER()                                                                                \
-            KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Renderer OpenGL: {}\n", (const char*)glGetString(GL_RENDERER))
-
-#else
-    #define KT_DISPLAY_OPENGL_TARGET_VERSION()
-    #define KT_DISPLAY_OPENGL_VENDOR_VERSION()
-    #define KT_DISPLAY_OPENGL_RENDERER()
-#endif
-
 #define KT_BIND_EVENT_FUNC(func) \
     std::bind(&func, this, std::placeholders::_1)
 

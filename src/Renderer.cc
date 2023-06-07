@@ -3,11 +3,10 @@
 //
 
 #include <Renderer/Renderer.hh>
-#include <Renderer/RenderCommand.hh>
 
 namespace kaTe {
     auto Renderer::beginScene(std::shared_ptr<OrthographicCamera> camera) -> void {
-        s_SceneData.camera = camera;
+        m_SceneData.camera = camera;
     }
 
     auto Renderer::submit(std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
@@ -15,12 +14,12 @@ namespace kaTe {
     }
 
     auto Renderer::submit(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
-        RenderCommand::drawIndexed(vertexBuffer, indexBuffer);
+        m_RenderCommand.drawIndexed(vertexBuffer, indexBuffer);
     }
 
     auto Renderer::submit(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
-        shader->setUniformMat4("u_ProjectionView", s_SceneData.camera->getProjectionView());
-        RenderCommand::drawIndexed(shader, vertexBuffer, indexBuffer);
+        shader->setUniformMat4("u_ProjectionView", m_SceneData.camera->getProjectionView());
+        m_RenderCommand.drawIndexed(shader, vertexBuffer, indexBuffer);
     }
 
     auto Renderer::endScene() -> void {

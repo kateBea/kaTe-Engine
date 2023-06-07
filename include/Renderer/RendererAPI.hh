@@ -5,7 +5,7 @@
 
 #include <glm/vec4.hpp>
 
-#include <Renderer/Renderer.hh>
+#include <Renderer/Shader.hh>
 #include <Renderer/VertexBuffer.hh>
 #include <Renderer/IndexBuffer.hh>
 
@@ -43,6 +43,8 @@ namespace kaTe {
         virtual auto draw(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
 
 		virtual auto setViewPort(UInt32_T width, UInt32_T height) -> void = 0;
+
+        virtual ~RendererAPI() = default;
     private:
         // Forbidden operations
         RendererAPI(const RendererAPI&) = delete;

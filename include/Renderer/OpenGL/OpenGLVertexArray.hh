@@ -17,15 +17,12 @@
 #include <GL/glew.h>
 
 // Project Libraries
-#include <Renderer/IndexBuffer.hh>
-#include <Renderer/VertexBuffer.hh>
 #include <Tools/Common.hh>
+#include <Renderer/VertexBuffer.hh>
 
 namespace kaTe {
     class OpenGLVertexArray {
     public:
-        using Attribute = Vertex::Attribute;
-
         explicit OpenGLVertexArray() { glCreateVertexArrays(1, &m_Id); m_ValidId = m_Id != 0; }
 
         /**
@@ -39,7 +36,7 @@ namespace kaTe {
          * @param other other Vao from which we move data
          * @retunr *this
          * */
-        auto operator=(OpenGLVertexArray && other) noexcept -> OpenGLVertexArray &;
+        auto operator=(OpenGLVertexArray && other) noexcept -> OpenGLVertexArray&;
 
         /**
          * Returns the identifier of this Vertex Array Object

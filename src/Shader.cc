@@ -1,8 +1,12 @@
-#include <string>
+
+// C++ Standard Libraries
+#include <filesystem>
+#include <stdexcept>
 #include <fstream>
 #include <sstream>
-#include <stdexcept>
+#include <string>
 
+// Third-Party Libraries
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
@@ -10,10 +14,10 @@
 
 #include <fmt/core.h>
 
+// Project Libraries
 #include <Tools/Common.hh>
 #include <Core/Assert.hh>
 #include <Core/Logger.hh>
-
 #include <Renderer/Shader.hh>
 
 namespace kaTe {
@@ -128,7 +132,8 @@ namespace kaTe {
                     std::string outStr(length, '\0');
 
                     glGetShaderInfoLog(objectId, length, &length, outStr.data());
-                    KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_ORANGE_RED, "Error on {} shader compilation:\n {}\n", getShaderTypeStr(type), outStr);
+                    KATE_CORE_LOGGER_ERROR("Error on {} shader compilation", getShaderTypeStr(type));
+                    KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_RED, "\n{}", outStr);
                 }
                 else
                     KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME_GREEN, "Shader compilation successful. Type: {}\n", getShaderTypeStr(type));
@@ -145,10 +150,11 @@ namespace kaTe {
             case GL_LINK_STATUS:
                 if (success == GL_FALSE) {
                     glGetProgramInfoLog(m_Id, outStr.size(), nullptr, outStr.data());
-                    KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_ORANGE_RED, "Error on shader program Linking:\n {}\n", outStr);
+                    KATE_CORE_LOGGER_ERROR("Error on shader program Linking");
+                    KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_RED, "\n{}", outStr);
                 }
                 else
-                    KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME_GREEN, "Program linking successful\n");
+                    KATE_CORE_LOGGER_INFO("Shader program linking successful\n");
 
                 break;
         }
@@ -206,7 +212,7 @@ namespace kaTe {
         other.m_Id = 0;
     }
 
-    Shader& Shader::operator=(Shader &&other) noexcept {
+    auto Shader::operator=(Shader &&other) noexcept -> Shader& {
         m_Id = other.getProgram();
         other.m_Id = 0;
         return *this;

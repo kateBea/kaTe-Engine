@@ -11,8 +11,8 @@
 #include <GLFW/glfw3.h>
 
 // Project Headers
+#include "Core/EngineManager.hh"
 #include <Tools/Common.hh>
-#include <Tools/Application.hh>
 
 #include <Core/Logger.hh>
 #include "Platform/InputManagerGLFW.hh"
@@ -23,7 +23,7 @@ namespace kaTe {
 
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*
-            window = std::any_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
+            window = std::any_cast<GLFWwindow*>(EngineManager::get().getMainWindow().getNativeWindow());
             Int32_T state{ glfwGetKey(window, keyCode) };
 
             return state == GLFW_PRESS || state == GLFW_REPEAT;
@@ -40,7 +40,7 @@ namespace kaTe {
 
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*
-            window = std::any_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
+            window = std::any_cast<GLFWwindow*>(EngineManager::get().getMainWindow().getNativeWindow());
             Int32_T state{ glfwGetMouseButton(window, button) };
 
             return state == GLFW_PRESS || state == GLFW_REPEAT;
@@ -59,7 +59,7 @@ namespace kaTe {
 
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*
-            window = std::any_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
+            window = std::any_cast<GLFWwindow*>(EngineManager::get().getMainWindow().getNativeWindow());
             glfwGetCursorPos(window, &posX, &posY);
         }
         catch (const std::bad_any_cast& exception) {

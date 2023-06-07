@@ -53,3 +53,4 @@ is included as a submodule and build along with the project.
   - Yan Chernikov for his [YouTube videos](https://www.youtube.com/@TheCherno) and live streams
   - Cem Yuksel for his [YouTube videos](https://www.youtube.com/@cem_yuksel/videos) about graphics programing
   - Jason Gregory for the [Game Engine Architecture](https://www.gameenginebook.com/) book
+  - Matt Pharr, Wenzel Jakob, Greg Humphreys for the [Physically Based Rendering: From Theory to Implementation](https://www.pbr-book.org/)

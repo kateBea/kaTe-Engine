@@ -41,12 +41,15 @@ namespace kaTe {
 
     class KeyPressedEvent : public KeyEvent {
     public:
-        KeyPressedEvent(Int32_T keyCode, bool repeated)
-            :   KeyEvent{ EventType::KEY_PRESSED_EVENT, keyCode }, m_Repeated{ repeated }
+        KeyPressedEvent(Int32_T keyCode, bool repeated, Int32_T modifiers = 0)
+            :   KeyEvent{ EventType::KEY_PRESSED_EVENT, keyCode }, m_Repeated{ repeated }, m_Modifiers{ modifiers }
         {}
 
         KT_NODISCARD
         auto isRepeated() const -> bool { return m_Repeated; }
+
+        KT_NODISCARD
+        auto getModifiers() const -> bool { return m_Modifiers; }
 
         KT_NODISCARD
         auto getType() const -> EventType override { return getStaticType(); }
@@ -68,6 +71,7 @@ namespace kaTe {
         auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
 
         bool m_Repeated{};
+        Int32_T m_Modifiers{};
     };
 
     class KeyReleasedEvent : public KeyEvent {

@@ -2,14 +2,12 @@
  * EntryPoint.cc
  * */
 
-#include <Tools/Application.hh>
+#include <Sandbox.hh>
+#include <Tools/Common.hh>
 
 int main(int, char**) {
-    auto& app { kaTe::Application::get() };
+    auto app { kaTe::Sandbox() };
+    auto ret{ app.run() };
 
-    app.init();
-    app.loop();
-    app.shutDown();
-
-    return 0;
+    return ret;
 }

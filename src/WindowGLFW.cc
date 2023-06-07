@@ -3,22 +3,20 @@
  * Created by kate on 5/26/23.
  * */
 
-// C++ Standard Library
-#include <utility>
-
 // Third-Party Libraries
-
+#include <GLFW/glfw3.h>
 
 // Projects headers
-#include <Core/Assert.hh>
 #include <Core/Logger.hh>
+#include <Tools/Common.hh>
+#include <Core/Assert.hh>
 
-#include <Core/Events/Event.hh>
 #include <Core/Events/AppEvents.hh>
 #include <Core/Events/KeyEvents.hh>
 #include <Core/Events/MouseEvents.hh>
 
 #include <Platform/Window/WindowGLFW.hh>
+#include <Renderer/RenderContext.hh>
 #include <Renderer/OpenGL/OpenGLContext.hh>
 
 namespace kaTe {
@@ -41,42 +39,38 @@ namespace kaTe {
     }
 
     auto WindowGLFW::init() -> void {
-        KATE_CORE_LOGGER_DEBUG("Creating Linux_Window with name '{}' and dimension [{}, {}]",
+        initGLFW();
+        KATE_CORE_LOGGER_DEBUG("Creating Window GLFW. Name '{}'. Dimensions [{}, {}]",
                                m_Properties.getName(), m_Properties.getWidth(), m_Properties.getHeight());
-        // Init GLFW
-        if (!g_GLFWInitSuccess) {
-            auto ret{ glfwInit() };
-            KT_ASSERT(ret == GLFW_TRUE, "Failed to initialized the GLFW library");
-
-            g_GLFWInitSuccess = true;
-            glfwSetErrorCallback([](std::int32_t errCode, const char* desc) -> void {
-                    KATE_CORE_LOGGER_ERROR("GLFW error code: {} Description: {}", errCode, desc);
-                }
-            );
-
-            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        }
 
         m_Window = glfwCreateWindow(m_Properties.getWidth(), m_Properties.getHeight(), m_Properties.getName().c_str(), nullptr, nullptr);
         m_WindowCreateSuccess = m_Window != nullptr;
-        KT_ASSERT(m_WindowCreateSuccess, "Failed to create the Linux_Window");
+        KT_ASSERT(m_WindowCreateSuccess, "Failed to create the Window GLFW");
 
-        m_Context = new OpenGLContext();
+        m_Context = getActiveAPIContext();
+        KT_ASSERT(m_Context, "Graphics Rendering API context is NULL");
         m_Context->init(getNativeWindow());
 
-        glfwSetWindowUserPointer(m_Window, this);
+        spawnOnCenter();
         enableVSync();
         setCallbacks();
     }
 
     auto WindowGLFW::shutDown() -> void {
-        KATE_CORE_LOGGER_DEBUG("Shutting down Linux Window with name '{}' and dimension [{}, {}]",
+        KATE_CORE_LOGGER_DEBUG("Shutting down Window GLFW. Name '{}'. Dimensions [{}, {}]",
                                m_Properties.getName(), m_Properties.getWidth(), m_Properties.getHeight());
+
+        delete m_Context;
+
+        // Might have an internal window counter If we want to spawn multiple windows,
+        // so the last one alive shuts down the GLFW library
         glfwDestroyWindow(m_Window);
         glfwTerminate();
     }
 
     auto WindowGLFW::setCallbacks() -> void {
+        glfwSetWindowUserPointer(m_Window, this);
+
         glfwSetWindowSizeCallback(m_Window,
             [](GLFWwindow* window, Int32_T width, Int32_T height) {
                 WindowGLFW* data{static_cast<WindowGLFW*>(glfwGetWindowUserPointer(window)) };
@@ -102,17 +96,17 @@ namespace kaTe {
 
                 switch (action) {
                     case GLFW_PRESS: {
-                        KeyPressedEvent kpeNoRepeat{key, false};
+                        KeyPressedEvent kpeNoRepeat{ key, false, mods };
                         data->m_Callback(kpeNoRepeat);
                         break;
                     }
                     case GLFW_RELEASE: {
-                        KeyReleasedEvent kre{key};
+                        KeyReleasedEvent kre{ key };
                         data->m_Callback(kre);
                         break;
                     }
                     case GLFW_REPEAT: {
-                        KeyPressedEvent kpeRepeat{key, true};
+                        KeyPressedEvent kpeRepeat{ key, true, mods };
                         data->m_Callback(kpeRepeat);
                         break;
                     }
@@ -126,12 +120,12 @@ namespace kaTe {
 
                 switch (action) {
                     case GLFW_PRESS: {
-                        MouseButtonPressedEvent mousePressed{button};
+                        MouseButtonPressedEvent mousePressed{ button, mods };
                         data->m_Callback(mousePressed);
                         break;
                     }
                     case GLFW_RELEASE: {
-                        MouseButtonReleasedEvent mouseReleased{button};
+                        MouseButtonReleasedEvent mouseReleased{ button };
                         data->m_Callback(mouseReleased);
                         break;
                     }
@@ -162,5 +156,41 @@ namespace kaTe {
                 data->m_Callback(kce);
             }
         );
+    }
+    auto WindowGLFW::spawnOnCenter() const -> void {
+#if defined(_DEBUG) || defined(NDEBUG)
+        Int32_T count{};
+        GLFWmonitor** monitors{ glfwGetMonitors(&count) };
+        KATE_CORE_LOGGER_INFO("Number of available monitors: {}", count);
+#endif
+        // See: https://www.glfw.org/docs/3.3/monitor_guide.html
+        // The primary monitor is returned by glfwGetPrimaryMonitor. It is the user's
+        // preferred monitor and is usually the one with global UI elements like task bar or menu bar.
+        Int32_T monitorWidth{};
+        Int32_T monitorHeight{};
+        GLFWmonitor* primary{ glfwGetPrimaryMonitor() };
+        glfwGetMonitorWorkarea(primary, nullptr, nullptr, &monitorWidth, &monitorHeight);
+        glfwSetWindowPos(m_Window, monitorWidth / 5, monitorHeight / 5);
+    }
+
+
+    auto WindowGLFW::getActiveAPIContext() -> RenderContext* {
+        KATE_CORE_LOGGER_WARN("Default Context is for OpenGL");
+        return new OpenGLContext();
+    }
+
+    auto WindowGLFW::initGLFW() -> void {
+        if (!g_GLFWInitSuccess) {
+            auto ret{ glfwInit() };
+            KT_ASSERT(ret == GLFW_TRUE, "Failed to initialized the GLFW library");
+
+            g_GLFWInitSuccess = true;
+            glfwSetErrorCallback([](std::int32_t errCode, const char* desc) -> void {
+                KATE_CORE_LOGGER_ERROR("GLFW error code: {} Description: {}", errCode, desc);
+            }
+            );
+
+            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        }
     }
 }

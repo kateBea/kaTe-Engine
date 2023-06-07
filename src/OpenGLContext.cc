@@ -8,17 +8,17 @@
 #include "GLFW/glfw3.h"
 
 #include "Core/Assert.hh"
+#include "Core/EngineManager.hh"
 #include "Core/Logger.hh"
 #include "Renderer/OpenGL/OpenGLContext.hh"
-#include "Tools/Application.hh"
 #include "Tools/Common.hh"
 
 namespace kaTe {
 
-    auto OpenGLContext::init(std::any handle) -> void {
+    auto OpenGLContext::init(std::any windowHandle) -> void {
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*
-            m_Handle = std::any_cast<GLFWwindow*>(Application::get().getWindow().getNativeWindow());
+            m_Handle = std::any_cast<GLFWwindow*>(EngineManager::get().getMainWindow().getNativeWindow());
             KT_ASSERT(m_Handle, "OpenGLContext::init() window handle is NULL");
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, KT_OPENGL_VERSION_MAJOR);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, KT_OPENGL_VERSION_MINOR);
@@ -32,10 +32,10 @@ namespace kaTe {
             m_GLEWInitSuccess = glewInit() == GLEW_OK;
             KT_ASSERT(m_GLEWInitSuccess, "Failed to initialize GLEW");
 
-            KT_DISPLAY_OPENGL_TARGET_VERSION();
-            KT_DISPLAY_OPENGL_VENDOR();
-            KT_DISPLAY_OPENGL_VERSION();
-            KT_DISPLAY_OPENGL_RENDERER();
+            KATE_CORE_LOGGER_INFO("OpenGL target  {}.{}", KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR);
+            KATE_CORE_LOGGER_INFO("OpenGL available {}", (const char*)glGetString(GL_VERSION));
+            KATE_CORE_LOGGER_INFO("OpenGL vendor {}", (const char*)glGetString(GL_VENDOR));
+            KATE_CORE_LOGGER_INFO("OpenGL renderer {}", (const char*)glGetString(GL_RENDERER));
 
         }
         catch (const std::bad_any_cast& exception) {

@@ -16,7 +16,6 @@
 
 // Project Libraries
 #include <Tools/Common.hh>
-#include <Renderer/Vertex.hh>
 #include <Renderer/VertexBuffer.hh>
 
 namespace kaTe {

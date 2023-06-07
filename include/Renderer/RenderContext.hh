@@ -12,7 +12,7 @@ namespace kaTe {
     public:
         RenderContext() = default;
 
-        virtual auto init(std::any handle) -> void = 0;
+        virtual auto init(std::any windowHandle) -> void = 0;
         virtual auto shutDown() -> void = 0;
         virtual auto swapBuffers() -> void = 0;
 
