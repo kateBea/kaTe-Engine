@@ -16,9 +16,9 @@
 #include <Platform/InputManager.hh>
 
 namespace kaTe {
-    class TestLayer : public Layer {
+    class RuntimeLayer : public Layer {
     public:
-        TestLayer() : Layer{ "Example" } {}
+        RuntimeLayer() : Layer{ "Example" } {}
 
         auto onAttach() -> void override;
         auto onDetach() -> void override;
@@ -38,7 +38,7 @@ namespace kaTe {
         double m_CameraMovementSpeed{ 0.5 };
 
         double m_CameraRotation{ };
-        double m_CameraRotationSpeed{ 0.1 };
+        double m_CameraRotationSpeed{ 0.5 };
     };
 
 }   // END NAMESPACE kT

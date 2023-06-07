@@ -199,6 +199,10 @@ namespace kaTe {
          * For internal usage for now mainly
          * */
          bool m_ValidId{};
+
+         // Could somehow store all uniform locations when the shader program gets linked
+         // to avoid multiple calls to getUniformLocation for performance purposes
+         // std::unordered_map<std::string, UInt32_T> m_UniformLocations{}; where the string is the name and the integer is the location
     };
 }
 

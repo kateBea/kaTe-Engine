@@ -9,7 +9,7 @@
 #include <Core/EngineManager.hh>
 
 #include <Core/Layers/ImGuiLayer.hh>
-#include <Core/Layers/TestLayer.hh>
+#include <Core/Layers/RuntimeLayer.hh>
 
 
 namespace kaTe {
@@ -18,7 +18,7 @@ namespace kaTe {
 
         try {
             engine.init();
-            engine.pushLayer(std::make_shared<TestLayer>());
+            engine.pushLayer(std::make_shared<RuntimeLayer>());
             engine.pushOverlay(std::make_shared<ImGuiLayer>());
 
             while (engine.isRunning()) {

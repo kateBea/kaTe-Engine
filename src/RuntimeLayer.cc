@@ -3,16 +3,16 @@
  * Created by kate on 6/7/23.
  * */
 
-#include <Core/Layers/TestLayer.hh>
+#include <Core/EngineManager.hh>
+#include <Core/Layers/RuntimeLayer.hh>
+#include <Platform/InputManager.hh>
+#include <Renderer/IndexBuffer.hh>
+#include <Renderer/OrthographicCamera.hh>
 #include <Renderer/Shader.hh>
 #include <Renderer/VertexBuffer.hh>
-#include <Renderer/IndexBuffer.hh>
-#include <Core/EngineManager.hh>
-#include <Platform/InputManager.hh>
-#include <Renderer/OrthographicCamera.hh>
 
 namespace kaTe {
-    auto TestLayer::onAttach() -> void {
+    auto RuntimeLayer::onAttach() -> void {
         std::vector<float> data {
                 // Positions                // Colors
                 -0.5f, -0.5f, 0.0f,         1.0f, 0.0f, 1.0f, 1.0f,
@@ -41,7 +41,7 @@ namespace kaTe {
         m_Camera = std::make_shared<OrthographicCamera>(-1.0, 1.0, -1.0, 1.0);
     }
 
-    auto TestLayer::onUpdate() -> void {
+    auto RuntimeLayer::onUpdate() -> void {
         auto engine{ EngineManager::getPtr() };
 
         static float posX{ 0.0f };
@@ -73,11 +73,11 @@ namespace kaTe {
         engine->getRenderer()->endScene();
     }
 
-    auto TestLayer::onEvent(Event &event) -> void {
+    auto RuntimeLayer::onEvent(Event &event) -> void {
 
     }
 
-    auto TestLayer::onDetach() -> void {
+    auto RuntimeLayer::onDetach() -> void {
 
     }
 }
