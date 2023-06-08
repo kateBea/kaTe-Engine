@@ -1,7 +1,7 @@
 # kaTe-Engine
 Simple engine written in moder C++
 
-![kaTe Engine](assets/image/img2.png)
+![kaTe Engine](assets/image/img3.png)
 
 # Building
 
