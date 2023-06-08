@@ -34,6 +34,7 @@ namespace kaTe {
         virtual auto onDetach() -> void = 0;
         virtual auto onUpdate() -> void = 0;
         virtual auto onEvent(Event& event) -> void {}
+        virtual auto onImGuiRender() -> void {}
 
         /**
          * For debugging purposes

@@ -31,10 +31,10 @@ set(RENDERER_SOURCES
         src/Renderer.cc
         src/VertexBuffer.cc
         src/IndexBuffer.cc
-        src/Shader.cc
+        src/OpenGLShader.cc
         src/OpenGLRenderer.cc
         src/RendererAPI.cc
-        src/OrthographicCamera.cc)
+        src/OrthographicCamera.cc src/Texture2D.cc include/Renderer/Material/Texture2D.hh src/OpenGLTexture2D.cc include/Renderer/OpenGL/OpenGLTexture2D.hh)
 
 set(IMGUI_SOURCES
         lib/imgui/imgui.cpp
@@ -50,7 +50,7 @@ set(SOURCES
         ${PLATFORM_SOURCES}
         ${IMGUI_SOURCES}
         ${RENDERER_SOURCES}
-        src/Sandbox.cc)
+        src/Sandbox.cc src/stb_image.cc)
 
 # External dependencies
 add_subdirectory(${GLEW_CMAKE_DIR})
@@ -79,6 +79,7 @@ include_directories(lib/glew/include)
 include_directories(lib/imgui)
 include_directories(lib/imgui/backends)
 include_directories(lib/glm/)
+include_directories(lib/stb/)
 
 add_executable(kaTe_Engine src/EntryPoint.cc ${SOURCES})
 target_link_libraries(kaTe_Engine ${LIBRARIES})

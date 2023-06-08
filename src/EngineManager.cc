@@ -112,8 +112,14 @@ namespace kaTe {
     }
 
     auto EngineManager::updateState() -> void {
+        m_DeltaTime.updateDeltaTime();
         for (auto& layer : *m_LayerStack)
             layer->onUpdate();
+
+        ImGuiLayer::beginFrame();
+        for (auto& layer : *m_LayerStack)
+            layer->onImGuiRender();
+        ImGuiLayer::endFrame();
 
         m_Window->onUpdate();
     }
@@ -121,6 +127,7 @@ namespace kaTe {
     void EngineManager::initRenderer() {
         KATE_CORE_LOGGER_INFO("kaTe Engine: Renderer startup");
         m_Renderer = std::make_unique<Renderer>();
+        m_Renderer->init();
         KT_ASSERT(m_Renderer != nullptr, "Renderer is NULL");
     }
 }

@@ -3,41 +3,42 @@
  * Created by kate on 6/4/23.
  */
 
-#ifndef KATE_ENGINE_SHADER_HH
-#define KATE_ENGINE_SHADER_HH
+#ifndef KATE_ENGINE_OPENGLSHADER_HH
+#define KATE_ENGINE_OPENGLSHADER_HH
 
 // C++ Standard Library
 #include <string_view>
 #include <filesystem>
 
 // Third-Party Libraries
-#include <GL/glew.h>
+#include "GL/glew.h"
 
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
+#include "glm/mat4x4.hpp"
+#include "glm/vec3.hpp"
+#include "glm/vec4.hpp"
 
 // Project headers
-#include <Tools/Common.hh>
+#include "Renderer/Material/BaseShader.hh"
+#include "Tools/Common.hh"
 
 namespace kaTe {
-    class Shader {
+    class OpenGLShader : public BaseShader {
     public:
         /**
          * Default initialization for Shader. DOES NOT Create a valid shader program
          * */
-        explicit Shader() = default;
+        explicit OpenGLShader() = default;
 
         /**
          * Move constructor
          * */
-         Shader(Shader&& other) noexcept;
+        OpenGLShader(OpenGLShader && other) noexcept;
 
         /**
          * Move assignment
          * @return *this
          * */
-        Shader& operator=(Shader&& other) noexcept;
+        OpenGLShader & operator=(OpenGLShader && other) noexcept;
 
         /**
          * Construct Shader program from path to Vertex Shader source file directory
@@ -45,7 +46,7 @@ namespace kaTe {
          * @param vertexSourceDir directory to the Vertex Shader source file
          * @param fragmentSourceDir directory to the pixel Shader source file
          * */
-        Shader(const std::filesystem::path& vertexSourceDir, const std::filesystem::path& fragmentSourceDir);
+        OpenGLShader(const std::filesystem::path& vertexSourceDir, const std::filesystem::path& fragmentSourceDir);
 
         /**
          * Loads the shaders specified from paths
@@ -58,7 +59,9 @@ namespace kaTe {
         /**
          * Use this Shader program
          * */
-        auto useProgram() const -> void { glUseProgram(m_Id); }
+        auto bind() -> void override { glUseProgram(m_Id); }
+
+        auto unbind() -> void override { glUseProgram(0); }
 
         /**
          * Get Shader program ID
@@ -75,7 +78,7 @@ namespace kaTe {
          * @param name name of the uniform
          * @param value value to be set
          * */
-        auto setUniformBool(std::string_view name, bool value) const -> void;
+        auto setUniformBool(std::string_view name, bool value) -> void;
 
         /**
          * Sets the given integer value to the uniform identified by "name",
@@ -85,7 +88,7 @@ namespace kaTe {
          * @param name name of the uniform.
          * @param value value to be set
          * */
-        auto setUniformInt(std::string_view name, Int32_T value) const -> void;
+        auto setUniformInt(std::string_view name, Int32_T value) -> void;
 
         /**
          * Sets the given floating value to the uniform identified by "name",
@@ -95,7 +98,7 @@ namespace kaTe {
          * @param name name of the uniform
          * @param value value to be set
          * */
-        auto setUniformFloat(std::string_view name, float value) const -> void;
+        auto setUniformFloat(std::string_view name, float value) -> void;
 
         /**
          * Sets the given matrix to the uniform matrix specified by the name. This function
@@ -104,7 +107,7 @@ namespace kaTe {
          * @param name name of the uniform
          * @param mat value for the uniform
          * */
-        auto setUniformMat4(std::string_view name, const glm::mat4& mat) const -> void;
+        auto setUniformMat4(std::string_view name, const glm::mat4& mat) -> void;
 
         /**
          * Sets the given 3D vector to the uniform specified by the name. This function
@@ -113,7 +116,7 @@ namespace kaTe {
          * @param name name of the uniform
          * @param vec value for the uniform
          * */
-        auto setUniformVec3(std::string_view name, const glm::vec3& vec) const -> void;
+        auto setUniformVec3(std::string_view name, const glm::vec3& vec) -> void;
 
         /**
          * Sets the given 4D vector to the uniform specified by the name. This function
@@ -122,16 +125,16 @@ namespace kaTe {
          * @param name name of the uniform
          * @param vec value for the uniform
          * */
-        auto setUniformVec4(std::string_view name, const glm::vec4& vec) const -> void;
+        auto setUniformVec4(std::string_view name, const glm::vec4& vec) -> void;
 
         /**
          * Perform cleanup
          * */
-        ~Shader() { glDeleteProgram(getProgram()); }
+        ~OpenGLShader() { glDeleteProgram(getProgram()); }
     private:
         // Forbidden operations
-        Shader(const Shader&) = delete;
-        Shader& operator=(const Shader&) = delete;
+        OpenGLShader(const OpenGLShader &) = delete;
+        OpenGLShader & operator=(const OpenGLShader &) = delete;
 
     private:
         /**

@@ -14,8 +14,8 @@
 #include <GL/glew.h>
 
 // Project Libraries
+#include "Renderer/Buffers/IndexBuffer.hh"
 #include <Tools/Common.hh>
-#include <Renderer/IndexBuffer.hh>
 
 namespace kaTe {
     class OpenGLIndexBuffer : public IndexBuffer {

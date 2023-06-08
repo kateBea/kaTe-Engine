@@ -10,8 +10,8 @@
 #include <string_view>
 #include <utility>
 
-#include <Core/Assert.hh>
-#include <Tools/Common.hh>
+#include "Core/Assert.hh"
+#include "Tools/Common.hh"
 
 namespace kaTe {
     enum class ShaderDataType {

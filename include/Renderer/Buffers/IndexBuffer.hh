@@ -5,7 +5,7 @@
 #ifndef KATE_ENGINE_INDEX_BUFFER_HH
 #define KATE_ENGINE_INDEX_BUFFER_HH
 
-#include <Tools/Common.hh>
+#include "Tools/Common.hh"
 
 namespace kaTe {
     /**

@@ -19,12 +19,13 @@
 #include "Core/Events/Event.hh"
 #include "Core/Layers/LayerStack.hh"
 #include "Platform/InputManager.hh"
+#include <Core/TimeManager.hh>
 
 // TODO: Temporary just to try shader class
-#include "Renderer/IndexBuffer.hh"
+#include "Renderer/Buffers/IndexBuffer.hh"
+#include "Renderer/Buffers/VertexBuffer.hh"
+#include "Renderer/OpenGL/OpenGLShader.hh"
 #include "Renderer/Renderer.hh"
-#include "Renderer/Shader.hh"
-#include "Renderer/VertexBuffer.hh"
 
 
 namespace kaTe {
@@ -66,6 +67,7 @@ namespace kaTe {
 
         auto getRenderer() ->  std::shared_ptr<Renderer> { KT_ASSERT(m_Renderer, "Renderer is NULL"); return m_Renderer; }
 
+        auto getDeltaTime(TimeUnit unit = TimeUnit::SECONDS) -> double { return m_DeltaTime.getDeltaTime(unit); }
         /**
          * Initializes the subsystems of the
          * application
@@ -136,6 +138,8 @@ namespace kaTe {
         // could become part of the Window itself as an aggregation
         std::unique_ptr<InputManager> m_InputManager{ nullptr };
         std::shared_ptr<Renderer> m_Renderer{ nullptr };
+
+        TimeManager m_DeltaTime{};
 
     };
 }

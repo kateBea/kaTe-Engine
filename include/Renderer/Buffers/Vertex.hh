@@ -5,10 +5,10 @@
 #ifndef KATE_ENGINE_VERTEX_HH
 #define KATE_ENGINE_VERTEX_HH
 
-#include <glm/vec3.hpp>
-#include <glm/vec2.hpp>
+#include "glm/vec2.hpp"
+#include "glm/vec3.hpp"
 
-#include <Tools/Common.hh>
+#include "Tools/Common.hh"
 
 namespace kaTe {
     struct Vertex {

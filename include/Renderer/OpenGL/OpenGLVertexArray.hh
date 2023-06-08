@@ -17,8 +17,8 @@
 #include <GL/glew.h>
 
 // Project Libraries
+#include "Renderer/Buffers/VertexBuffer.hh"
 #include <Tools/Common.hh>
-#include <Renderer/VertexBuffer.hh>
 
 namespace kaTe {
     class OpenGLVertexArray {

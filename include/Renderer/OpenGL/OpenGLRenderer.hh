@@ -11,9 +11,9 @@
 #include <Renderer/RendererAPI.hh>
 #include <Tools/Common.hh>
 
-#include <Renderer/VertexBuffer.hh>
-#include <Renderer/IndexBuffer.hh>
-#include <Renderer/Shader.hh>
+#include "OpenGLShader.hh"
+#include "Renderer/Buffers/IndexBuffer.hh"
+#include "Renderer/Buffers/VertexBuffer.hh"
 
 #include <Renderer/OpenGL/OpenGLVertexArray.hh>
 
@@ -22,13 +22,15 @@ namespace kaTe {
     public:
         explicit OpenGLRenderer() = default;
 
+        auto init() -> void override;
+
         auto setClearColor(const glm::vec4& color) -> void override;
         auto setClearColor(float red, float green, float blue, float alpha) -> void override;
         auto clear(RendererAPI::BufferBit bufferBits) -> void override;
         auto setViewPort(UInt32_T width, UInt32_T height) -> void override;
 
         auto drawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
-        auto drawIndexed(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        auto drawIndexed(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
 
         // virtual auto draw(const Mesh& mesh) -> void = 0;
         auto draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
@@ -36,8 +38,8 @@ namespace kaTe {
         // There's no reason to draw a mesh indexed as it may probably have its own indices
 
         // virtual auto draw(const Shader& shader, const Mesh& mesh) -> void = 0;
-        auto draw(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
-        auto draw(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        auto draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
+        auto draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
 
     private:
         // Forbidden operations

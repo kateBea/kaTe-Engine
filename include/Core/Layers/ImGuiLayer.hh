@@ -30,15 +30,13 @@ namespace kaTe {
         auto onAttach() -> void override;
         auto onDetach() -> void override;
         auto onUpdate() -> void override;
+        auto onImGuiRender() -> void override;
 
-    protected:
-        auto imGuiPushRenderElements() -> void;
+        static auto beginFrame() -> void;
+        static auto endFrame() -> void;
 
     private:
         static auto setupCustomImGuiStyle() -> void;
-
-        auto beginFrame() -> void;
-        auto endFrame() -> void;
 
     };
 

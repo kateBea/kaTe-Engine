@@ -5,9 +5,9 @@
 
 #include <glm/vec4.hpp>
 
-#include <Renderer/VertexBuffer.hh>
-#include <Renderer/IndexBuffer.hh>
-#include <Renderer/Shader.hh>
+#include "Renderer/Buffers/IndexBuffer.hh"
+#include "Renderer/Buffers/VertexBuffer.hh"
+#include "Renderer/OpenGL/OpenGLShader.hh"
 
 #include <Renderer/RendererAPI.hh>
 #include <Renderer/OpenGL/OpenGLRenderer.hh>
@@ -20,6 +20,10 @@ namespace kaTe {
         explicit RenderCommand() {
             // temporal
             m_ActiveRendererAPI = std::make_unique<OpenGLRenderer>();
+        }
+
+        auto init() -> void {
+            m_ActiveRendererAPI->init();
         }
 
         auto clear(RendererAPI::BufferBit bufferBit) {
@@ -38,7 +42,7 @@ namespace kaTe {
             m_ActiveRendererAPI->drawIndexed(vertexBuffer, indexBuffer);
         }
 
-        auto drawIndexed(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
+        auto drawIndexed(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
             m_ActiveRendererAPI->drawIndexed(shader, vertexBuffer, indexBuffer);
         }
 
@@ -50,11 +54,11 @@ namespace kaTe {
             m_ActiveRendererAPI->draw(vertexBuffer, indexBuffer);
         }
 
-        auto draw(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
+        auto draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
             m_ActiveRendererAPI->draw(shader, vertexBuffer);
         }
 
-        auto draw(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
+        auto draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
             m_ActiveRendererAPI->draw(shader, vertexBuffer, indexBuffer);
         }
 

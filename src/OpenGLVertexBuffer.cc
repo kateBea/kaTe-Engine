@@ -1,5 +1,5 @@
+#include "Renderer/Buffers/Vertex.hh"
 #include <Renderer/OpenGL/OpenGLVertexBuffer.hh>
-#include <Renderer/Vertex.hh>
 
 #include <Tools/Common.hh>
 

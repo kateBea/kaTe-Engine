@@ -15,6 +15,7 @@
 #include <memory>
 #include <functional>
 #include <cstdint>
+#include <filesystem>
 
 // Third-Party Libraries
 #include <GL/glew.h>
@@ -241,19 +242,14 @@ namespace kaTe {
     template<typename T>
     using Scope_T = std::unique_ptr<T>;
 
+    using Path_T = std::filesystem::path;
+
     /**
          * Pointer to a T. May share the held instance
          * @tparam T held type
          * */
     template<typename T>
     using Ref_T = std::shared_ptr<T>;
-
-    /**
-         * Raw pointer to a T.
-         * @tparam T held type
-         * */
-    template<typename T>
-    using RawPtr_T = T*;
 
     using Int8_T = std::int8_t;
     using Int16_T = std::int16_t;

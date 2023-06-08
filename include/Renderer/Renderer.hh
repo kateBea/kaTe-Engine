@@ -3,22 +3,27 @@
 
 #include <memory>
 
+#include <glm/mat4x4.hpp>
+
+#include "Renderer/Buffers/IndexBuffer.hh"
+#include "Renderer/Buffers/VertexBuffer.hh"
+#include "Renderer/Camera/OrthographicCamera.hh"
+#include "Renderer/OpenGL/OpenGLShader.hh"
 #include <Renderer/RenderCommand.hh>
-#include <Renderer/OrthographicCamera.hh>
-#include <Renderer/VertexBuffer.hh>
-#include <Renderer/IndexBuffer.hh>
-#include <Renderer/Shader.hh>
 
 namespace kaTe {
     class Renderer {
     public:
         explicit Renderer() = default;
+        virtual ~Renderer() = default;
         enum class GraphicsAPI {
             NONE,
             OPENGL_API,
             VULKAN_API,
             COUNT,
         };
+
+        virtual auto init() -> void;
 
         auto beginScene(std::shared_ptr<OrthographicCamera> camera) -> void;
 
@@ -34,7 +39,7 @@ namespace kaTe {
         // virtual auto submit(const Mesh& mesh) -> void = 0;
         auto submit(std::shared_ptr<VertexBuffer> vertexBuffer) -> void;
         auto submit(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
-        auto submit(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
+        auto submit(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, const glm::mat4 &transform = glm::mat4(1.0)) -> void;
 
         auto getRenderCommand() -> RenderCommand& { return m_RenderCommand; }
 

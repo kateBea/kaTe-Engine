@@ -50,7 +50,7 @@ namespace kaTe {
 
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*
-            RawPtr_T<GLFWwindow> window{ std::any_cast<RawPtr_T<GLFWwindow>>(EngineManager::get().getMainWindow().getNativeWindow()) };
+            GLFWwindow* window{ std::any_cast<GLFWwindow*>(EngineManager::get().getMainWindow().getNativeWindow()) };
 
             // Setup Platform/Renderer backends
             ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -68,9 +68,7 @@ namespace kaTe {
     }
 
     auto ImGuiLayer::onUpdate() -> void {
-        beginFrame();
-        imGuiPushRenderElements();
-        endFrame();
+
     }
 
     auto ImGuiLayer::setupCustomImGuiStyle() -> void {
@@ -125,16 +123,7 @@ namespace kaTe {
         style.TabRounding = 5.0f;
     }
 
-    auto ImGuiLayer::imGuiPushRenderElements() -> void {
-        bool bl{ true };
-        ImGui::ShowDemoWindow(&bl);
-        ImGui::Begin("Test");
-        ImGui::SetWindowSize("Test", { 128, 64 });
-        ImGui::Text("Framerate: %.1f", ImGui::GetIO().Framerate);
-        ImGui::End();
-    }
-
-    auto ImGuiLayer::beginFrame() -> void{
+    auto ImGuiLayer::beginFrame() -> void {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -142,7 +131,7 @@ namespace kaTe {
 
     auto ImGuiLayer::endFrame() -> void {
         ImGuiIO& io{ ImGui::GetIO() };
-        Window& win{EngineManager::get().getMainWindow() };
+        Window& win{ EngineManager::get().getMainWindow() };
         io.DisplaySize = ImVec2(win.getWidth(), win.getHeight());
 
         ImGui::Render();
@@ -153,11 +142,20 @@ namespace kaTe {
         // so we save/restore it to make it easier to paste this code elsewhere.
         //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-            RawPtr_T<GLFWwindow> backupCurrentContext = glfwGetCurrentContext();
+            GLFWwindow* backupCurrentContext{ glfwGetCurrentContext() };
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backupCurrentContext);
         }
+    }
+
+    auto ImGuiLayer::onImGuiRender() -> void {
+        bool bl{ true };
+        ImGui::ShowDemoWindow(&bl);
+        ImGui::Begin("Info");
+        ImGui::SetWindowSize("Test", { 128, 64 });
+        ImGui::Text("Framerate: %.1f", ImGui::GetIO().Framerate);
+        ImGui::End();
     }
 
     ImGuiLayer::~ImGuiLayer() = default;

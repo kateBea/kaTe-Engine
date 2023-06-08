@@ -2,8 +2,8 @@
 // Created by kate on 6/7/23.
 //
 
+#include "Renderer/Camera/OrthographicCamera.hh"
 #include <glm/gtc/matrix_transform.hpp>
-#include <Renderer/OrthographicCamera.hh>
 
 namespace kaTe {
 
@@ -28,5 +28,12 @@ namespace kaTe {
 
         m_ViewMatrix = glm::inverse(transform);
         m_ProjectionAndView = m_Projection * m_ViewMatrix;
+    }
+
+    void OrthographicCamera::updateProjection(const Window &window) {
+        double width{ static_cast<double>(window.getWidth()) };
+        double height{ static_cast<double>(window.getHeight()) };
+        m_AspectRatio = height / height;
+        m_Projection = glm::ortho(0.0, width, 0.0, height, s_DefaultNearPlane, s_DefaultFarPlane);
     }
 }

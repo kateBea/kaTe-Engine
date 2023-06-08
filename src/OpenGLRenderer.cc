@@ -4,6 +4,7 @@
 
 #include <GL/glew.h>
 
+#include <Core/Logger.hh>
 #include <Renderer/OpenGL/OpenGLRenderer.hh>
 
 namespace kaTe {
@@ -28,8 +29,8 @@ namespace kaTe {
 
     }
 
-    auto OpenGLRenderer::drawIndexed(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
-        shader->useProgram();
+    auto OpenGLRenderer::drawIndexed(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
+        shader->bind();
         m_VertexArray.useVertexBuffer(vertexBuffer);
         indexBuffer->bindIndexBuffer();
 
@@ -44,11 +45,17 @@ namespace kaTe {
 
     }
 
-    auto OpenGLRenderer::draw(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
+    auto OpenGLRenderer::draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
 
     }
 
-    auto OpenGLRenderer::draw(std::shared_ptr<Shader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
+    auto OpenGLRenderer::draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
 
+    }
+
+    auto OpenGLRenderer::init() -> void {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        KATE_CORE_LOGGER_INFO("Render blending enabled");
     }
 }

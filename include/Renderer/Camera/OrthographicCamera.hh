@@ -5,8 +5,9 @@
 #ifndef KATE_ENGINE_ORTHOGRAPHIC_CAMERA_HH
 #define KATE_ENGINE_ORTHOGRAPHIC_CAMERA_HH
 
-#include <glm/mat4x4.hpp>
-#include <glm/vec3.hpp>
+#include "Platform/Window/Window.hh"
+#include "glm/mat4x4.hpp"
+#include "glm/vec3.hpp"
 
 namespace kaTe {
     class OrthographicCamera {
@@ -30,6 +31,7 @@ namespace kaTe {
         auto setPosition(double x, double y) -> void{ m_Position = { x, y, 0.0 }; recomputeViewMatrix(); }
         auto setProjection(glm::mat4 proj) -> void{ m_Projection = proj; recomputeViewMatrix(); }
         auto setView(glm::mat4 view) -> void{ m_ViewMatrix = view; recomputeViewMatrix(); }
+        auto updateProjection(const Window &window) -> void;
     private:
         auto recomputeViewMatrix() -> void;
     private:
@@ -49,7 +51,6 @@ namespace kaTe {
 
         // Rotation in degrees
         double m_Rotation{};
-
     };
 }
 

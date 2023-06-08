@@ -3,7 +3,7 @@
 //
 
 
-#include <Renderer/IndexBuffer.hh>
+#include "Renderer/Buffers/IndexBuffer.hh"
 #include <Renderer/OpenGL/OpenGLIndexBuffer.hh>
 
 #include <Core/EngineManager.hh>
