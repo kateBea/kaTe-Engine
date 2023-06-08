@@ -1,5 +1,6 @@
 # kaTe-Engine
-Simple engine written in moder C++
+This is a simple engine written in modern C++. For now and quite some time 
+it will use OpenGL as its main rendering API, but the end goal is to integrate Vulkan.
 
 ![kaTe Engine](assets/image/img3.png)
 
