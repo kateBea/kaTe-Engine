@@ -16,7 +16,7 @@ set(CORE_SOURCES
         src/LayerStack.cc
         src/ImGuiLayer.cc
         src/OpenGLContext.cc
-        src/RuntimeLayer.cc)
+        src/RuntimeLayer.cc src/InputManager.cc)
 
 set(PLATFORM_SOURCES
         src/EngineManager.cc
@@ -34,7 +34,7 @@ set(RENDERER_SOURCES
         src/OpenGLShader.cc
         src/OpenGLRenderer.cc
         src/RendererAPI.cc
-        src/OrthographicCamera.cc src/Texture2D.cc include/Renderer/Material/Texture2D.hh src/OpenGLTexture2D.cc include/Renderer/OpenGL/OpenGLTexture2D.hh)
+        src/OrthographicCamera.cc src/Texture2D.cc include/Renderer/Material/Texture2D.hh src/OpenGLTexture2D.cc include/Renderer/OpenGL/OpenGLTexture2D.hh src/RenderCommand.cc)
 
 set(IMGUI_SOURCES
         lib/imgui/imgui.cpp

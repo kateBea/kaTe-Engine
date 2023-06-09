@@ -2,9 +2,6 @@
 #include <memory>
 #include <cmath>
 
-// Third-party libraries
-#include <GLFW/glfw3.h>
-
 // Project headers
 #include <Core/Events/AppEvents.hh>
 #include <Core/Logger.hh>
@@ -16,27 +13,36 @@
 #include <Platform/InputManagerGLFW.hh>
 
 #include <Renderer/Renderer.hh>
+#include <Renderer/RenderCommand.hh>
 
 
 namespace kaTe {
     auto EngineManager::init() -> void {
         KATE_CORE_LOGGER_INFO("Initializing kaTe Engine ----------------------------------------");
 
-        initWindow();
-        initRenderer();
-        initLayerStack();
-        initInputManager();
+        m_MainWindow = std::make_unique<WindowGLFW>();
+        m_LayerStack = std::make_unique<LayerStack>();
+
+        KT_ASSERT(m_MainWindow != nullptr, "Window is NULL");
+        m_MainWindow->init();
+        m_MainWindow->setEventCallback(KT_BIND_EVENT_FUNC(EngineManager::onEvent));// Should probably not be done here
+        KT_ASSERT(m_LayerStack != nullptr, "Layer Stack is NULL");
+        m_LayerStack->init();
+
+        Renderer::init();
+        RenderCommand::init();
+        InputManager::init();
 
         KATE_CORE_LOGGER_DEBUG("Finished kaTe Engine initialization ----------------------------");
     }
 
     auto EngineManager::initWindow() -> void {
         KATE_CORE_LOGGER_INFO("kaTe Engine: Main Window initialization");
-        m_Window = std::make_unique<WindowGLFW>();
-        KT_ASSERT(m_Window != nullptr, "Window is NULL");
-        m_Window->init();
+        m_MainWindow = std::make_unique<WindowGLFW>();
+        KT_ASSERT(m_MainWindow != nullptr, "Window is NULL");
+        m_MainWindow->init();
         // Should probably not be done here
-        m_Window->setEventCallback(KT_BIND_EVENT_FUNC(EngineManager::onEvent));
+        m_MainWindow->setEventCallback(KT_BIND_EVENT_FUNC(EngineManager::onEvent));
     }
 
     auto EngineManager::initLayerStack() -> void {
@@ -44,12 +50,6 @@ namespace kaTe {
         m_LayerStack = std::make_unique<LayerStack>();
         KT_ASSERT(m_LayerStack != nullptr, "Layer Stack is NULL");
         m_LayerStack->init();
-    }
-
-    auto EngineManager::initInputManager() -> void {
-        KATE_CORE_LOGGER_INFO("kaTe Engine: Input Manager initialization");
-        m_InputManager = std::make_unique<InputManagerGLFW>();
-        KT_ASSERT(m_InputManager != nullptr, "Input Manager is NULL");
     }
 
     // Should probably not be here
@@ -76,7 +76,7 @@ namespace kaTe {
     }
 
     bool EngineManager::onResizeEvent(WindowResizedEvent &ev) {
-        m_Renderer->getRenderCommand().refreshViewPort(ev.getWidth(), ev.getHeight());
+        RenderCommand::refreshViewPort(ev.getWidth(), ev.getHeight());
         return true;
     }
 
@@ -93,18 +93,17 @@ namespace kaTe {
     auto EngineManager::shutDown() -> void {
         KATE_CORE_LOGGER_INFO("Shutting down kaTe Engine");
 
+        InputManager::shutDown();
+        RenderCommand::shutDown();
+        Renderer::shutDown();
+
         m_LayerStack->shutDown();
-        m_Window->shutDown();
+        m_MainWindow->shutDown();
     }
 
     auto EngineManager::getMainWindow() -> Window & {
-        KT_ASSERT(m_Window, "Application main window is NULL");
-        return *m_Window;
-    }
-
-    auto EngineManager::getInputManager() -> InputManager& {
-        KT_ASSERT(m_InputManager, "Input manager is null");
-        return *m_InputManager;
+        KT_ASSERT(m_MainWindow, "Application main window is NULL");
+        return *m_MainWindow;
     }
 
     auto EngineManager::isRunning() -> bool {
@@ -121,13 +120,6 @@ namespace kaTe {
             layer->onImGuiRender();
         ImGuiLayer::endFrame();
 
-        m_Window->onUpdate();
-    }
-
-    void EngineManager::initRenderer() {
-        KATE_CORE_LOGGER_INFO("kaTe Engine: Renderer startup");
-        m_Renderer = std::make_unique<Renderer>();
-        m_Renderer->init();
-        KT_ASSERT(m_Renderer != nullptr, "Renderer is NULL");
+        m_MainWindow->onUpdate();
     }
 }

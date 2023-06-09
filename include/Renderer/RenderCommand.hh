@@ -7,68 +7,36 @@
 
 #include "Renderer/Buffers/IndexBuffer.hh"
 #include "Renderer/Buffers/VertexBuffer.hh"
-#include "Renderer/OpenGL/OpenGLShader.hh"
 
+#include <Renderer/Renderer.hh>
 #include <Renderer/RendererAPI.hh>
-#include <Renderer/OpenGL/OpenGLRenderer.hh>
+#include <Renderer/Material/BaseShader.hh>
 
+#include <Core/Logger.hh>
 #include <Tools/Common.hh>
 
 namespace kaTe {
 	class RenderCommand {
 	public:
-        explicit RenderCommand() {
-            // temporal
-            m_ActiveRendererAPI = std::make_unique<OpenGLRenderer>();
-        }
+        static auto init() -> void;
+        static auto shutDown() -> void;
 
-        auto init() -> void {
-            m_ActiveRendererAPI->init();
-        }
+        static auto clear(RendererAPI::BufferBit bufferBit) -> void;
+        static auto setClearColor(const glm::vec4& color) -> void;
+        static auto setClearColor(float red, float green, float blue, float alpha) -> void;
 
-        auto clear(RendererAPI::BufferBit bufferBit) {
-            m_ActiveRendererAPI->clear(bufferBit);
-        }
+        static auto drawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
+        static auto drawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
 
-        auto setClearColor(const glm::vec4& color) -> void {
-            m_ActiveRendererAPI->setClearColor(color);
-        }
+        static auto draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void;
+        static auto draw(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
+        static auto draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void;
+        static auto draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
 
-        auto setClearColor(float red, float green, float blue, float alpha) -> void {
-            m_ActiveRendererAPI->setClearColor(red, green, blue, alpha);
-        }
-
-        auto drawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
-            m_ActiveRendererAPI->drawIndexed(vertexBuffer, indexBuffer);
-        }
-
-        auto drawIndexed(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
-            m_ActiveRendererAPI->drawIndexed(shader, vertexBuffer, indexBuffer);
-        }
-
-        auto draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
-            m_ActiveRendererAPI->draw(vertexBuffer);
-        }
-
-        auto draw(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
-            m_ActiveRendererAPI->draw(vertexBuffer, indexBuffer);
-        }
-
-        auto draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
-            m_ActiveRendererAPI->draw(shader, vertexBuffer);
-        }
-
-        auto draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
-            m_ActiveRendererAPI->draw(shader, vertexBuffer, indexBuffer);
-        }
-
-        auto refreshViewPort(UInt32_T width, UInt32_T height) -> void {
-            m_ActiveRendererAPI->setViewPort(width, height);
-        }
+        static auto refreshViewPort(UInt32_T width, UInt32_T height) -> void;
 
 	private:
-		// Non owning pointer to the currently active Graphics API
-        std::unique_ptr<RendererAPI> m_ActiveRendererAPI{ nullptr };
+        inline static RendererAPI* s_ActiveRendererAPI{ nullptr };
 	};
 }
 

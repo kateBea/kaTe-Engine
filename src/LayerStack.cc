@@ -7,6 +7,7 @@
 #include <algorithm>
 
 // Project headers
+#include <Core/Logger.hh>
 #include <Core/Layers/LayerStack.hh>
 
 namespace kaTe {
@@ -33,6 +34,10 @@ namespace kaTe {
         if (targetIt != m_Layers.end())
             m_Layers.erase(targetIt);
 
+    }
+
+    auto LayerStack::init() -> void {
+        KATE_CORE_LOGGER_INFO("Layer Stack initialization");
     }
 
 }   // END NAMESPACE kT

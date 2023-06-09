@@ -10,23 +10,13 @@
 #include <memory>
 
 // Project Headers
-#include "Platform/Window/WindowGLFW.hh"
-
-#include "Tools/Singleton.hh"
-
-#include "Assert.hh"
-#include "Core/Events/AppEvents.hh"
-#include "Core/Events/Event.hh"
-#include "Core/Layers/LayerStack.hh"
-#include "Platform/InputManager.hh"
+#include <Tools/Singleton.hh>
+#include <Platform/Window/Window.hh>
+#include <Core/Events/Event.hh>
+#include <Core/Layers/LayerStack.hh>
 #include <Core/TimeManager.hh>
 
-// TODO: Temporary just to try shader class
-#include "Renderer/Buffers/IndexBuffer.hh"
-#include "Renderer/Buffers/VertexBuffer.hh"
-#include "Renderer/OpenGL/OpenGLShader.hh"
-#include "Renderer/Renderer.hh"
-
+#include <Core/Events/AppEvents.hh>
 
 namespace kaTe {
     /**
@@ -62,11 +52,6 @@ namespace kaTe {
         KT_NODISCARD
         auto getMainWindow() -> Window&;
 
-        KT_NODISCARD
-        auto getInputManager() -> InputManager&;
-
-        auto getRenderer() ->  std::shared_ptr<Renderer> { KT_ASSERT(m_Renderer, "Renderer is NULL"); return m_Renderer; }
-
         auto getDeltaTime(TimeUnit unit = TimeUnit::SECONDS) -> double { return m_DeltaTime.getDeltaTime(unit); }
         /**
          * Initializes the subsystems of the
@@ -96,6 +81,7 @@ namespace kaTe {
             NONE,
             RUNNING,
             STOPPED,
+            IDDLE,  // can be used when we minimize the main window
             COUNT,
         };
 
@@ -109,7 +95,7 @@ namespace kaTe {
          * forward this event any further and handler it right away
          * */
         bool onWindowClose(WindowCloseEvent &ev);
-        
+
         /**
          * Callback function for WindowResizedEvent event. For now
          * it always returns true as we have no needs to
@@ -125,19 +111,16 @@ namespace kaTe {
         auto initWindow() -> void;
         auto initLayerStack() -> void;
         auto initInputManager() -> void;
-        auto initRenderer() -> void;
 
         // MEMBER VARIABLES ----------------------------
         State m_State{ State::RUNNING };
 
-        std::unique_ptr<Window> m_Window{ nullptr };
-        std::unique_ptr<LayerStack> m_LayerStack{ nullptr };
+        std::unique_ptr<Window> m_MainWindow{};
+        std::unique_ptr<LayerStack> m_LayerStack{};
 
         // For now, there's one instance of InputManager in our application
         // In case we may want to poll input from multiple Windows, this
         // could become part of the Window itself as an aggregation
-        std::unique_ptr<InputManager> m_InputManager{ nullptr };
-        std::shared_ptr<Renderer> m_Renderer{ nullptr };
 
         TimeManager m_DeltaTime{};
 

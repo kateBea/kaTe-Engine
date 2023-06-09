@@ -35,7 +35,7 @@ namespace kaTe {
 
         explicit LayerStack() : m_Layers{}, m_LayerIndex{} {}
 
-        auto init() -> void { /*Empty for now */ }
+        auto init() -> void;
         auto shutDown() -> void { /*Empty for now */ }
 
         auto addLayer(LayerPtr layer) -> void;

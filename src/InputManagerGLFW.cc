@@ -52,7 +52,7 @@ namespace kaTe {
         return false;
     }
 
-    auto InputManagerGLFW::getMousePosNative() -> Pos_T {
+    auto InputManagerGLFW::getMousePosNative() -> std::pair<double, double> {
         double posX{};
         double posY{};
         GLFWwindow* window{ nullptr };

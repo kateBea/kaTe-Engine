@@ -8,10 +8,11 @@
 #include <memory>
 
 #include <glm/vec4.hpp>
+
 #include <Renderer/RendererAPI.hh>
 #include <Tools/Common.hh>
 
-#include "OpenGLShader.hh"
+#include "Renderer/Material/BaseShader.hh"
 #include "Renderer/Buffers/IndexBuffer.hh"
 #include "Renderer/Buffers/VertexBuffer.hh"
 
@@ -30,7 +31,7 @@ namespace kaTe {
         auto setViewPort(UInt32_T width, UInt32_T height) -> void override;
 
         auto drawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
-        auto drawIndexed(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        auto drawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
 
         // virtual auto draw(const Mesh& mesh) -> void = 0;
         auto draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
@@ -38,8 +39,8 @@ namespace kaTe {
         // There's no reason to draw a mesh indexed as it may probably have its own indices
 
         // virtual auto draw(const Shader& shader, const Mesh& mesh) -> void = 0;
-        auto draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
-        auto draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        auto draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
+        auto draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
 
     private:
         // Forbidden operations

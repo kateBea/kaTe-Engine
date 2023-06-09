@@ -24,7 +24,7 @@ namespace kaTe {
         KT_NODISCARD
         auto getMouseYNative() -> double override;
         KT_NODISCARD
-        auto getMousePosNative() -> Pos_T override;
+        auto getMousePosNative() -> std::pair<double, double> override;
     };
 
 }   // END NAMESPACE kT

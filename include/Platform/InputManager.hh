@@ -18,40 +18,20 @@
 #include <Tools/Common.hh>
 
 namespace kaTe {
-    class InputManager : public Singleton<InputManager> {
+    class InputManager {
     public:
-        using Pos_T = std::pair<double, double>;
+        static auto init() -> void;
 
-        KT_NODISCARD
-        inline static auto isKeyPressed(Int32_T keyCode) -> bool {
-            KT_ASSERT(getPtr(), "InputManager singleton ptr is NULL");
-            return getPtr()->isKeyPressedNative(keyCode);
-        }
+        static auto isKeyPressed(Int32_T keyCode) -> bool;
+        static auto isMouseKeyPressed(Int32_T button) -> bool;
+        static auto getMouseX() -> double;
+        static auto getMouseY() -> double;
+        static auto getMousePos() -> std::pair<double, double>;
 
-        KT_NODISCARD
-        inline static auto isMouseKeyPressed(Int32_T button) -> bool {
-            KT_ASSERT(getPtr(), "InputManager singleton ptr is NULL");
-            return getPtr()->isMouseKeyPressedNative(button);
-        }
+        static auto shutDown() -> void;
 
-        KT_NODISCARD
-        inline static auto getMouseX() -> double {
-            KT_ASSERT(getPtr(), "InputManager singleton ptr is NULL");
-            return getPtr()->getMouseXNative();
-        }
-
-        KT_NODISCARD
-        inline static auto getMouseY() -> double {
-            KT_ASSERT(getPtr(), "InputManager singleton ptr is NULL");
-            return getPtr()->getMouseYNative();
-        }
-
-        KT_NODISCARD
-        inline static auto getMousePos() -> Pos_T {
-            KT_ASSERT(getPtr(), "InputManager singleton ptr is NULL");
-            return getPtr()->getMousePosNative();
-        }
-
+    private:
+        inline static InputManager* s_InputManager{};
     protected:
         /* Keyboard Input */
         KT_NODISCARD
@@ -65,7 +45,7 @@ namespace kaTe {
         KT_NODISCARD
         virtual auto getMouseYNative() -> double = 0;
         KT_NODISCARD
-        virtual auto getMousePosNative() -> Pos_T = 0;
+        virtual auto getMousePosNative() -> std::pair<double, double> = 0;
     };
 
 }

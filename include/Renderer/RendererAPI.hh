@@ -7,7 +7,7 @@
 
 #include "Renderer/Buffers/IndexBuffer.hh"
 #include "Renderer/Buffers/VertexBuffer.hh"
-#include "Renderer/OpenGL/OpenGLShader.hh"
+#include "Renderer/Material/BaseShader.hh"
 
 #include <Tools/Common.hh>
 
@@ -30,7 +30,7 @@ namespace kaTe {
 		virtual auto clear(BufferBit bufferBits) -> void = 0;
 
 		virtual auto drawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
-        virtual auto drawIndexed(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
+        virtual auto drawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
 
         // RendererAPI::draw() possible overloads
         //
@@ -40,8 +40,8 @@ namespace kaTe {
 		// There's no reason to draw a mesh indexed as it may probably have its own indices
 	
 		// virtual auto draw(const Shader& shader, const Mesh& mesh) -> void = 0;
-		virtual auto draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void = 0;
-        virtual auto draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
+		virtual auto draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void = 0;
+        virtual auto draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
 
 		virtual auto setViewPort(UInt32_T width, UInt32_T height) -> void = 0;
 

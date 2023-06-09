@@ -15,9 +15,12 @@
 namespace kaTe {
     auto IndexBuffer::createBuffer(const std::vector<UInt32_T>& data) -> IndexBuffer* {
         EngineManager& engine{ EngineManager::get() };
-        switch(engine.getRenderer()->getActiveAPI()) {
-            case Renderer::GraphicsAPI::OPENGL_API: return new OpenGLIndexBuffer(data);
-            default: KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API"); return nullptr;
+        switch(Renderer::getActiveAPI()) {
+            case Renderer::GraphicsAPI::OPENGL_API:
+                return new OpenGLIndexBuffer(data);
+            default:
+                KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API");
+                return nullptr;
         }
     }
 }

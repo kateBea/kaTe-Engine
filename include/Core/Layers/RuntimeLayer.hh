@@ -17,6 +17,7 @@
 #include <Core/EngineManager.hh>
 #include <Platform/InputManager.hh>
 #include <Renderer/Material/Texture2D.hh>
+#include <Renderer/Camera/OrthographicCamera.hh>
 
 namespace kaTe {
     class RuntimeLayer : public Layer {

@@ -39,6 +39,7 @@ namespace kaTe {
     }
 
     auto WindowGLFW::init() -> void {
+        KATE_CORE_LOGGER_INFO("Main Window initialization");
         initGLFW();
         KATE_CORE_LOGGER_DEBUG("Creating Window GLFW. Name '{}'. Dimensions [{}, {}]",
                                m_Properties.getName(), m_Properties.getWidth(), m_Properties.getHeight());

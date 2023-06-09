@@ -2,9 +2,11 @@
 // Created by kate on 6/6/23.
 //
 
+#include <memory>
 #include <GL/glew.h>
 
 #include <Core/Logger.hh>
+#include <Renderer/OpenGL/OpenGLShader.hh>
 #include <Renderer/OpenGL/OpenGLRenderer.hh>
 
 namespace kaTe {
@@ -29,8 +31,8 @@ namespace kaTe {
 
     }
 
-    auto OpenGLRenderer::drawIndexed(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
-        shader->bind();
+    auto OpenGLRenderer::drawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
+        std::dynamic_pointer_cast<OpenGLShader>(shader)->bind();
         m_VertexArray.useVertexBuffer(vertexBuffer);
         indexBuffer->bindIndexBuffer();
 
@@ -45,11 +47,11 @@ namespace kaTe {
 
     }
 
-    auto OpenGLRenderer::draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
+    auto OpenGLRenderer::draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
 
     }
 
-    auto OpenGLRenderer::draw(std::shared_ptr<OpenGLShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
+    auto OpenGLRenderer::draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
 
     }
 

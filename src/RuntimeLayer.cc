@@ -20,6 +20,9 @@
 #include <Platform/InputManager.hh>
 #include <Renderer/Material/Texture2D.hh>
 
+#include <Renderer/Renderer.hh>
+#include <Renderer/RenderCommand.hh>
+
 namespace kaTe {
     auto RuntimeLayer::onAttach() -> void {
         std::vector<float> data {
@@ -78,48 +81,44 @@ namespace kaTe {
         if (InputManager::isKeyPressed(KT_KEY_I)) m_SquarePos.y += m_CameraMovementSpeed * deltaTime;
         if (InputManager::isKeyPressed(KT_KEY_K)) m_SquarePos.y -= m_CameraMovementSpeed * deltaTime;
 
+        m_ColorShader->setUniformVec4("u_Color", glm::vec4(m_SquareColor, 1.0));
         m_Camera->setPosition(m_CameraPosition.x, m_CameraPosition.y);
         m_Camera->setRotation(m_CameraRotation);
+
         constexpr static glm::mat4 IDENTITY_MAT(1.0);
-
         glm::mat4 scale{ glm::scale(IDENTITY_MAT, glm::vec3(0.1, 0.1, 0.1)) };
-
-        m_ColorShader->setUniformVec4("u_Color", glm::vec4(m_SquareColor, 1.0));
 
         double blue{ 0.5f };
         double time{ TimeManager::getTime(TimeUnit::NANOSECONDS) };
         double red{ (std::sin(time) + blue * 2) * blue };
         double green{ std::cos(time) + blue * 2 * blue };
 
-        engine->getRenderer()->getRenderCommand().setClearColor(red, green, blue, 1.0f);
-        engine->getRenderer()->getRenderCommand().clear((RendererAPI::BufferBit)(RendererAPI::OPEN_GL_COLOR_BUFFER_BIT |
-                                                                                 RendererAPI::OPEN_GL_DEPTH_BUFFER_BIT));
-        engine->getRenderer()->beginScene(m_Camera);
+        RenderCommand::setClearColor(red, green, blue, 1.0f);
+        RenderCommand::clear((RendererAPI::BufferBit)(RendererAPI::OPEN_GL_COLOR_BUFFER_BIT | RendererAPI::OPEN_GL_DEPTH_BUFFER_BIT));
 
+        Renderer::beginScene(m_Camera);
         // Grid. submit 20 rectangles
         for (UInt32_T countY{}; countY < 20; ++countY) {
             for (UInt32_T countX{}; countX < 20; ++countX) {
                 glm::mat4 transform{ glm::translate(IDENTITY_MAT, m_SquarePos + glm::vec3(countX * 0.11, countY * -0.11, 0.0)) * scale };
-                engine->getRenderer()->submit(m_ColorShader, m_SquareVertexBuffer, m_SquareIndexBuffer, transform);
+                Renderer::submit(m_ColorShader, m_SquareVertexBuffer, m_SquareIndexBuffer, transform);
             }
         }
 
         // Big square
         m_Texture->bind();
-        engine->getRenderer()->submit(m_ColorTextureShader, m_SquareVertexBuffer, m_SquareIndexBuffer, glm::scale(IDENTITY_MAT, glm::vec3(1.5)) );
+        Renderer::submit(m_ColorTextureShader, m_SquareVertexBuffer, m_SquareIndexBuffer, glm::scale(IDENTITY_MAT, glm::vec3(1.5)) );
 
         m_TextureTrans->bind();
-        engine->getRenderer()->submit(m_ColorTextureShader, m_SquareVertexBuffer, m_SquareIndexBuffer,
-                                       glm::scale(IDENTITY_MAT, glm::vec3(1.5)) );
+        Renderer::submit(m_ColorTextureShader, m_SquareVertexBuffer, m_SquareIndexBuffer, glm::scale(IDENTITY_MAT, glm::vec3(1.5)) );
         // Render Triangle
         // engine->getRenderer()->submit(m_Shader, m_VertexBuffer, m_IndexBuffer);
-        engine->getRenderer()->endScene();
+        Renderer::endScene();
     }
 
     auto RuntimeLayer::onImGuiRender() -> void {
         ImGui::Begin("Color");
         ImGui::ColorEdit3("Color", glm::value_ptr(m_SquareColor));
-
         ImGui::End();
     }
 
