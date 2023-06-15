@@ -2,7 +2,7 @@
 This is a simple engine written in modern C++. For now and quite some time 
 it will use OpenGL as its main rendering API, but the end goal is to integrate Vulkan.
 
-![kaTe Engine](assets/image/img3.png)
+![kaTe Engine](assets/image/img4.png)
 
 # Building
 
@@ -44,11 +44,14 @@ is included as a submodule and build along with the project.
     cmake ..
     ```
   
-- Build project using CMake
+- Build the project using CMake
     ```shell
     cmake --build .
     ```
 
+# Goals
+
+The main goal is really just offer support for 3D and 2D graphics rendering 
 
 # Special thanks and mentions to
   - Yan Chernikov for his [YouTube videos](https://www.youtube.com/@TheCherno) and live streams
