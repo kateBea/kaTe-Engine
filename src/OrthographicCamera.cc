@@ -2,19 +2,20 @@
 // Created by kate on 6/7/23.
 //
 
-#include "Renderer/Camera/OrthographicCamera.hh"
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <Renderer/Camera/OrthographicCamera.hh>
 
 namespace kaTe {
 
     OrthographicCamera::OrthographicCamera(double left, double right, double bottom, double top)
-        :   m_Projection{ glm::ortho(left, right, bottom, top, s_DefaultNearPlane, s_DefaultFarPlane) }, m_ViewMatrix{ 1.0f }
+        :   m_ViewMatrix{ 1.0f }, m_Projection{ glm::ortho(left, right, bottom, top, s_DefaultNearPlane, s_DefaultFarPlane) }
     {
         m_ProjectionAndView = m_Projection * m_ViewMatrix;
     }
 
     OrthographicCamera::OrthographicCamera(double left, double right, double bottom, double top, double zNear, double zFar)
-        :   m_Projection{ glm::ortho(left, right, bottom, top, zNear, zFar) }, m_ViewMatrix{ 1.0f }
+        :   m_ViewMatrix{ 1.0f }, m_Projection{ glm::ortho(left, right, bottom, top, zNear, zFar) }
     {
         m_ProjectionAndView = m_Projection * m_ViewMatrix;
     }
@@ -35,5 +36,10 @@ namespace kaTe {
         double height{ static_cast<double>(window.getHeight()) };
         m_AspectRatio = height / height;
         m_Projection = glm::ortho(0.0, width, 0.0, height, s_DefaultNearPlane, s_DefaultFarPlane);
+    }
+
+    auto OrthographicCamera::setProjection(double left, double right, double bottom, double top) -> void {
+        m_Projection = glm::ortho(left, right, bottom, top, s_DefaultNearPlane, s_DefaultFarPlane);
+        m_ProjectionAndView = m_Projection * m_ViewMatrix;
     }
 }

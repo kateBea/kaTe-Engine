@@ -4,7 +4,7 @@
 
 #include <memory>
 
-#include <Core/EngineManager.hh>
+#include <Core/Application.hh>
 
 #include <Renderer/Renderer.hh>
 
@@ -14,11 +14,10 @@
 
 namespace kaTe {
 
-    auto Texture2D::createTexture(const Path_T &path) -> Texture* {
-        EngineManager& engine{ EngineManager::get() };
-        switch(Renderer::getActiveAPI()) {
+    auto Texture2D::CreateTexture(const Path_T &path) -> std::shared_ptr<Texture> {
+        switch(Renderer::GetActiveGraphicsAPI()) {
             case Renderer::GraphicsAPI::OPENGL_API:
-                return new OpenGLTexture2D(path);
+                return std::make_shared<OpenGLTexture2D>(path);
             default:
                 KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API");
                 return nullptr;

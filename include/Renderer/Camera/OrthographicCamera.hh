@@ -30,6 +30,7 @@ namespace kaTe {
         auto setPosition(const glm::vec3& pos) -> void{ m_Position = pos; recomputeViewMatrix(); }
         auto setPosition(double x, double y) -> void{ m_Position = { x, y, 0.0 }; recomputeViewMatrix(); }
         auto setProjection(glm::mat4 proj) -> void{ m_Projection = proj; recomputeViewMatrix(); }
+        auto setProjection(double left, double right, double bottom, double top) -> void;
         auto setView(glm::mat4 view) -> void{ m_ViewMatrix = view; recomputeViewMatrix(); }
         auto updateProjection(const Window &window) -> void;
     private:

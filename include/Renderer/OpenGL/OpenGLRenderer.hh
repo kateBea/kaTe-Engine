@@ -23,24 +23,25 @@ namespace kaTe {
     public:
         explicit OpenGLRenderer() = default;
 
-        auto init() -> void override;
+        auto Init() -> void override;
+        auto Shutdown() -> void override;
 
-        auto setClearColor(const glm::vec4& color) -> void override;
-        auto setClearColor(float red, float green, float blue, float alpha) -> void override;
-        auto clear(RendererAPI::BufferBit bufferBits) -> void override;
-        auto setViewPort(UInt32_T width, UInt32_T height) -> void override;
+        auto SetClearColor(const glm::vec4& color) -> void override;
+        auto SetClearColor(float red, float green, float blue, float alpha) -> void override;
+        auto Clear(BufferBit bufferBits) -> void override;
+        auto SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void override;
 
-        auto drawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
-        auto drawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        auto DrawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        auto DrawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
 
         // virtual auto draw(const Mesh& mesh) -> void = 0;
-        auto draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
-        auto draw(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        auto Draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
+        auto Draw(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
         // There's no reason to draw a mesh indexed as it may probably have its own indices
 
         // virtual auto draw(const Shader& shader, const Mesh& mesh) -> void = 0;
-        auto draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
-        auto draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        auto Draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
+        auto Draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
 
     private:
         // Forbidden operations

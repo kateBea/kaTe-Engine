@@ -31,7 +31,7 @@ namespace kaTe {
         /**
          * Mark this Vertex index buffer as current
          * */
-        auto bindIndexBuffer() const -> void override { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, getRenderId()); }
+        auto BindBuffer() const -> void override { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, GetID()); }
 
         /**
          * Releases the currently bound Vertex element buffer.
@@ -39,7 +39,7 @@ namespace kaTe {
          * previously bound, and restores client memory usage for that buffer object
          * target (if supported for that target). See: https://docs.gl/gl4/glBindBuffer
          * */
-        auto unbindIndexBuffer() const -> void override { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); }
+        auto UnbindBuffer() const -> void override { glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0); }
 
         /**
          * Move constructor

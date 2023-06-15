@@ -2,7 +2,7 @@
 #include <Core/Assert.hh>
 
 namespace kaTe {
-    auto Logger::init() -> void {
+    auto Logger::Init() -> void {
         m_CoreLogger = spdlog::stdout_color_mt("KATE_CORE_LOGGER");
         m_AppLogger = spdlog::stdout_color_mt("KATE_APP_LOGGER");
 
@@ -28,13 +28,13 @@ namespace kaTe {
         spdlog::flush_on(spdlog::level::debug);
     }
 
-    auto Logger::getCoreLogger() -> const std::shared_ptr<spdlog::logger>& {
+    auto Logger::GetCoreLogger() -> const std::shared_ptr<spdlog::logger>& {
+        KT_ASSERT(m_CoreLogger, "Core Logger is NULL");
         return m_CoreLogger;
     }
 
-    auto Logger::getAppLogger() -> const std::shared_ptr<spdlog::logger>& {
-
-
+    auto Logger::GetAppLogger() -> const std::shared_ptr<spdlog::logger>& {
+        KT_ASSERT(m_AppLogger, "Client Logger is NULL");
         return m_AppLogger;
     }
 }

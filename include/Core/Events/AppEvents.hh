@@ -23,29 +23,29 @@ namespace kaTe {
             :   Event{ EventType::WINDOW_RESIZE_EVENT, APPLICATION_EVENT_CATEGORY }, m_Width{ newWidth }, m_Height{ newHeight } {}
 
         KT_NODISCARD
-        auto getWidth() const -> Int32_T { return m_Width; }
+        auto GetWidth() const -> Int32_T { return m_Width; }
 
         KT_NODISCARD
-        auto getHeight() const -> Int32_T { return m_Height; }
+        auto GetHeight() const -> Int32_T { return m_Height; }
 
         KT_NODISCARD
-        auto getType() const -> EventType override { return getStaticType(); }
+        auto GetType() const -> EventType override { return GetStaticType(); }
 
         /**
          * Useful if we need to query the type of this event.
          * See <code>kT::EventDispatcher</code> for usage
          * */
         KT_NODISCARD
-        static auto getStaticType() -> EventType { return EventType::WINDOW_RESIZE_EVENT; }
+        static auto GetStaticType() -> EventType { return EventType::WINDOW_RESIZE_EVENT; }
 
         KT_NODISCARD
-        auto displayData() const -> std::string override {
-            return fmt::format("{} NEW DIMENSIONS: [{}, {}]", getFormattedStr(getType()).data(), m_Width, m_Height);
+        auto DisplayData() const -> std::string override {
+            return fmt::format("{} NEW DIMENSIONS: [{}, {}]", GetEventFormattedStr(GetType()).data(), m_Width, m_Height);
         }
 
     protected:
         KT_NODISCARD
-        auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
+        auto ToString() const -> std::string_view override { return GetEventFormattedStr(GetType()); }
 
         Int32_T m_Width{};
         Int32_T m_Height{};
@@ -56,22 +56,22 @@ namespace kaTe {
         WindowCloseEvent() : Event{ EventType::WINDOW_CLOSE_EVENT, APPLICATION_EVENT_CATEGORY } {}
 
         KT_NODISCARD
-        auto getType() const -> EventType override { return getStaticType(); }
+        auto GetType() const -> EventType override { return GetStaticType(); }
 
         /**
          * Useful if we need to query the type of this event.
          * See <code>kT::EventDispatcher</code> for usage
          * */
         KT_NODISCARD
-        static auto getStaticType() -> EventType { return EventType::WINDOW_CLOSE_EVENT; }
+        static auto GetStaticType() -> EventType { return EventType::WINDOW_CLOSE_EVENT; }
 
         KT_NODISCARD
-        auto displayData() const -> std::string override {
-            return fmt::format("{}", getFormattedStr(getType()).data());
+        auto DisplayData() const -> std::string override {
+            return fmt::format("{}", GetEventFormattedStr(GetType()).data());
         }
     protected:
         KT_NODISCARD
-        auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
+        auto ToString() const -> std::string_view override { return GetEventFormattedStr(GetType()); }
     };
 
     class AppTick : public Event {
@@ -79,7 +79,7 @@ namespace kaTe {
         AppTick() : Event{ EventType::APP_TICK_EVENT, APPLICATION_EVENT_CATEGORY } {}
 
         KT_NODISCARD
-        auto getType() const -> EventType override { return getStaticType(); }
+        auto GetType() const -> EventType override { return getStaticType(); }
 
         /**
          * Useful if we need to query the type of this event.
@@ -89,13 +89,13 @@ namespace kaTe {
         static auto getStaticType() -> EventType { return EventType::APP_TICK_EVENT; }
 
         KT_NODISCARD
-        auto displayData() const -> std::string override {
-            return fmt::format("{}", getFormattedStr(getType()).data());
+        auto DisplayData() const -> std::string override {
+            return fmt::format("{}", GetEventFormattedStr(GetType()).data());
         }
 
     protected:
         KT_NODISCARD
-        auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
+        auto ToString() const -> std::string_view override { return GetEventFormattedStr(GetType()); }
     };
 
     class AppUpdate : public Event {
@@ -103,22 +103,22 @@ namespace kaTe {
         AppUpdate() : Event{ EventType::APP_UPDATE_EVENT, APPLICATION_EVENT_CATEGORY } {}
 
         KT_NODISCARD
-        auto getType() const -> EventType override { return getStaticType(); }
+        auto GetType() const -> EventType override { return GetStaticType(); }
 
         /**
          * Useful if we need to query the type of this event.
          * See <code>kT::EventDispatcher</code> for usage
          * */
         KT_NODISCARD
-        static auto getStaticType() -> EventType { return EventType::APP_UPDATE_EVENT; }
+        static auto GetStaticType() -> EventType { return EventType::APP_UPDATE_EVENT; }
 
         KT_NODISCARD
-        auto displayData() const -> std::string override {
-            return fmt::format("{}", getFormattedStr(getType()).data());
+        auto DisplayData() const -> std::string override {
+            return fmt::format("{}", GetEventFormattedStr(GetType()).data());
         }
     protected:
         KT_NODISCARD
-        auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
+        auto ToString() const -> std::string_view override { return GetEventFormattedStr(GetType()); }
     };
 
     class AppRender: public Event {
@@ -126,22 +126,22 @@ namespace kaTe {
         AppRender() : Event{ EventType::APP_RENDER_EVENT, APPLICATION_EVENT_CATEGORY } {}
 
         KT_NODISCARD
-        auto getType() const -> EventType override { return getStaticType(); }
+        auto GetType() const -> EventType override { return GetStaticType(); }
 
         /**
          * Useful if we need to query the type of this event.
          * See <code>kT::EventDispatcher</code> for usage
          * */
         KT_NODISCARD
-        static auto getStaticType() -> EventType { return EventType::APP_RENDER_EVENT; }
+        static auto GetStaticType() -> EventType { return EventType::APP_RENDER_EVENT; }
 
         KT_NODISCARD
-        auto displayData() const -> std::string override {
-            return fmt::format("{}", getFormattedStr(getType()).data());
+        auto DisplayData() const -> std::string override {
+            return fmt::format("{}", GetEventFormattedStr(GetType()).data());
         }
     protected:
         KT_NODISCARD
-        auto toString() const -> std::string_view override { return getFormattedStr(getType()); }
+        auto ToString() const -> std::string_view override { return GetEventFormattedStr(GetType()); }
     };
 
 

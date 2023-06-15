@@ -3,23 +3,25 @@
  * Created by kate on 6/4/23.
  */
 
-#ifndef KATE_ENGINE_OPENGLSHADER_HH
-#define KATE_ENGINE_OPENGLSHADER_HH
+#ifndef KATE_ENGINE_OPENGL_SHADER_HH
+#define KATE_ENGINE_OPENGL_SHADER_HH
 
 // C++ Standard Library
 #include <string_view>
 #include <filesystem>
 
 // Third-Party Libraries
-#include "GL/glew.h"
+#include <GL/glew.h>
 
-#include "glm/mat4x4.hpp"
-#include "glm/vec3.hpp"
-#include "glm/vec4.hpp"
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/mat3x3.hpp>
+#include <glm/mat4x4.hpp>
 
 // Project headers
-#include "Renderer/Material/BaseShader.hh"
-#include "Tools/Common.hh"
+#include <Tools/Common.hh>
+#include <Renderer/Material/BaseShader.hh>
 
 namespace kaTe {
     class OpenGLShader : public BaseShader {
@@ -38,7 +40,7 @@ namespace kaTe {
          * Move assignment
          * @return *this
          * */
-        OpenGLShader & operator=(OpenGLShader && other) noexcept;
+        OpenGLShader& operator=(OpenGLShader && other) noexcept;
 
         /**
          * Construct Shader program from path to Vertex Shader source file directory
@@ -101,13 +103,13 @@ namespace kaTe {
         auto setUniformFloat(std::string_view name, float value) -> void;
 
         /**
-         * Sets the given matrix to the uniform matrix specified by the name. This function
+         * Sets the given 3D vector to the uniform specified by the name. This function
          * ensures this shader is being used before passing the data to the shader uniform, so
          * a previous call to Shader::use() is unnecessary
          * @param name name of the uniform
-         * @param mat value for the uniform
+         * @param vec value for the uniform
          * */
-        auto setUniformMat4(std::string_view name, const glm::mat4& mat) -> void;
+        auto setUniformVec2(std::string_view name, const glm::vec2& vec) -> void;
 
         /**
          * Sets the given 3D vector to the uniform specified by the name. This function
@@ -126,6 +128,24 @@ namespace kaTe {
          * @param vec value for the uniform
          * */
         auto setUniformVec4(std::string_view name, const glm::vec4& vec) -> void;
+
+        /**
+         * Sets the given matrix to the uniform matrix specified by the name. This function
+         * ensures this shader is being used before passing the data to the shader uniform, so
+         * a previous call to Shader::use() is unnecessary
+         * @param name name of the uniform
+         * @param mat value for the uniform
+         * */
+        auto setUniformMat3(std::string_view name, const glm::mat3& mat) -> void;
+
+        /**
+         * Sets the given matrix to the uniform matrix specified by the name. This function
+         * ensures this shader is being used before passing the data to the shader uniform, so
+         * a previous call to Shader::use() is unnecessary
+         * @param name name of the uniform
+         * @param mat value for the uniform
+         * */
+        auto setUniformMat4(std::string_view name, const glm::mat4& mat) -> void;
 
         /**
          * Perform cleanup
@@ -147,7 +167,7 @@ namespace kaTe {
             FRAGMENT_SHADER_TYPE,
             COUNT,
         };
-
+    private:
         /**
          * Returns an error message indicating the type of shader
          * This is a helper function for showing compilation status on Shader::compile()
@@ -192,6 +212,8 @@ namespace kaTe {
          * */
         auto showProgramStatus(GLenum status) const -> void;
 
+        auto GetFileData(const std::filesystem::path &path) -> std::string;
+    private:
         /**
          * Identifier of this Shader program
          * */

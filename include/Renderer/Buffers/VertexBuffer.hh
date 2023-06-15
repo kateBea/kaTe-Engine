@@ -9,6 +9,7 @@
 #include <string>
 #include <string_view>
 #include <utility>
+#include <memory>
 
 #include "Core/Assert.hh"
 #include "Tools/Common.hh"
@@ -90,6 +91,10 @@ namespace kaTe {
                 case ShaderDataType::INT3_TYPE:     return s_DefaultShaderIntSize * 3;
                 case ShaderDataType::INT4_TYPE:     return s_DefaultShaderIntSize * 4;
                 case ShaderDataType::BOOL_TYPE:     return 1;
+
+                case ShaderDataType::NONE:
+                case ShaderDataType::COUNT: [[fallthrough]];
+                default: KT_ASSERT(false, "Invalid shader data type");
             }
 
             KT_ASSERT(false, "Invalid shader data type");
@@ -114,6 +119,10 @@ namespace kaTe {
                 case ShaderDataType::INT3_TYPE:     return 3;
                 case ShaderDataType::INT4_TYPE:     return 4;
                 case ShaderDataType::BOOL_TYPE:     return 1;
+
+                case ShaderDataType::NONE:
+                case ShaderDataType::COUNT: [[fallthrough]];
+                default: KT_ASSERT(false, "Invalid shader data type");
             }
 
             KT_ASSERT(false, "Invalid shader data type");
@@ -121,22 +130,25 @@ namespace kaTe {
 
         static GLenum getOpenGLTypeFromShaderDataType(ShaderDataType type) {
             switch(type) {
-                case ShaderDataType::FLOAT_TYPE: return GL_FLOAT;
-                case ShaderDataType::FLOAT2_TYPE: return GL_FLOAT;
-                case ShaderDataType::FLOAT3_TYPE: return GL_FLOAT;
-                case ShaderDataType::FLOAT4_TYPE: return GL_FLOAT;
 
-                case ShaderDataType::MAT3_TYPE: return GL_FLOAT;
+                case ShaderDataType::FLOAT_TYPE:
+                case ShaderDataType::FLOAT2_TYPE:
+                case ShaderDataType::FLOAT3_TYPE:
+                case ShaderDataType::FLOAT4_TYPE:
+
+                case ShaderDataType::MAT3_TYPE:
                 case ShaderDataType::MAT4_TYPE: return GL_FLOAT;
 
-                case ShaderDataType::INT_TYPE: return GL_INT;
-                case ShaderDataType::INT2_TYPE: return GL_INT;
-                case ShaderDataType::INT3_TYPE: return GL_INT;
-                case ShaderDataType::INT4_TYPE: return GL_INT;
+                case ShaderDataType::INT_TYPE:
+                case ShaderDataType::INT2_TYPE:
+                case ShaderDataType::INT3_TYPE:
+                case ShaderDataType::INT4_TYPE:
                 case ShaderDataType::BOOL_TYPE: return GL_BOOL;
-            }
 
-            KT_ASSERT(false, "Invalid shader data type");
+                case ShaderDataType::NONE:
+                case ShaderDataType::COUNT: [[fallthrough]];
+                default: KT_ASSERT(false, "Invalid shader data type");
+            }
         }
     };
 
@@ -187,26 +199,26 @@ namespace kaTe {
         virtual ~VertexBuffer() = default;
 
         KT_NODISCARD
-        virtual auto getRenderId() const -> UInt32_T { return m_Id; }
+        virtual auto GetID() const -> UInt32_T { return m_Id; }
 
         // Temporary for OpenGL VertexBuffer
-        virtual auto bindBufferData() const -> void = 0;
-        virtual auto unbindBufferData() const -> void = 0;
+        virtual auto BindBufferData() const -> void = 0;
+        virtual auto UnbindBufferData() const -> void = 0;
 
-        virtual auto setBufferLayout(const BufferLayout& layout) -> void = 0;
+        virtual auto SetBufferLayout(const BufferLayout& layout) -> void = 0;
         KT_NODISCARD
-        virtual auto getBufferLayout() const -> const BufferLayout& = 0;
+        virtual auto GetBufferLayout() const -> const BufferLayout& = 0;
 
         /**
          * Returns the total size in bytes of the contents of this Vertex buffer
          * @return total size in bytes of the vertices of this buffer
          * */
         [[nodiscard]]
-        auto getSize() const -> std::size_t { return m_Size; }
+        auto GetSize() const -> std::size_t { return m_Size; }
 
-        auto isEmpty() const -> bool { return m_Size == 0; }
+        auto IsEmpty() const -> bool { return m_Size == 0; }
 
-        static auto createBuffer(const std::vector<float>& data) -> VertexBuffer*;
+        static auto CreateBuffer(const std::vector<float>& data) -> std::shared_ptr<VertexBuffer>;
 
     protected:
         UInt32_T m_Id{};

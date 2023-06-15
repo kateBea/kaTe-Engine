@@ -15,33 +15,36 @@
 #include <Core/Events/KeyEvents.hh>
 #include <Core/Events/MouseEvents.hh>
 
-#include <Platform/Window/WindowGLFW.hh>
-#include <Renderer/RenderContext.hh>
+#include <Platform/Window/CrossPlatformWindow.hh>
 #include <Renderer/OpenGL/OpenGLContext.hh>
+#include <Renderer/RenderContext.hh>
 
 namespace kaTe {
-    WindowGLFW::WindowGLFW(const WindowProperties& properties)
+    CrossPlatformWindow::CrossPlatformWindow(const WindowProperties& properties)
         :   Window{ properties }, m_Window{ nullptr }, m_Callback{}, m_VSync{ true } {}
 
-    auto WindowGLFW::onUpdate() -> void {
+    auto CrossPlatformWindow::onUpdate() -> void {
         glfwPollEvents();
+
+        // should probably not be here and most likely
+        // not be done when the window is minimized, it CPU waste
         m_Context->swapBuffers();
     }
 
-    auto WindowGLFW::enableVSync() -> void {
+    auto CrossPlatformWindow::enableVSync() -> void {
         glfwSwapInterval(1);
         m_VSync = true;
     }
 
-    auto WindowGLFW::disableVSync() -> void {
+    auto CrossPlatformWindow::disableVSync() -> void {
         glfwSwapInterval(0);
         m_VSync = false;
     }
 
-    auto WindowGLFW::init() -> void {
+    auto CrossPlatformWindow::init() -> void {
         KATE_CORE_LOGGER_INFO("Main Window initialization");
         initGLFW();
-        KATE_CORE_LOGGER_DEBUG("Creating Window GLFW. Name '{}'. Dimensions [{}, {}]",
+        KATE_CORE_LOGGER_INFO("Creating Window GLFW. Name '{}'. Dimensions [{}, {}]",
                                m_Properties.getName(), m_Properties.getWidth(), m_Properties.getHeight());
 
         m_Window = glfwCreateWindow(m_Properties.getWidth(), m_Properties.getHeight(), m_Properties.getName().c_str(), nullptr, nullptr);
@@ -57,7 +60,7 @@ namespace kaTe {
         setCallbacks();
     }
 
-    auto WindowGLFW::shutDown() -> void {
+    auto CrossPlatformWindow::shutDown() -> void {
         KATE_CORE_LOGGER_DEBUG("Shutting down Window GLFW. Name '{}'. Dimensions [{}, {}]",
                                m_Properties.getName(), m_Properties.getWidth(), m_Properties.getHeight());
 
@@ -69,12 +72,12 @@ namespace kaTe {
         glfwTerminate();
     }
 
-    auto WindowGLFW::setCallbacks() -> void {
+    auto CrossPlatformWindow::setCallbacks() -> void {
         glfwSetWindowUserPointer(m_Window, this);
 
         glfwSetWindowSizeCallback(m_Window,
             [](GLFWwindow* window, Int32_T width, Int32_T height) {
-                WindowGLFW* data{static_cast<WindowGLFW*>(glfwGetWindowUserPointer(window)) };
+                                      CrossPlatformWindow * data{static_cast<CrossPlatformWindow *>(glfwGetWindowUserPointer(window)) };
                 data->m_Properties.setWidth(width);
                 data->m_Properties.setHeight(height);
 
@@ -85,7 +88,7 @@ namespace kaTe {
 
         glfwSetWindowCloseCallback(m_Window,
             [](GLFWwindow* window) {
-                WindowGLFW* data{static_cast<WindowGLFW*>(glfwGetWindowUserPointer(window)) };
+                                       CrossPlatformWindow * data{static_cast<CrossPlatformWindow *>(glfwGetWindowUserPointer(window)) };
                 WindowCloseEvent wce{};
                 data->m_Callback(wce);
             }
@@ -93,7 +96,7 @@ namespace kaTe {
 
         glfwSetKeyCallback(m_Window,
             [](GLFWwindow *window, std::int32_t key, Int32_T scancode, Int32_T action, Int32_T mods) {
-                WindowGLFW* data{static_cast<WindowGLFW*>(glfwGetWindowUserPointer(window)) };
+                               CrossPlatformWindow * data{static_cast<CrossPlatformWindow *>(glfwGetWindowUserPointer(window)) };
 
                 switch (action) {
                     case GLFW_PRESS: {
@@ -117,7 +120,7 @@ namespace kaTe {
 
         glfwSetMouseButtonCallback(m_Window,
             [](GLFWwindow* window, Int32_T button, Int32_T action, Int32_T mods) {
-                WindowGLFW* data{static_cast<WindowGLFW*>(glfwGetWindowUserPointer(window)) };
+                                       CrossPlatformWindow * data{static_cast<CrossPlatformWindow *>(glfwGetWindowUserPointer(window)) };
 
                 switch (action) {
                     case GLFW_PRESS: {
@@ -136,7 +139,7 @@ namespace kaTe {
 
         glfwSetScrollCallback(m_Window,
             [](GLFWwindow* window, double xOffset, double yOffset) {
-                WindowGLFW* data{static_cast<WindowGLFW*>(glfwGetWindowUserPointer(window)) };
+                                  CrossPlatformWindow * data{static_cast<CrossPlatformWindow *>(glfwGetWindowUserPointer(window)) };
                 MouseScrollEvent msc{ xOffset, yOffset };
                 data->m_Callback(msc);
             }
@@ -144,7 +147,7 @@ namespace kaTe {
 
         glfwSetCursorPosCallback(m_Window,
             [](GLFWwindow* window, double x, double y) {
-                WindowGLFW* data{static_cast<WindowGLFW*>(glfwGetWindowUserPointer(window)) };
+                                     CrossPlatformWindow * data{static_cast<CrossPlatformWindow *>(glfwGetWindowUserPointer(window)) };
                 MouseMovedEvent mme{x, y};
                 data->m_Callback(mme);
             }
@@ -152,13 +155,13 @@ namespace kaTe {
 
         glfwSetCharCallback(m_Window,
             [](GLFWwindow* window, unsigned int codePoint) {
-                WindowGLFW* data{static_cast<WindowGLFW*>(glfwGetWindowUserPointer(window)) };
+                                CrossPlatformWindow * data{static_cast<CrossPlatformWindow *>(glfwGetWindowUserPointer(window)) };
                 KeyCharEvent kce{ codePoint };
                 data->m_Callback(kce);
             }
         );
     }
-    auto WindowGLFW::spawnOnCenter() const -> void {
+    auto CrossPlatformWindow::spawnOnCenter() const -> void {
 #if defined(_DEBUG) || defined(NDEBUG)
         Int32_T count{};
         GLFWmonitor** monitors{ glfwGetMonitors(&count) };
@@ -175,12 +178,12 @@ namespace kaTe {
     }
 
 
-    auto WindowGLFW::getActiveAPIContext() -> RenderContext* {
+    auto CrossPlatformWindow::getActiveAPIContext() -> RenderContext* {
         KATE_CORE_LOGGER_WARN("Default Context is for OpenGL");
         return new OpenGLContext();
     }
 
-    auto WindowGLFW::initGLFW() -> void {
+    auto CrossPlatformWindow::initGLFW() -> void {
         if (!g_GLFWInitSuccess) {
             auto ret{ glfwInit() };
             KT_ASSERT(ret == GLFW_TRUE, "Failed to initialized the GLFW library");

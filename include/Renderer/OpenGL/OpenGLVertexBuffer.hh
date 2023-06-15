@@ -48,7 +48,7 @@ namespace kaTe {
         /**
          * Mark this Vertex buffer as current
          * */
-        auto bindBufferData() const -> void override { glBindBuffer(GL_ARRAY_BUFFER, getRenderId()); }
+        auto BindBufferData() const -> void override { glBindBuffer(GL_ARRAY_BUFFER, GetID()); }
 
         /**
          * Releases the currently bound Vertex buffer object.
@@ -56,7 +56,7 @@ namespace kaTe {
          * previously bound, and restores client memory usage for that buffer object
          * target (if supported for that target). See: https://docs.gl/gl4/glBindBuffer
          * */
-        auto unbindBufferData() const -> void override { glBindBuffer(GL_ARRAY_BUFFER, 0); }
+        auto UnbindBufferData() const -> void override { glBindBuffer(GL_ARRAY_BUFFER, 0); }
 
         /**
          * Returns the total count of vertices of this Vertex buffer
@@ -67,10 +67,10 @@ namespace kaTe {
 
         auto load(const std::vector<float>& vertices, GLenum usage = GL_STATIC_DRAW) -> void;
 
-        auto setBufferLayout(const BufferLayout& layout) -> void override { m_Layout = layout; }
+        auto SetBufferLayout(const BufferLayout& layout) -> void override { m_Layout = layout; }
 
         KT_NODISCARD
-        auto getBufferLayout() const -> const BufferLayout& override { return m_Layout; }
+        auto GetBufferLayout() const -> const BufferLayout& override { return m_Layout; }
         /**
          * Releases resources from this Vertex buffer
          * */

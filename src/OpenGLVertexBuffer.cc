@@ -15,15 +15,15 @@ namespace kaTe {
     OpenGLVertexBuffer::OpenGLVertexBuffer(OpenGLVertexBuffer && other) noexcept
         :   m_Layout{ std::move(other.m_Layout) }, m_ValidId{ other.m_ValidId }
     {
-        m_Id = other.getRenderId();
+        m_Id = other.GetID();
 
         other.m_Id = 0;
         other.m_Size = 0;
     }
 
     auto OpenGLVertexBuffer::operator=(OpenGLVertexBuffer && other) noexcept -> OpenGLVertexBuffer & {
-        m_Id = other.getRenderId();
-        m_Size = other.getSize();
+        m_Id = other.GetID();
+        m_Size = other.GetSize();
 
         other.m_Id = 0;
         other.m_Size = 0;
@@ -37,10 +37,10 @@ namespace kaTe {
         }
 
         if (!vertices.empty()) {
-            bindBufferData();
+            BindBufferData();
             m_Size = vertices.size() * sizeof(float);
             glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Size), vertices.data(), usage);
-            unbindBufferData();
+            UnbindBufferData();
         }
     }
 }

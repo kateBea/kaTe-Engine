@@ -6,23 +6,24 @@
 #ifndef KATE_ENGINE_EXAMPLE_LAYER_HH
 #define KATE_ENGINE_EXAMPLE_LAYER_HH
 
-#include <glm/vec3.hpp>
+#include "glm/vec3.hpp"
 
-#include <Core/Layers/Layer.hh>
-#include <Core/Logger.hh>
+#include "Core/Layers/Layer.hh"
+#include "Core/Logger.hh"
 
+#include "Core/Application.hh"
+#include "Platform/InputManager.hh"
 #include "Renderer/Buffers/IndexBuffer.hh"
 #include "Renderer/Buffers/VertexBuffer.hh"
+#include "Renderer/Camera/OrthographicCamera.hh"
+#include "Renderer/Camera/OrthographicCameraController.hh"
+#include "Renderer/Material/Texture2D.hh"
 #include "Renderer/OpenGL/OpenGLShader.hh"
-#include <Core/EngineManager.hh>
-#include <Platform/InputManager.hh>
-#include <Renderer/Material/Texture2D.hh>
-#include <Renderer/Camera/OrthographicCamera.hh>
 
 namespace kaTe {
-    class RuntimeLayer : public Layer {
+    class TestLayer : public Layer {
     public:
-        RuntimeLayer() : Layer{ "Example" } {}
+        TestLayer() : Layer{ "Test Layer" } {}
 
         auto onAttach() -> void override;
         auto onDetach() -> void override;
@@ -31,7 +32,6 @@ namespace kaTe {
         auto onImGuiRender() -> void override;
 
     private:
-        std::shared_ptr<OpenGLShader> m_Shader{};
         std::shared_ptr<OpenGLShader> m_ColorShader{};
         std::shared_ptr<OpenGLShader> m_ColorTextureShader{};
         std::shared_ptr<VertexBuffer> m_VertexBuffer{};
@@ -39,16 +39,12 @@ namespace kaTe {
 
         std::shared_ptr<VertexBuffer> m_SquareVertexBuffer{};
         std::shared_ptr<IndexBuffer> m_SquareIndexBuffer{};
-        std::shared_ptr<OrthographicCamera> m_Camera{};
+        std::shared_ptr<OrthographicCameraController> m_CameraController{};
 
         glm::vec3 m_CameraPosition{};
         double m_CameraMovementSpeed{ 3.0 };
 
-        double m_CameraRotation{ };
-        double m_CameraRotationSpeed{ 90.0 };
-
         glm::vec3 m_SquarePos{};
-        double m_SquareMoveSpeed{ 3.0 };
         glm::vec3 m_SquareColor{};
 
         std::shared_ptr<Texture> m_Texture{};

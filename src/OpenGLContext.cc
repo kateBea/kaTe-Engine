@@ -7,8 +7,8 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
+#include "Core/Application.hh"
 #include "Core/Assert.hh"
-#include "Core/EngineManager.hh"
 #include "Core/Logger.hh"
 #include "Renderer/OpenGL/OpenGLContext.hh"
 #include "Tools/Common.hh"
@@ -18,7 +18,7 @@ namespace kaTe {
     auto OpenGLContext::init(std::any windowHandle) -> void {
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*
-            m_Handle = std::any_cast<GLFWwindow*>(EngineManager::get().getMainWindow().getNativeWindow());
+            m_Handle = std::any_cast<GLFWwindow*>(Application::Get().GetMainWindow().getNativeWindow());
             KT_ASSERT(m_Handle, "OpenGLContext::init() window handle is NULL");
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, KT_OPENGL_VERSION_MAJOR);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, KT_OPENGL_VERSION_MINOR);

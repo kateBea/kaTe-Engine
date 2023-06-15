@@ -24,26 +24,22 @@ namespace kaTe {
 			COUNT,
 		};
 
-        virtual auto init() -> void = 0;
-		virtual auto setClearColor(const glm::vec4& color) -> void = 0;
-		virtual auto setClearColor(float red, float green, float blue, float alpha) -> void = 0;
-		virtual auto clear(BufferBit bufferBits) -> void = 0;
+        virtual auto Init() -> void = 0;
+        virtual auto Shutdown() -> void = 0;
+		virtual auto SetClearColor(const glm::vec4& color) -> void = 0;
+		virtual auto SetClearColor(float red, float green, float blue, float alpha) -> void = 0;
+		virtual auto Clear(BufferBit bufferBits) -> void = 0;
 
-		virtual auto drawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
-        virtual auto drawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
+		virtual auto DrawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
+        virtual auto DrawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
 
-        // RendererAPI::draw() possible overloads
-        //
-        // virtual auto draw(const Mesh& mesh) -> void = 0;
-        virtual auto draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void = 0;
-		virtual auto draw(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
-		// There's no reason to draw a mesh indexed as it may probably have its own indices
-	
-		// virtual auto draw(const Shader& shader, const Mesh& mesh) -> void = 0;
-		virtual auto draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void = 0;
-        virtual auto draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
+        virtual auto Draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void = 0;
+		virtual auto Draw(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
 
-		virtual auto setViewPort(UInt32_T width, UInt32_T height) -> void = 0;
+		virtual auto Draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void = 0;
+        virtual auto Draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
+
+		virtual auto SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void = 0;
 
         virtual ~RendererAPI() = default;
     private:

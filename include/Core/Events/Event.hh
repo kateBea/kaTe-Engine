@@ -101,34 +101,34 @@ namespace kaTe {
          * this event in scenarios where polymorphism is used
          * */
         KT_NODISCARD
-        virtual auto getType() const -> EventType = 0;
+        virtual auto GetType() const -> EventType = 0;
 
         KT_NODISCARD
-        virtual auto getCategoryFlags() const -> EventCategory { return m_Categories; };
+        virtual auto GetCategoryFlags() const -> EventCategory { return m_Categories; };
 
         /**
          * Returns the string representation of this Event.
          * Mainly for debugging purposes
          * */
         KT_NODISCARD
-        auto getNameStr() const -> std::string_view { return toString(); };
+        auto GetNameStr() const -> std::string_view { return ToString(); };
 
         /**
          * Tells whether this event has been handled or not
          * @returns true if the event has been handled, false otherwise
          * */
         KT_NODISCARD
-        auto isHandled() const -> bool { return m_Handled; }
+        auto IsHandled() const -> bool { return m_Handled; }
 
         KT_NODISCARD
-        auto isInCategory(EventCategory cat) const -> bool { return getCategoryFlags() & cat; }
+        auto isInCategory(EventCategory cat) const -> bool { return GetCategoryFlags() & cat; }
 
         /**
          * Returns a formatted string representing the data, if any,
          * that this event holds. Used for debugging purposes
          * */
         KT_NODISCARD
-        virtual auto displayData() const -> std::string = 0;
+        virtual auto DisplayData() const -> std::string = 0;
 
         virtual ~Event() = default;
     private:
@@ -146,7 +146,7 @@ namespace kaTe {
          * interface
          * */
         KT_NODISCARD
-        virtual auto toString() const -> std::string_view = 0;
+        virtual auto ToString() const -> std::string_view = 0;
 
         /**
          * In case we want to avoid propagating an Event we mark it as handled.
@@ -162,11 +162,11 @@ namespace kaTe {
 
     /**
      * This concept ensures type safety determining in for the dispatcher method.
-     * If the event defines the static member function getStaticType()
+     * If the event defines the static member function GetStaticType()
      * (Ideally all events should implement it)
      * */
     template<typename EventClassType>
-    concept HasStaticGetType = requires (EventClassType) { EventClassType::getStaticType(); };
+    concept HasStaticGetType = requires (EventClassType) { EventClassType::GetStaticType(); };
 
     /**
      * This a mechanism that handles the distribution and routing of events
@@ -195,7 +195,7 @@ namespace kaTe {
             requires HasStaticGetType<EventClassType>
         KT_NODISCARD
         auto forward(EventFunc_T<EventClassType> func) -> bool {
-            if (m_Event.getType() == EventClassType::getStaticType()) {
+            if (m_Event.GetType() == EventClassType::GetStaticType()) {
                 m_Event.m_Handled = func(*(static_cast<EventClassType*>(&m_Event)));
                 return true;
             }
@@ -215,7 +215,7 @@ namespace kaTe {
      * @returns EventType string representation
      * */
     KT_NODISCARD
-    constexpr auto getFormattedStr(EventType type) -> std::string_view {
+    constexpr auto GetEventFormattedStr(EventType type) -> std::string_view {
         switch(type) {
             case EventType::EMPTY_EVENT: return "EMPTY_EVENT";
 
@@ -255,7 +255,7 @@ namespace kaTe {
      * Helper to print an Event to console
      * */
     inline std::ostream& operator<<(std::ostream& out, const Event& e) {
-        return out << "Type: " << e.getNameStr();
+        return out << "Type: " << e.GetNameStr();
     }
 
 }   // END NAMESPACE kaTe

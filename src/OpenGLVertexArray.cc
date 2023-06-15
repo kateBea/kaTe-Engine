@@ -15,15 +15,15 @@ namespace kaTe {
     }
 
     auto OpenGLVertexArray::useVertexBuffer(std::shared_ptr<VertexBuffer> buffer) -> void {
-        KT_ASSERT(!buffer->isEmpty(), "Vertex Buffer is empty");
+        KT_ASSERT(!buffer->IsEmpty(), "Vertex Buffer is empty");
         bindVertexArray();
-        buffer->bindBufferData();
+        buffer->BindBufferData();
 
         UInt32_T index{};
-        for (const auto&i: buffer->getBufferLayout()) {
+        for (const auto&i: buffer->GetBufferLayout()) {
             glEnableVertexAttribArray(index);
             glVertexAttribPointer(index, i.getAttributeCount(), i.getOpenGLAttributeDataType(),
-                                  !i.isNormalized() ? GL_FALSE : GL_TRUE, buffer->getBufferLayout().getStride(), (const void*)i.getOffset());
+                                  !i.isNormalized() ? GL_FALSE : GL_TRUE, buffer->GetBufferLayout().getStride(), (const void*)i.getOffset());
             ++index;
         }
     }

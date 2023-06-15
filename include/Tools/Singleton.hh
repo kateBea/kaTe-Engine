@@ -18,35 +18,38 @@ namespace kaTe {
     public:
         using Value_T = Derived;
         using ValueRef_T = Derived&;
-        using SingletonPtr_T = Value_T*;
+        using ValuePtr_T = Value_T*;
 
     public:
         Singleton() {
             KT_ASSERT(!s_Instance, "Singleton instance already exists!");
-            s_Instance = static_cast<SingletonPtr_T>(this);
+            s_Instance = static_cast<ValuePtr_T>(this);
         }
 
         /**
          * Return a reference to the single instance
          * @returns single instance
          * */
-        static auto get() -> ValueRef_T { static Value_T obj{}; return *s_Instance; }
+        static auto Get() -> ValueRef_T { static Value_T obj{}; return *s_Instance; }
 
         /**
          * Return a pointer to the single instance
          * @returns pointer single instance
          * */
-        static auto getPtr() -> SingletonPtr_T { return s_Instance; }
+        static auto GetPtr() -> ValuePtr_T { return s_Instance; }
 
-    private:
+    public:
         // Forbidden operations for Singleton
-        Singleton(const ValueRef_T) = delete;
-        auto operator=(const ValueRef_T) -> ValueRef_T = delete;
+        Singleton(const Singleton&) = delete;
+        auto operator=(const Singleton&) -> ValueRef_T& = delete;
+
+        Singleton(Singleton&&) = delete;
+        auto operator=(Singleton&&) -> Singleton& = delete;
 
     protected:
         virtual ~Singleton() = default;
 
-        inline static SingletonPtr_T s_Instance;
+        inline static ValuePtr_T s_Instance;
     };
 
 }   // END NAMESPACE kT

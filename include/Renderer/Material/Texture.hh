@@ -12,10 +12,10 @@ namespace kaTe {
     public:
         Texture() = default;
         virtual ~Texture() = default;
-        virtual auto getWidth() -> UInt32_T = 0;
-        virtual auto getHeight() -> UInt32_T = 0;
+        virtual auto GetWidth() -> UInt32_T = 0;
+        virtual auto GetHeight() -> UInt32_T = 0;
 
-        virtual auto bind(UInt32_T slot = 0) -> void = 0;
+        virtual auto Bind(UInt32_T slot = 0) -> void = 0;
 
     private:
 

@@ -29,29 +29,25 @@ namespace kaTe {
      * */
     class LayerStack {
     public:
-        using LayerPtr = std::shared_ptr<Layer>;
-        using LayerContainerIter = std::vector<LayerPtr>::iterator;
-        using LayerContainerReverseIter = std::vector<LayerPtr>::reverse_iterator;
-
-        explicit LayerStack() : m_Layers{}, m_LayerIndex{} {}
+        explicit LayerStack() = default;
 
         auto init() -> void;
         auto shutDown() -> void { /*Empty for now */ }
 
-        auto addLayer(LayerPtr layer) -> void;
-        auto addOverlay(LayerPtr overlay) -> void;
+        auto addLayer(std::shared_ptr<Layer> layer) -> void;
+        auto addOverlay(std::shared_ptr<Layer> overlay) -> void;
 
-        auto popLayer(LayerPtr layer) -> void;
-        auto popOverlay(LayerPtr overlay) -> void;
+        auto popLayer(std::shared_ptr<Layer> layer) -> void;
+        auto popOverlay(std::shared_ptr<Layer> overlay) -> void;
 
-        KT_NODISCARD auto begin() -> LayerContainerIter { return m_Layers.begin(); }
-        KT_NODISCARD auto end() -> LayerContainerIter { return m_Layers.end(); }
+        auto begin() -> std::vector<std::shared_ptr<Layer>>::iterator { return m_Layers.begin(); }
+        auto end() -> std::vector<std::shared_ptr<Layer>>::iterator { return m_Layers.end(); }
 
-        KT_NODISCARD auto rbegin() -> LayerContainerReverseIter { return m_Layers.rbegin(); }
-        KT_NODISCARD auto rend() -> LayerContainerReverseIter { return m_Layers.rend(); }
+        auto rbegin() -> std::vector<std::shared_ptr<Layer>>::reverse_iterator { return m_Layers.rbegin(); }
+        auto rend() -> std::vector<std::shared_ptr<Layer>>::reverse_iterator { return m_Layers.rend(); }
 
     private:
-        std::vector<LayerPtr> m_Layers{};
+        std::vector<std::shared_ptr<Layer>> m_Layers{};
         UInt32_T m_LayerIndex{};
     };
 

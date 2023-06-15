@@ -15,11 +15,12 @@
 #include <Core/Logger.hh>
 #include <Core/KeyCodes.hh>
 
-#include "Core/EngineManager.hh"
+#include "Core/Application.hh"
 #include <Tools/Common.hh>
 
-#include <Core/Layers/ImGuiLayer.hh>
+#include "Core/Layers/ImGuiLayer.hh"
 #include "Platform/InputManager.hh"
+#include <Core/TimeManager.hh>
 
 namespace kaTe {
     ImGuiLayer::ImGuiLayer() noexcept
@@ -50,7 +51,7 @@ namespace kaTe {
 
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*
-            GLFWwindow* window{ std::any_cast<GLFWwindow*>(EngineManager::get().getMainWindow().getNativeWindow()) };
+            GLFWwindow* window{ std::any_cast<GLFWwindow*>(Application::Get().GetMainWindow().getNativeWindow()) };
 
             // Setup Platform/Renderer backends
             ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -131,7 +132,7 @@ namespace kaTe {
 
     auto ImGuiLayer::endFrame() -> void {
         ImGuiIO& io{ ImGui::GetIO() };
-        Window& win{ EngineManager::get().getMainWindow() };
+        Window& win{Application::Get().GetMainWindow() };
         io.DisplaySize = ImVec2(win.getWidth(), win.getHeight());
 
         ImGui::Render();

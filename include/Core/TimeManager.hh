@@ -7,6 +7,11 @@
 
 #include <ratio>
 #include <chrono>
+#include <string>
+
+#include <fmt/chrono.h>
+
+#include <Tools/Common.hh>
 
 namespace kaTe {
     enum class TimeUnit {
@@ -20,35 +25,75 @@ namespace kaTe {
 
     class TimeManager {
     public:
-        auto updateDeltaTime() -> void {
+        static auto Init() {
+            s_InitTimePoint = Clock_T::now();
+        }
+
+        static auto UpdateDeltaTime() -> void {
             TimePoint_T now{ Clock_T::now() };
-            m_TimeStep = std::chrono::duration_cast<Sec_T>(now - m_LasFrameTime).count();
-            m_LasFrameTime = now;
+            s_TimeStep = std::chrono::duration_cast<Sec_T>(now - s_LasFrameTime).count();
+            s_LasFrameTime = now;
         }
 
-        auto getDeltaTime(TimeUnit unit = TimeUnit::SECONDS) -> double {
+        static auto GetDeltaTime(TimeUnit unit = TimeUnit::SECONDS) -> double {
             switch (unit) {
-                case TimeUnit::SECONDS:         return m_TimeStep;
-                case TimeUnit::MILLISECONDS:    return m_TimeStep / SEC_TO_MILLI;
-                case TimeUnit::MICROSECONDS:    return m_TimeStep / SEC_TO_MICRO;
-                case TimeUnit::NANOSECONDS:     return m_TimeStep / SEC_TO_NANO;
+                case TimeUnit::SECONDS:         return s_TimeStep;
+                case TimeUnit::MILLISECONDS:    return s_TimeStep / SEC_TO_MILLI;
+                case TimeUnit::MICROSECONDS:    return s_TimeStep / SEC_TO_MICRO;
+                case TimeUnit::NANOSECONDS:     return s_TimeStep / SEC_TO_NANO;
+
+                case TimeUnit::NONE:
+                    [[fallthrough]];
+                case TimeUnit::COUNT:
+                    [[fallthrough]];
+                default:
+                    return -1;
             }
         }
 
-        // Returns amount of time between this time_point and the clock's epoch
-        static auto getTime(TimeUnit unit = TimeUnit::SECONDS) -> double {
+        static auto GetTime(TimeUnit unit = TimeUnit::SECONDS) -> double {
             switch (unit) {
-                case TimeUnit::SECONDS:         return Clock_T::now().time_since_epoch().count();
-                case TimeUnit::MILLISECONDS:    return Clock_T::now().time_since_epoch().count() / SEC_TO_MILLI;
-                case TimeUnit::MICROSECONDS:    return Clock_T::now().time_since_epoch().count() / SEC_TO_MICRO;
-                case TimeUnit::NANOSECONDS:     return Clock_T::now().time_since_epoch().count() / SEC_TO_NANO;
+                case TimeUnit::SECONDS:         return std::chrono::duration_cast<Sec_T>(Clock_T::now() - s_InitTimePoint).count();
+                case TimeUnit::MILLISECONDS:    return std::chrono::duration_cast<Milli_T>(Clock_T::now() - s_InitTimePoint).count();
+                case TimeUnit::MICROSECONDS:    return std::chrono::duration_cast<Micro_T>(Clock_T::now() - s_InitTimePoint).count();
+                case TimeUnit::NANOSECONDS:     return std::chrono::duration_cast<Nano_T>(Clock_T::now() - s_InitTimePoint).count();
+
+                case TimeUnit::NONE:
+                    [[fallthrough]];
+                case TimeUnit::COUNT:
+                    [[fallthrough]];
+                default:
+                    return -1;
             }
         }
 
+        static auto ToString(double time) {
+            using namespace std::literals::chrono_literals;
+            std::chrono::hours hours{ (ULongLong_T)(time / HOURS_TO_SECONDS) };
+            std::chrono::minutes minutes{ (ULongLong_T)(((ULongLong_T)(time) % (ULongLong_T)(HOURS_TO_SECONDS)) / MINUTES_TO_SECONDS) };
+            std::chrono::seconds seconds{ (ULongLong_T)(((ULongLong_T)(time) % (ULongLong_T)(HOURS_TO_SECONDS)) % MINUTES_TO_SECONDS) };
+            return fmt::format("{:%H:%M:%S}", hours + minutes + seconds);
+        }
+
+    public:
+        static constexpr UInt32_T HOURS_TO_SECONDS{ 3600 };
+        static constexpr UInt32_T MINUTES_TO_SECONDS{ 60 };
+
+        static constexpr UInt32_T SEC_TO_MILLI{ 1000 };
+        static constexpr UInt32_T SEC_TO_MICRO{ 1000'000 };
+        static constexpr UInt32_T SEC_TO_NANO{ 1000'000'000 };
     private:
-        static constexpr double SEC_TO_MILLI{ 1000.0 };
-        static constexpr double SEC_TO_MICRO{ 1000'000.0 };
-        static constexpr double SEC_TO_NANO{ 1000'000'000.0 };
+        static auto TransformToSeconds(double time, TimeUnit unit) -> double {
+            switch (unit) {
+                case TimeUnit::MILLISECONDS:
+                    return time / SEC_TO_MILLI;
+                case TimeUnit::MICROSECONDS:
+                    return time / SEC_TO_MICRO;
+                case TimeUnit::NANOSECONDS:
+                    return time / SEC_TO_NANO;
+                default: return -1;
+            }
+        }
 
         using Nano_T = std::chrono::duration<double, std::ratio<1, 1000000000>>;
         using Micro_T = std::chrono::duration<double, std::ratio<1, 1000000>>;
@@ -58,9 +103,9 @@ namespace kaTe {
         using TimePoint_T   =  std::chrono::time_point<Clock_T>;
 
         // Time in seconds
-        double m_TimeStep{};
-
-        TimePoint_T m_LasFrameTime{};
+        inline static double s_TimeStep{};
+        inline static TimePoint_T s_LasFrameTime{};
+        inline static TimePoint_T s_InitTimePoint{};
     };
 }
 

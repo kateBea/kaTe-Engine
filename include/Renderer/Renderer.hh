@@ -10,7 +10,19 @@
 #include "Renderer/Buffers/VertexBuffer.hh"
 #include "Renderer/Camera/OrthographicCamera.hh"
 
+#include <Renderer/Material/Texture.hh>
+
+#include <Tools/Common.hh>
+
 namespace kaTe {
+    struct DrawData {
+        std::shared_ptr<BaseShader> shader{};
+        std::shared_ptr<VertexBuffer> vertexBuffer{};
+        std::shared_ptr<IndexBuffer> indexBuffer{};
+        std::vector<std::shared_ptr<Texture>> textures{};
+        glm::mat4 transform{ glm::mat4(1.0) };
+    };
+
     class Renderer {
     public:
         explicit Renderer() = default;
@@ -22,32 +34,23 @@ namespace kaTe {
             COUNT,
         };
 
-        static auto init() -> void;
+        static auto Init() -> void;
 
-        static auto beginScene(std::shared_ptr<OrthographicCamera> camera) -> void;
+        static auto BeginScene(std::shared_ptr<OrthographicCamera> camera) -> void;
+        static auto EndScene() -> void;
 
-        // Renderer::beginScene() possible overloads
-        //
-        // static auto beginScene(const Camera& camera) -> void;
-        // static auto beginScene(const Camera& camera, const Light& light) -> void;
+        static auto Submit(std::shared_ptr<VertexBuffer> vertexBuffer) -> void;
+        static auto Submit(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
+        static auto Submit(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, const glm::mat4 &transform = glm::mat4(1.0)) -> void;
 
-        static auto endScene() -> void;
+        static auto Submit(const DrawData& data) -> void;
+        static auto Flush() -> void;
 
-        // Renderer::submit() possible overloads
-        //
-        // virtual auto submit(const Mesh& mesh) -> void = 0;
-        static auto submit(std::shared_ptr<VertexBuffer> vertexBuffer) -> void;
-        static auto submit(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
-        static auto submit(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, const glm::mat4 &transform = glm::mat4(1.0)) -> void;
+        static auto ShutDown() -> void;
 
-        static auto flush() -> void;
+        static auto OnWindowResize(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void;
 
-        static auto shutDown() -> void;
-
-        /**
-		 * Returns the currently active Graphics Rendering API
-		 * */
-        static auto getActiveAPI() -> GraphicsAPI { return s_ActiveAPI;  }
+        static auto GetActiveGraphicsAPI() -> GraphicsAPI { return s_ActiveAPI;  }
     private:
         // Forbidden operations
         Renderer(const Renderer&) = delete;
@@ -55,7 +58,6 @@ namespace kaTe {
 
         Renderer(Renderer&&) = delete;
         auto operator=(Renderer&&) -> Renderer& = delete;
-
     private:
         // States the active Graphics Rendering API for the current window.
         // For the time being, we only have one main window, therefore, this attribute is going
@@ -67,7 +69,7 @@ namespace kaTe {
             std::shared_ptr<OrthographicCamera> camera{};
         };
 
-        inline static SceneData s_SceneData{ .camera{} };
+        inline static SceneData* s_SceneData{};
     };
 }
 

@@ -7,18 +7,22 @@
 #include <string>
 
 // Third-Party Libraries
+#include <GL/glew.h>
+
+#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
+#include <glm/mat3x3.hpp>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <fmt/core.h>
 
 // Project Libraries
-#include "Renderer/OpenGL/OpenGLShader.hh"
-#include <Core/Assert.hh>
 #include <Core/Logger.hh>
 #include <Tools/Common.hh>
+#include <Renderer/OpenGL/OpenGLShader.hh>
+
 
 namespace kaTe {
     OpenGLShader::OpenGLShader(const std::filesystem::path& vertexSourceDir, const std::filesystem::path& fragmentSourceDir) {
@@ -39,27 +43,19 @@ namespace kaTe {
                 throw std::runtime_error("Error when creating shader program");
         }
 
-        std::ifstream vertexShaderFile{ vShaderPath };
-        std::ifstream pixelShaderFile{ fShaderPath };
+        auto vertexShaderData{ GetFileData(vShaderPath) };
+        auto fragmentShaderData{ GetFileData(fShaderPath) };
 
-        if (!vertexShaderFile.is_open())
-            throw std::runtime_error("could not open vertex Shader file...");
+        build(vertexShaderData.c_str() , fragmentShaderData.c_str());
+    }
 
-        if (!pixelShaderFile.is_open())
-            throw std::runtime_error("could not open fragment Shader file...");
+    auto OpenGLShader::GetFileData(const std::filesystem::path &path) -> std::string {
+        std::ifstream file{ path, std::ios::binary };
 
-        std::ostringstream vertexShaderStream{};
-        std::ostringstream pixelShaderStream{};
+        if (!file.is_open())
+            throw std::runtime_error("Failed to open Shader file for OpenGL");
 
-        // read file buffer into the streams
-        vertexShaderStream << vertexShaderFile.rdbuf();
-        pixelShaderStream << pixelShaderFile.rdbuf();
-
-        // close files
-        vertexShaderFile.close();
-        pixelShaderFile.close();
-
-        build(vertexShaderStream.str().c_str() , pixelShaderStream.str().c_str());
+        return std::string { std::istreambuf_iterator<std::string::value_type>(file), std::istreambuf_iterator<std::string::value_type>() };
     }
 
     auto OpenGLShader::compile(const char* content, GLenum shaderType) -> UInt32_T {
@@ -216,5 +212,40 @@ namespace kaTe {
         m_Id = other.getProgram();
         other.m_Id = 0;
         return *this;
+    }
+
+    auto OpenGLShader::setUniformVec2(std::string_view name, const glm::vec2 &vec) -> void {
+        bind();
+        auto ret{ glGetUniformLocation(getProgram(), name.data()) };
+
+        if (ret == -1)
+            KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
+        else {
+            // we pass we 1 because the shader uniform is not expected to be an array
+            glUniform2fv(ret, 1, glm::value_ptr(vec));
+        }
+    }
+
+    auto OpenGLShader::setUniformMat3(std::string_view name, const glm::mat3& mat) -> void {
+        bind();
+        auto ret{ glGetUniformLocation(getProgram(), name.data()) };
+
+        if (ret == -1)
+            KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
+        else {
+            /*
+             * If transpose is GL_FALSE, each matrix is assumed to be supplied in column major order.
+             * If transpose is GL_TRUE, each matrix is assumed to be supplied in row major order.
+             * The count argument indicates the number of matrices to be passed. A count of 1
+             * should be used if modifying the value of a single matrix, and a count greater
+             * than 1 can be used to modify an array of matrices.
+             * from: https://docs.gl/gl4/glUniform
+             *
+             * we pass GL_FALSE because glm::mat4 has each row stored contiguously in memory by default,
+             * meaning the elements of the first row are stored first, followed by the
+             * elements of the second row, and so on.
+             * */
+            glUniformMatrix3fv(ret, 1, GL_FALSE, glm::value_ptr(mat));
+        }
     }
 }

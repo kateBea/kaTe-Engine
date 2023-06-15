@@ -18,22 +18,22 @@
 namespace kaTe {
 	class RenderCommand {
 	public:
-        static auto init() -> void;
-        static auto shutDown() -> void;
+        static auto Init() -> void;
+        static auto ShutDown() -> void;
 
-        static auto clear(RendererAPI::BufferBit bufferBit) -> void;
-        static auto setClearColor(const glm::vec4& color) -> void;
-        static auto setClearColor(float red, float green, float blue, float alpha) -> void;
+        static auto Clear(RendererAPI::BufferBit bufferBit) -> void;
+        static auto SetClearColor(const glm::vec4& color) -> void;
+        static auto SetClearColor(float red, float green, float blue, float alpha) -> void;
 
-        static auto drawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
-        static auto drawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
+        static auto DrawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
+        static auto DrawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
 
-        static auto draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void;
-        static auto draw(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
-        static auto draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void;
-        static auto draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
+        static auto Draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void;
+        static auto Draw(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
+        static auto Draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void;
+        static auto Draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
 
-        static auto refreshViewPort(UInt32_T width, UInt32_T height) -> void;
+        static auto UpdateViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void;
 
 	private:
         inline static RendererAPI* s_ActiveRendererAPI{ nullptr };

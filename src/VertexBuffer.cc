@@ -5,17 +5,16 @@
 #include "Renderer/Buffers/VertexBuffer.hh"
 #include <Renderer/OpenGL/OpenGLVertexBuffer.hh>
 
-#include <Core/EngineManager.hh>
+#include <Core/Application.hh>
 
 #include <Renderer/Renderer.hh>
 #include <Core/Logger.hh>
 
 namespace kaTe {
-    auto VertexBuffer::createBuffer(const std::vector<float>& data) -> VertexBuffer* {
-        EngineManager& engine{ EngineManager::get() };
-        switch(Renderer::getActiveAPI()) {
+    auto VertexBuffer::CreateBuffer(const std::vector<float>& data) -> std::shared_ptr<VertexBuffer> {
+        switch(Renderer::GetActiveGraphicsAPI()) {
             case Renderer::GraphicsAPI::OPENGL_API:
-                return new OpenGLVertexBuffer(data);
+                return std::make_shared<OpenGLVertexBuffer>(data);
             default:
                 KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API");
                 return nullptr;

@@ -20,7 +20,7 @@ namespace kaTe {
         // STB image expects width and height and channel to be signed integers
         Int32_T width{}, height{}, channels{};
 
-        auto fileDir{ getByteChar(path) };
+        auto fileDir{GetByteChar(path) };
         stbi_set_flip_vertically_on_load(true);
         stbi_uc* imageData{ stbi_load(fileDir.c_str(), &width, &height, &channels, 4) };
 
@@ -29,7 +29,7 @@ namespace kaTe {
             m_Height = height;
             m_Channels = channels;
             glCreateTextures(GL_TEXTURE_2D, 1, &m_Id);
-            setupTexture(imageData);
+            SetupTexture(imageData);
 
             // free the data if we do not want to keep it
             if (!m_RetainData)
@@ -41,15 +41,15 @@ namespace kaTe {
 
     }
 
-    auto OpenGLTexture2D::bind(UInt32_T slot) -> void {
+    auto OpenGLTexture2D::Bind(UInt32_T slot) -> void {
         glBindTextureUnit(slot, m_Id);
     }
 
     auto OpenGLTexture2D::operator=(OpenGLTexture2D &&other) noexcept -> OpenGLTexture2D& {
-        m_Id        = other.getId();
-        m_Width     = other.getWidth();
-        m_Height    = other.getHeight();
-        m_Channels  = other.getChannels();
+        m_Id        = other.GetId();
+        m_Width     = other.GetWidth();
+        m_Height    = other.GetHeight();
+        m_Channels  = other.GetChannels();
         m_TextureFileData = std::move(other.m_TextureFileData);
 
         other.m_Id          = 0;
@@ -61,8 +61,8 @@ namespace kaTe {
     }
 
     OpenGLTexture2D::OpenGLTexture2D(OpenGLTexture2D &&other) noexcept
-        :   m_Id{ other.getId() }, m_Width{ other.getWidth() }, m_Height{ other.getHeight() }
-        ,   m_Channels{ other.getChannels() }, m_TextureFileData{ std::move(other.m_TextureFileData) }
+        :   m_Id{ other.GetId() }, m_Width{other.GetWidth() }, m_Height{other.GetHeight() }
+        ,   m_Channels{other.GetChannels() }, m_TextureFileData{ std::move(other.m_TextureFileData) }
     {
         other.m_Id          = 0;
         other.m_Width       = 0;
@@ -70,36 +70,31 @@ namespace kaTe {
         other.m_Channels    = 0;
     }
 
-    auto OpenGLTexture2D::setupTexture(const stbi_uc* data) -> void {
-        // Specifies the sized internal format to be used to store texture image data
-        GLenum internalFormat{};
-        // Specifies the format of the pixel data
-        GLenum dataFormat{};
-
+    auto OpenGLTexture2D::SetupTexture(const stbi_uc* data) -> void {
         switch (m_Channels) {
             case 3:
-                dataFormat = GL_RGB;
-                internalFormat = GL_RGB8;
+                m_Format = GL_RGB;
+                m_InternalFormat = GL_RGB8;
                 break;
             case 4:
-                dataFormat = GL_RGBA;
-                internalFormat = GL_RGBA8;
+                m_Format = GL_RGBA;
+                m_InternalFormat = GL_RGBA8;
                 break;
         }
-        KT_ASSERT(dataFormat & internalFormat, "Texture data format unsupported");
+        KT_ASSERT(m_Format & m_InternalFormat, "Texture data format unsupported");
 
-        glTextureStorage2D(m_Id, 1, internalFormat, m_Width, m_Height);
+        glTextureStorage2D(m_Id, 1, m_InternalFormat, m_Width, m_Height);
 
-        // Mipmap
         glGenerateTextureMipmap(m_Id);
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
         glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_Id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTextureSubImage2D(m_Id, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+        glTextureSubImage2D(m_Id, 0, 0, 0, m_Width, m_Height, m_Format, GL_UNSIGNED_BYTE, data);
     }
 
-    auto OpenGLTexture2D::getByteChar(const Path_T &path) -> std::string {
+    auto OpenGLTexture2D::GetByteChar(const Path_T &path) -> std::string {
         std::string fileDir(4096, '\0');
 #ifdef defined(_WIN32) || defined(_WIN64)
         // fileDir.size() will return the amount of elements of fileDir, since it contains char which are byte sized

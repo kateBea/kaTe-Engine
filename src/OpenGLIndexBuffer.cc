@@ -18,16 +18,16 @@ namespace kaTe {
         }
 
         if (!indices.empty()) {
-            bindIndexBuffer();
+            BindBuffer();
             m_Count = indices.size();
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Count) * sizeof(UInt32_T), indices.data(), usage);
-            unbindIndexBuffer();
+            UnbindBuffer();
         }
     }
 
     OpenGLIndexBuffer::OpenGLIndexBuffer(OpenGLIndexBuffer && other) noexcept {
-        m_Id = other.getRenderId();
-        m_Count = other.getCount();
+        m_Id = other.GetID();
+        m_Count = other.GetCount();
         m_ValidId = other.m_ValidId;
 
         other.m_Id = 0;
@@ -35,8 +35,8 @@ namespace kaTe {
     }
 
     auto OpenGLIndexBuffer::operator=(OpenGLIndexBuffer && other) noexcept -> OpenGLIndexBuffer & {
-        m_Id = other.getRenderId();
-        m_Count = other.getCount();
+        m_Id = other.GetID();
+        m_Count = other.GetCount();
         m_ValidId = other.m_ValidId;
 
         other.m_Id = 0;

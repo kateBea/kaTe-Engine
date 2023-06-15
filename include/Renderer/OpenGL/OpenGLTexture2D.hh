@@ -38,15 +38,15 @@ namespace kaTe {
          * @return id of this object
          * */
         [[nodiscard]]
-        auto getId() const -> UInt32_T { return m_Id; }
+        auto GetId() const -> UInt32_T { return m_Id; }
 
-        auto getChannels() const -> UInt32_T { return m_Channels; }
-        auto getWidth() -> UInt32_T override { return m_Width; }
-        auto getHeight() -> UInt32_T override { return m_Height; }
+        auto GetChannels() const -> UInt32_T { return m_Channels; }
+        auto GetWidth() -> UInt32_T override { return m_Width; }
+        auto GetHeight() -> UInt32_T override { return m_Height; }
 
-        auto getTextureFileData() -> std::vector<UInt8_T> { return m_TextureFileData; }
+        auto GetTextureFileData() -> std::vector<UInt8_T> { return m_TextureFileData; }
 
-        auto bind(UInt32_T slot = 0) -> void override;
+        auto Bind(UInt32_T slot = 0) -> void override;
 
         ~OpenGLTexture2D() override { glDeleteTextures(1, &m_Id); }
     private:
@@ -56,13 +56,17 @@ namespace kaTe {
 
     private:
         // Helper because on windows std::filesystem uses wchar_t
-        static auto getByteChar(const Path_T& path) -> std::string;
-        auto setupTexture(const stbi_uc* data) -> void;
+        static auto GetByteChar(const Path_T& path) -> std::string;
+        auto SetupTexture(const stbi_uc* data) -> void;
 
         UInt32_T    m_Id{};
         UInt32_T    m_Height{};
         UInt32_T    m_Width{};
         UInt32_T    m_Channels{};
+
+
+        GLenum      m_InternalFormat{}; // Specifies the sized internal format to be used to store texture image data
+        GLenum      m_Format{};         // Specifies the format of the pixel data
 
         bool m_RetainData{};
         std::vector<UInt8_T> m_TextureFileData;

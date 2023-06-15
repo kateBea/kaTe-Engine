@@ -24,56 +24,45 @@ namespace kaTe {
      * application, and it serves as a way of communicating the different
      * components of ours engine
      * */
-    class EngineManager : public Singleton<EngineManager> {
+    class Application : public Singleton<Application> {
     public:
         /**
          * This functions forwards the received event to the appropriate
          * event handler. For more see the CALLBACK HANDLERS section of this file
          * @param event event to be dispatched
          * */
-        auto onEvent(Event& event) -> void;
+        auto OnEvent(Event& event) -> void;
 
         /**
          * Adds a the <code>layer</code> to the Layer stack
          * @param layer layer to be stacked
          * */
-        auto pushLayer(LayerStack::LayerPtr layer) -> void;
+        auto PushLayer(std::shared_ptr<Layer> layer) -> void;
 
         /**
          * Adds a the <code>overlay</code> to the Layer stack
          * @param overlay overlay to be stacked
          * */
-        auto pushOverlay(LayerStack::LayerPtr overlay) -> void;
+        auto PushOverlay(std::shared_ptr<Layer> overlay) -> void;
 
         /**
          * Returns a reference to the Application main window
          * @returns main window
          * */
-        KT_NODISCARD
-        auto getMainWindow() -> Window&;
+        auto GetMainWindow() -> Window&;
 
-        auto getDeltaTime(TimeUnit unit = TimeUnit::SECONDS) -> double { return m_DeltaTime.getDeltaTime(unit); }
         /**
          * Initializes the subsystems of the
          * application
          * */
-        auto init() -> void;
+        auto Init() -> void;
+        auto ShutDown() -> void;
+        auto UpdateState() -> void;
 
-        auto updateState() -> void;
+        auto IsRunning() -> bool;
 
-        auto isRunning() -> bool;
-
-        /**
-         * Destroys this application freeing
-         * any resources it may own
-         * */
-        auto shutDown() -> void;
 
     private:
-        /*************************************************************
-         *  INTERNAL ALIASES -----------------------------------------
-         * ********************************************************+ */
-
         /**
          * Represents the current state of this application
          * */
@@ -81,12 +70,12 @@ namespace kaTe {
             NONE,
             RUNNING,
             STOPPED,
-            IDDLE,  // can be used when we minimize the main window
+            IDLE,  // can be used when we minimize the main window
             COUNT,
         };
 
         /*************************************************************
-         * APPLICATION CALLBACK HANDLERS -----------------------------
+         * APPLICATION EVENT HANDLERS -----------------------------
          * ********************************************************+ */
 
         /**
@@ -94,35 +83,21 @@ namespace kaTe {
          * it always returns true as we have no needs to
          * forward this event any further and handler it right away
          * */
-        bool onWindowClose(WindowCloseEvent &ev);
+        bool OnWindowClose(WindowCloseEvent &event);
 
         /**
          * Callback function for WindowResizedEvent event. For now
          * it always returns true as we have no needs to
          * forward this event any further and handler it right away
          * */
-        bool onResizeEvent(WindowResizedEvent &ev);
-       
-
-        /*************************************************************
-         *  HELPER FUNCTIONS -----------------------------------------
-         * ********************************************************+ */
-
-        auto initWindow() -> void;
-        auto initLayerStack() -> void;
-        auto initInputManager() -> void;
+        bool OnResizeEvent(WindowResizedEvent &event);
 
         // MEMBER VARIABLES ----------------------------
+        bool m_MainWindowMinimized{ false };
         State m_State{ State::RUNNING };
 
         std::unique_ptr<Window> m_MainWindow{};
         std::unique_ptr<LayerStack> m_LayerStack{};
-
-        // For now, there's one instance of InputManager in our application
-        // In case we may want to poll input from multiple Windows, this
-        // could become part of the Window itself as an aggregation
-
-        TimeManager m_DeltaTime{};
 
     };
 }

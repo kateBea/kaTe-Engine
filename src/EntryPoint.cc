@@ -2,10 +2,10 @@
  * EntryPoint.cc
  * */
 
-#include <Sandbox.hh>
+#include <Engine.hh>
 
 int main(int, char**) {
-    auto app { new kaTe::Sandbox() };
+    auto app { new kaTe::Engine() };
     auto ret{ app->run() };
     delete app;
 

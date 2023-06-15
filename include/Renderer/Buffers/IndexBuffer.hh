@@ -5,6 +5,8 @@
 #ifndef KATE_ENGINE_INDEX_BUFFER_HH
 #define KATE_ENGINE_INDEX_BUFFER_HH
 
+#include <memory>
+
 #include "Tools/Common.hh"
 
 namespace kaTe {
@@ -16,14 +18,14 @@ namespace kaTe {
          IndexBuffer() = default;
          virtual ~IndexBuffer() = default;
 
-         virtual auto getRenderId() const -> UInt32_T { return m_Id; }
-         virtual auto getCount() const -> UInt32_T { return m_Count; }
+         virtual auto GetID() const -> UInt32_T { return m_Id; }
+         virtual auto GetCount() const -> UInt32_T { return m_Count; }
 
          // Temporary for OpenGL IndexBuffer
-         virtual auto bindIndexBuffer() const -> void {}
-         virtual auto unbindIndexBuffer() const -> void {}
+         virtual auto BindBuffer() const -> void {}
+         virtual auto UnbindBuffer() const -> void {}
 
-         static auto createBuffer(const std::vector<UInt32_T>& data) -> IndexBuffer*;
+         static auto CreateBuffer(const std::vector<UInt32_T>& data) -> std::shared_ptr<IndexBuffer>;
      protected:
          UInt32_T m_Id{};
          UInt32_T m_Count{};

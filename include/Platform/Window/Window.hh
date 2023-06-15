@@ -49,7 +49,7 @@ namespace kaTe {
      * to create a context for a specific graphics API.
      *
      * Important to initialize and terminate the windows explicitly for now by explicit calls
-     * to <code>init()</code> and <code>shutDown()</code>, this allows for more flexibility as to
+     * to <code>init()</code> and <code>ShutDown()</code>, this allows for more flexibility as to
      * when an entity has to free its resources amongst other termination operations
      *
      * A single instance of Window manages a single window, hence why the copy
