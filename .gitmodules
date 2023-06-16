@@ -13,6 +13,6 @@
 [submodule "lib/fmt"]
 	path = lib/fmt
 	url = https://github.com/fmtlib/fmt.git
-[submodule "lib/--force"]
-	path = lib/--force
+[submodule "lib/spdlog"]
+	path = lib/spdlog
 	url = https://github.com/gabime/spdlog.git
