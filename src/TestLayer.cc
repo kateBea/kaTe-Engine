@@ -54,10 +54,10 @@ namespace kaTe {
         m_VertexBuffer->SetBufferLayout(BufferLayout{{ShaderDataType::FLOAT3_TYPE, "a_Position"}, {ShaderDataType::FLOAT4_TYPE, "a_Color"}});
         m_SquareVertexBuffer->SetBufferLayout(BufferLayout{{ShaderDataType::FLOAT3_TYPE, "a_Position"}, {ShaderDataType::FLOAT2_TYPE, "a_TextureCoordinates"}});
 
-        m_ColorShader = std::make_shared<OpenGLShader>("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/colorShader.glsl");
-        m_ColorTextureShader = std::make_shared<OpenGLShader>("../assets/shaders/textureVert.glsl", "../assets/shaders/textureFrag.glsl");
+        m_ColorShader = BaseShader::CreateShader("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/colorShader.glsl");
+        m_ColorTextureShader = BaseShader::CreateShader("../assets/shaders/textureVert.glsl", "../assets/shaders/textureFrag.glsl");
         m_CameraController = std::make_shared<OrthographicCameraController>(window.getWidth(), window.getHeight(), true, nullptr);
-        m_ColorTextureShader->setUniformInt("u_TextSampler", 0);
+        m_ColorTextureShader->SetInt("u_TextSampler", 0);
     }
 
     auto TestLayer::onUpdate() -> void {
@@ -68,7 +68,7 @@ namespace kaTe {
         if (InputManager::isKeyPressed(KT_KEY_K)) m_SquarePos.y -= m_CameraMovementSpeed * deltaTime;
 
         m_CameraController->OnUpdate();
-        m_ColorShader->setUniformVec4("u_Color", glm::vec4(m_SquareColor, 1.0));
+        m_ColorShader->SetVec4("u_Color", glm::vec4(m_SquareColor, 1.0));
 
         constexpr static glm::mat4 IDENTITY_MAT(1.0);
         glm::mat4 scale{ glm::scale(IDENTITY_MAT, glm::vec3(0.1, 0.1, 0.1)) };

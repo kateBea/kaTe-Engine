@@ -32,8 +32,8 @@ namespace kaTe {
         auto onImGuiRender() -> void override;
 
     private:
-        std::shared_ptr<OpenGLShader> m_ColorShader{};
-        std::shared_ptr<OpenGLShader> m_ColorTextureShader{};
+        std::shared_ptr<BaseShader> m_ColorShader{};
+        std::shared_ptr<BaseShader> m_ColorTextureShader{};
         std::shared_ptr<VertexBuffer> m_VertexBuffer{};
         std::shared_ptr<IndexBuffer> m_IndexBuffer{};
 

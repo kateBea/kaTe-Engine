@@ -2,13 +2,13 @@
 // Created by kate on 6/5/23.
 //
 
+#include <Core/Application.hh>
+#include <Core/Logger.hh>
+
 #include "Renderer/Buffers/VertexBuffer.hh"
 #include <Renderer/OpenGL/OpenGLVertexBuffer.hh>
 
-#include <Core/Application.hh>
-
 #include <Renderer/Renderer.hh>
-#include <Core/Logger.hh>
 
 namespace kaTe {
     auto VertexBuffer::CreateBuffer(const std::vector<float>& data) -> std::shared_ptr<VertexBuffer> {

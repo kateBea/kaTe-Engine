@@ -34,7 +34,7 @@ set(RENDERER_SOURCES
         src/OpenGLShader.cc
         src/OpenGLRenderer.cc
         src/RendererAPI.cc
-        src/OrthographicCamera.cc src/Texture2D.cc include/Renderer/Material/Texture2D.hh src/OpenGLTexture2D.cc include/Renderer/OpenGL/OpenGLTexture2D.hh src/RenderCommand.cc src/Renderer2D.cc src/OrthographicCameraController.cc)
+        src/OrthographicCamera.cc src/Texture2D.cc include/Renderer/Material/Texture2D.hh src/OpenGLTexture2D.cc include/Renderer/OpenGL/OpenGLTexture2D.hh src/RenderCommand.cc src/Renderer2D.cc src/OrthographicCameraController.cc src/BaseShader.cc)
 
 set(IMGUI_SOURCES
         lib/imgui/imgui.cpp

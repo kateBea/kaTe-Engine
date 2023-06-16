@@ -29,9 +29,9 @@ namespace kaTe {
         s_DrawData->vertexBuffer = VertexBuffer::CreateBuffer(squareData);
         s_DrawData->indexBuffer = IndexBuffer::CreateBuffer({0, 1, 2, 2, 3, 0});
         s_DrawData->vertexBuffer->SetBufferLayout(BufferLayout{{ShaderDataType::FLOAT3_TYPE, "a_Position"}, {ShaderDataType::FLOAT2_TYPE, "a_TextureCoordinates"}});
-        s_DrawData->colorShader = std::make_shared<OpenGLShader>("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/colorShader.glsl");
-        s_DrawData->textureShader = std::make_shared<OpenGLShader>("../assets/shaders/textureVert.glsl", "../assets/shaders/textureFrag.glsl");
-        std::dynamic_pointer_cast<OpenGLShader>(s_DrawData->textureShader)->setUniformInt("u_TextSampler", 0);
+        s_DrawData->colorShader = BaseShader::CreateShader("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/colorShader.glsl");
+        s_DrawData->textureShader = BaseShader::CreateShader("../assets/shaders/textureVert.glsl", "../assets/shaders/textureFrag.glsl");
+        s_DrawData->textureShader->SetInt("u_TextSampler", 0);
     }
 
     auto Renderer2D::BeginScene(std::shared_ptr<OrthographicCamera> camera) -> void {
@@ -55,9 +55,9 @@ namespace kaTe {
         glm::mat4 rotation{ glm::rotate(identMat, (float)glm::radians(angle), zAxis) };
         glm::mat4 transform{ glm::translate(identMat, position) * scale * rotation };
 
-        std::dynamic_pointer_cast<OpenGLShader>(s_DrawData->colorShader)->setUniformVec4("u_Color", glm::vec4(color));
-        std::dynamic_pointer_cast<OpenGLShader>(s_DrawData->colorShader)->setUniformMat4("u_ProjectionView", s_DrawData->camera->getProjectionView());
-        std::dynamic_pointer_cast<OpenGLShader>(s_DrawData->colorShader)->setUniformMat4("u_Transform", transform);
+        s_DrawData->colorShader->SetVec4("u_Color", glm::vec4(color));
+        s_DrawData->colorShader->SetMat4("u_ProjectionView", s_DrawData->camera->getProjectionView());
+        s_DrawData->colorShader->SetMat4("u_Transform", transform);
 
         RenderCommand::DrawIndexed(s_DrawData->colorShader, s_DrawData->vertexBuffer, s_DrawData->indexBuffer);
     }
@@ -78,8 +78,8 @@ namespace kaTe {
         glm::mat4 rotation{ glm::rotate(identMat, (float)glm::radians(angle), zAxis) };
         glm::mat4 transform{ glm::translate(identMat, position) * scale * rotation };
 
-        std::dynamic_pointer_cast<OpenGLShader>(s_DrawData->textureShader)->setUniformMat4("u_ProjectionView", s_DrawData->camera->getProjectionView());
-        std::dynamic_pointer_cast<OpenGLShader>(s_DrawData->textureShader)->setUniformMat4("u_Transform", transform);
+        s_DrawData->textureShader->SetMat4("u_ProjectionView", s_DrawData->camera->getProjectionView());
+        s_DrawData->textureShader->SetMat4("u_Transform", transform);
         texture->Bind();
         RenderCommand::DrawIndexed(s_DrawData->textureShader, s_DrawData->vertexBuffer, s_DrawData->indexBuffer);
     }

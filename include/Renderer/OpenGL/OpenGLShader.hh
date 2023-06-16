@@ -61,9 +61,9 @@ namespace kaTe {
         /**
          * Use this Shader program
          * */
-        auto bind() -> void override { glUseProgram(m_Id); }
+        auto Bind() -> void override { glUseProgram(m_Id); }
 
-        auto unbind() -> void override { glUseProgram(0); }
+        auto Unbind() -> void override { glUseProgram(0); }
 
         /**
          * Get Shader program ID
@@ -72,6 +72,18 @@ namespace kaTe {
         [[nodiscard]]
         auto getProgram() const -> UInt32_T { return m_Id; }
 
+    public:
+        auto SetBool(std::string_view name, bool value) -> void override { SetUniformBool(name, value); }
+        auto SetInt(std::string_view name, Int32_T value) -> void override { SetUniformInt(name, value); }
+        auto SetFloat(std::string_view name, float value) -> void override { SetUniformFloat(name, value); }
+        auto SetVec2(std::string_view name, const glm::vec2& value) -> void override { SetUniformVec2(name, value); }
+        auto SetVec3(std::string_view name, const glm::vec3& value) -> void override { SetUniformVec3(name, value); }
+        auto SetVec4(std::string_view name, const glm::vec4& value) -> void override { SetUniformVec4(name, value); }
+        auto SetMat3(std::string_view name, const glm::mat3& value) -> void override { SetUniformMat3(name, value); }
+        auto SetMat4(std::string_view name, const glm::mat4& value) -> void override { SetUniformMat4(name, value); }
+
+        ~OpenGLShader() { glDeleteProgram(getProgram()); }
+    private:
         /**
          * Sets the given boolean value to the uniform identified by "name",
          * it has no effect if this Shader has no uniform with given name. This function
@@ -80,7 +92,7 @@ namespace kaTe {
          * @param name name of the uniform
          * @param value value to be set
          * */
-        auto setUniformBool(std::string_view name, bool value) -> void;
+        auto SetUniformBool(std::string_view name, bool value) -> void;
 
         /**
          * Sets the given integer value to the uniform identified by "name",
@@ -90,7 +102,7 @@ namespace kaTe {
          * @param name name of the uniform.
          * @param value value to be set
          * */
-        auto setUniformInt(std::string_view name, Int32_T value) -> void;
+        auto SetUniformInt(std::string_view name, Int32_T value) -> void;
 
         /**
          * Sets the given floating value to the uniform identified by "name",
@@ -100,7 +112,7 @@ namespace kaTe {
          * @param name name of the uniform
          * @param value value to be set
          * */
-        auto setUniformFloat(std::string_view name, float value) -> void;
+        auto SetUniformFloat(std::string_view name, float value) -> void;
 
         /**
          * Sets the given 3D vector to the uniform specified by the name. This function
@@ -109,7 +121,7 @@ namespace kaTe {
          * @param name name of the uniform
          * @param vec value for the uniform
          * */
-        auto setUniformVec2(std::string_view name, const glm::vec2& vec) -> void;
+        auto SetUniformVec2(std::string_view name, const glm::vec2& vec) -> void;
 
         /**
          * Sets the given 3D vector to the uniform specified by the name. This function
@@ -118,7 +130,7 @@ namespace kaTe {
          * @param name name of the uniform
          * @param vec value for the uniform
          * */
-        auto setUniformVec3(std::string_view name, const glm::vec3& vec) -> void;
+        auto SetUniformVec3(std::string_view name, const glm::vec3& vec) -> void;
 
         /**
          * Sets the given 4D vector to the uniform specified by the name. This function
@@ -127,7 +139,7 @@ namespace kaTe {
          * @param name name of the uniform
          * @param vec value for the uniform
          * */
-        auto setUniformVec4(std::string_view name, const glm::vec4& vec) -> void;
+        auto SetUniformVec4(std::string_view name, const glm::vec4& vec) -> void;
 
         /**
          * Sets the given matrix to the uniform matrix specified by the name. This function
@@ -136,7 +148,7 @@ namespace kaTe {
          * @param name name of the uniform
          * @param mat value for the uniform
          * */
-        auto setUniformMat3(std::string_view name, const glm::mat3& mat) -> void;
+        auto SetUniformMat3(std::string_view name, const glm::mat3& mat) -> void;
 
         /**
          * Sets the given matrix to the uniform matrix specified by the name. This function
@@ -145,12 +157,7 @@ namespace kaTe {
          * @param name name of the uniform
          * @param mat value for the uniform
          * */
-        auto setUniformMat4(std::string_view name, const glm::mat4& mat) -> void;
-
-        /**
-         * Perform cleanup
-         * */
-        ~OpenGLShader() { glDeleteProgram(getProgram()); }
+        auto SetUniformMat4(std::string_view name, const glm::mat4& mat) -> void;
     private:
         // Forbidden operations
         OpenGLShader(const OpenGLShader &) = delete;

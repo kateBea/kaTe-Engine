@@ -20,20 +20,20 @@ namespace kaTe {
         // STB image expects width and height and channel to be signed integers
         Int32_T width{}, height{}, channels{};
 
-        auto fileDir{GetByteChar(path) };
+        auto fileDir{ GetByteChar(path) };
         stbi_set_flip_vertically_on_load(true);
-        stbi_uc* imageData{ stbi_load(fileDir.c_str(), &width, &height, &channels, 4) };
+        m_TextureFileData = stbi_load(fileDir.c_str(), &width, &height, &channels, 4);
 
-        if (imageData) {
+        if (m_TextureFileData) {
             m_Width = width;
             m_Height = height;
             m_Channels = channels;
             glCreateTextures(GL_TEXTURE_2D, 1, &m_Id);
-            SetupTexture(imageData);
+            SetupTexture(m_TextureFileData);
 
             // free the data if we do not want to keep it
             if (!m_RetainData)
-                stbi_image_free(imageData);
+                stbi_image_free(m_TextureFileData);
         }
         else {
             throw std::runtime_error("Could not load Texture data");

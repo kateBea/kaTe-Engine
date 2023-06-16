@@ -89,8 +89,8 @@ namespace kaTe {
         glDeleteShader(pixelShaderID);
     }
 
-    auto OpenGLShader::setUniformBool(std::string_view name, bool value) -> void {
-        bind();
+    auto OpenGLShader::SetUniformBool(std::string_view name, bool value) -> void {
+        Bind();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
@@ -98,8 +98,8 @@ namespace kaTe {
             glUniform1i(ret, static_cast<Int32_T>(value));
     }
 
-    auto OpenGLShader::setUniformInt(std::string_view name, Int32_T value) -> void {
-        bind();
+    auto OpenGLShader::SetUniformInt(std::string_view name, Int32_T value) -> void {
+        Bind();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
@@ -107,8 +107,8 @@ namespace kaTe {
             glUniform1i(ret, value);
     }
 
-    auto OpenGLShader::setUniformFloat(std::string_view name, float value) -> void {
-        bind();
+    auto OpenGLShader::SetUniformFloat(std::string_view name, float value) -> void {
+        Bind();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
@@ -156,8 +156,8 @@ namespace kaTe {
         }
     }
 
-    auto OpenGLShader::setUniformMat4(std::string_view name, const glm::mat4& mat) -> void {
-        bind();
+    auto OpenGLShader::SetUniformMat4(std::string_view name, const glm::mat4& value) -> void {
+        Bind();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
@@ -174,29 +174,29 @@ namespace kaTe {
              * meaning the elements of the first row are stored first, followed by the
              * elements of the second row, and so on.
              * */
-            glUniformMatrix4fv(ret, 1, GL_FALSE, glm::value_ptr(mat));
+            glUniformMatrix4fv(ret, 1, GL_FALSE, glm::value_ptr(value));
     }
 
-    auto OpenGLShader::setUniformVec3(std::string_view name, const glm::vec3 &vec) -> void {
-        bind();
+    auto OpenGLShader::SetUniformVec3(std::string_view name, const glm::vec3 &value) -> void {
+        Bind();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
         else {
             // we pass we 1 because the shader uniform is not expected to be an array
-            glUniform3fv(ret, 1, glm::value_ptr(vec));
+            glUniform3fv(ret, 1, glm::value_ptr(value));
         }
     }
 
-    auto OpenGLShader::setUniformVec4(std::string_view name, const glm::vec4& vec) -> void {
-        bind();
+    auto OpenGLShader::SetUniformVec4(std::string_view name, const glm::vec4& value) -> void {
+        Bind();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
 
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
         else {
             // we pass we 1 because the shader uniform is not expected to be an array
-            glUniform4fv(ret, 1, glm::value_ptr(vec));
+            glUniform4fv(ret, 1, glm::value_ptr(value));
         }
     }
 
@@ -214,8 +214,8 @@ namespace kaTe {
         return *this;
     }
 
-    auto OpenGLShader::setUniformVec2(std::string_view name, const glm::vec2 &vec) -> void {
-        bind();
+    auto OpenGLShader::SetUniformVec2(std::string_view name, const glm::vec2 &vec) -> void {
+        Bind();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
 
         if (ret == -1)
@@ -226,8 +226,8 @@ namespace kaTe {
         }
     }
 
-    auto OpenGLShader::setUniformMat3(std::string_view name, const glm::mat3& mat) -> void {
-        bind();
+    auto OpenGLShader::SetUniformMat3(std::string_view name, const glm::mat3& value) -> void {
+        Bind();
         auto ret{ glGetUniformLocation(getProgram(), name.data()) };
 
         if (ret == -1)
@@ -245,7 +245,7 @@ namespace kaTe {
              * meaning the elements of the first row are stored first, followed by the
              * elements of the second row, and so on.
              * */
-            glUniformMatrix3fv(ret, 1, GL_FALSE, glm::value_ptr(mat));
+            glUniformMatrix3fv(ret, 1, GL_FALSE, glm::value_ptr(value));
         }
     }
 }

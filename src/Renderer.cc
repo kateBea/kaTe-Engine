@@ -23,11 +23,8 @@ namespace kaTe {
 
     auto Renderer::Submit(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, const glm::mat4 &transform) -> void {
         // Currently submit draws our geometry directly, not buffered
-        // These should be cast to an OpenGL shader with std::dynamic_pointer_cast
-        // since they are expected to be opengl gl shaders, so we can upload uniform data
-        // this way
-        std::dynamic_pointer_cast<OpenGLShader>(shader)->setUniformMat4("u_ProjectionView", s_SceneData->camera->getProjectionView());
-        std::dynamic_pointer_cast<OpenGLShader>(shader)->setUniformMat4("u_Transform", transform);
+        shader->SetMat4("u_ProjectionView", s_SceneData->camera->getProjectionView());
+        shader->SetMat4("u_Transform", transform);
         RenderCommand::DrawIndexed(shader, vertexBuffer, indexBuffer);
     }
 

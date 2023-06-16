@@ -32,7 +32,7 @@ namespace kaTe {
     }
 
     auto OpenGLRenderer::DrawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
-        std::dynamic_pointer_cast<OpenGLShader>(shader)->bind();
+        std::dynamic_pointer_cast<OpenGLShader>(shader)->Bind();
         m_VertexArray.useVertexBuffer(vertexBuffer);
         indexBuffer->BindBuffer();
 

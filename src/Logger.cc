@@ -34,7 +34,7 @@ namespace kaTe {
     }
 
     auto Logger::GetAppLogger() -> const std::shared_ptr<spdlog::logger>& {
-        KT_ASSERT(m_AppLogger, "Client Logger is NULL");
+        KT_ASSERT(m_AppLogger, "Application Logger is NULL");
         return m_AppLogger;
     }
 }

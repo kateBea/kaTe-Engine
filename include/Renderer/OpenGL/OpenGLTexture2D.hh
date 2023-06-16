@@ -44,7 +44,7 @@ namespace kaTe {
         auto GetWidth() -> UInt32_T override { return m_Width; }
         auto GetHeight() -> UInt32_T override { return m_Height; }
 
-        auto GetTextureFileData() -> std::vector<UInt8_T> { return m_TextureFileData; }
+        auto GetTextureFileData() const -> stbi_uc* { return m_TextureFileData; }
 
         auto Bind(UInt32_T slot = 0) -> void override;
 
@@ -60,8 +60,8 @@ namespace kaTe {
         auto SetupTexture(const stbi_uc* data) -> void;
 
         UInt32_T    m_Id{};
-        UInt32_T    m_Height{};
         UInt32_T    m_Width{};
+        UInt32_T    m_Height{};
         UInt32_T    m_Channels{};
 
 
@@ -69,7 +69,7 @@ namespace kaTe {
         GLenum      m_Format{};         // Specifies the format of the pixel data
 
         bool m_RetainData{};
-        std::vector<UInt8_T> m_TextureFileData;
+        stbi_uc* m_TextureFileData;
     };
 }
 
