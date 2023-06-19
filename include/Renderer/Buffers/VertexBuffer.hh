@@ -11,8 +11,8 @@
 #include <utility>
 #include <memory>
 
-#include "Core/Assert.hh"
-#include "Tools/Common.hh"
+#include <Core/Assert.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
     enum class ShaderDataType {
@@ -39,26 +39,26 @@ namespace kaTe {
     class BufferElement {
     public:
         BufferElement(ShaderDataType type, std::string_view name, bool normalized = false)
-            :   m_Name{ name }, m_Type{ type }, m_Size{ getSizeFromShaderType(type) }, m_Offset{ 0 }, m_Normalized{ normalized } {}
+            :   m_Name{ name }, m_Type{ type }, m_Size{GetSizeFromShaderType(type) }, m_Offset{ 0 }, m_Normalized{ normalized } {}
 
-        auto getAttributeCount() const -> UInt32_T { return getComponentCount(m_Type); }
-        auto getOpenGLAttributeDataType() const -> UInt32_T { return getOpenGLTypeFromShaderDataType(m_Type); }
-        auto getAttributeSize() const -> UInt32_T { return m_Size; }
+        KT_NODISCARD auto GetAttributeCount() const -> UInt32_T { return GetComponentCount(m_Type); }
+        KT_NODISCARD auto GetOpenGLAttributeDataType() const -> UInt32_T { return GetOpenGLTypeFromShaderDataType(m_Type); }
+        KT_NODISCARD auto GetAttributeSize() const -> UInt32_T { return m_Size; }
 
         /*  Getters */
-        auto getName() const -> const std::string& { return m_Name; }
-        auto getType() const -> ShaderDataType { return m_Type; }
-        auto getSize() const -> UInt32_T { return m_Size; }
-        auto getOffset() const -> UInt32_T { return m_Offset; }
-        auto isNormalized() const  { return m_Normalized; }
+        KT_NODISCARD auto GetName() const -> const std::string& { return m_Name; }
+        KT_NODISCARD auto GetType() const -> ShaderDataType { return m_Type; }
+        KT_NODISCARD auto GetSize() const -> UInt32_T { return m_Size; }
+        KT_NODISCARD auto GetOffset() const -> UInt32_T { return m_Offset; }
+        KT_NODISCARD auto IsNormalized() const  { return m_Normalized; }
 
         /*  Setters */
-        auto setName(std::string_view name) -> void { m_Name = name; }
-        auto setType(ShaderDataType type) -> void { m_Type = type; }
-        auto setSize(UInt32_T size) -> void { m_Size = size; }
-        auto setOffset(UInt32_T offset) -> void { m_Offset = offset; }
-        auto setNormalized() -> void { m_Normalized = true; }
-        auto unsetNormalized() -> void { m_Normalized = false; }
+        auto SetName(std::string_view name) -> void { m_Name = name; }
+        auto SetType(ShaderDataType type) -> void { m_Type = type; }
+        auto SetSize(UInt32_T size) -> void { m_Size = size; }
+        auto SetOffset(UInt32_T offset) -> void { m_Offset = offset; }
+        auto SetNormalized() -> void { m_Normalized = true; }
+        auto UnsetNormalized() -> void { m_Normalized = false; }
 
     private:
         // Size in bytes for integer
@@ -76,7 +76,7 @@ namespace kaTe {
          * Returns the size of the shader data type
          * @returns the size in bytes of the data type
          * */
-        static constexpr auto getSizeFromShaderType(ShaderDataType type) -> UInt32_T {
+        static constexpr auto GetSizeFromShaderType(ShaderDataType type) -> UInt32_T {
             switch (type) {
                 case ShaderDataType::FLOAT_TYPE:    return s_DefaultShaderFloatSize;
                 case ShaderDataType::FLOAT2_TYPE:   return s_DefaultShaderFloatSize * 2;
@@ -104,7 +104,7 @@ namespace kaTe {
          * Returns the number of components of the given type
          * @returns Count of elements of the data type
          * */
-        static constexpr auto getComponentCount(ShaderDataType type) -> UInt32_T {
+        static constexpr auto GetComponentCount(ShaderDataType type) -> UInt32_T {
             switch(type) {
                 case ShaderDataType::FLOAT_TYPE:    return 1;
                 case ShaderDataType::FLOAT2_TYPE:   return 2;
@@ -128,9 +128,8 @@ namespace kaTe {
             KT_ASSERT(false, "Invalid shader data type");
         }
 
-        static GLenum getOpenGLTypeFromShaderDataType(ShaderDataType type) {
+        static auto GetOpenGLTypeFromShaderDataType(ShaderDataType type) -> GLenum {
             switch(type) {
-
                 case ShaderDataType::FLOAT_TYPE:
                 case ShaderDataType::FLOAT2_TYPE:
                 case ShaderDataType::FLOAT3_TYPE:
@@ -154,34 +153,38 @@ namespace kaTe {
 
     class BufferLayout {
     public:
-        explicit BufferLayout(std::initializer_list<BufferElement>&& items)
+        BufferLayout(std::initializer_list<BufferElement>&& items)
             :    m_Stride{ 0 }, m_Items(std::forward<std::initializer_list<BufferElement>>(items))
         {
-            computeOffsetAndStride();
+            ComputeOffsetAndStride();
         }
 
-        auto getElements() const -> const std::vector<BufferElement>& { return m_Items; }
-        auto getStride() const { return m_Stride; }
+        KT_NODISCARD auto GetElements() const -> const std::vector<BufferElement>& { return m_Items; }
+        KT_NODISCARD auto GetCount() const -> Int32_T { return m_Items.size(); }
+        KT_NODISCARD auto GetStride() const { return m_Stride; }
+
+        auto operator[](UInt32_T index) -> BufferElement& { return m_Items[index]; }
+        auto operator[](UInt32_T index) const -> const BufferElement& { return m_Items[index]; }
 
         auto begin() -> std::vector<BufferElement>::iterator { return m_Items.begin(); }
         auto end() -> std::vector<BufferElement>::iterator { return m_Items.end(); }
 
-        auto begin() const -> std::vector<BufferElement>::const_iterator { return m_Items.begin(); }
-        auto end() const -> std::vector<BufferElement>::const_iterator { return m_Items.end(); }
+        KT_NODISCARD auto begin() const -> std::vector<BufferElement>::const_iterator { return m_Items.begin(); }
+        KT_NODISCARD auto end() const -> std::vector<BufferElement>::const_iterator { return m_Items.end(); }
 
         auto rbegin() -> std::vector<BufferElement>::reverse_iterator { return m_Items.rbegin(); }
         auto rend() -> std::vector<BufferElement>::reverse_iterator { return m_Items.rend(); }
 
-        auto rbegin() const -> std::vector<BufferElement>::const_reverse_iterator { return m_Items.rbegin(); }
-        auto rend() const -> std::vector<BufferElement>::const_reverse_iterator { return m_Items.rend(); }
+        KT_NODISCARD auto rbegin() const -> std::vector<BufferElement>::const_reverse_iterator { return m_Items.rbegin(); }
+        KT_NODISCARD auto rend() const -> std::vector<BufferElement>::const_reverse_iterator { return m_Items.rend(); }
     private:
         // Helpers
-        auto computeOffsetAndStride() -> void {
+        auto ComputeOffsetAndStride() -> void {
             UInt32_T offset{ 0 };
             for (auto& item : m_Items) {
-                item.setOffset(offset);
-                offset += item.getSize();
-                m_Stride += item.getSize();
+                item.SetOffset(offset);
+                offset += item.GetSize();
+                m_Stride += item.GetSize();
             }
         }
 
@@ -195,30 +198,24 @@ namespace kaTe {
     class VertexBuffer {
     public:
         VertexBuffer() = default;
-        VertexBuffer(const BufferLayout& bufferLayout) ;
         virtual ~VertexBuffer() = default;
 
-        KT_NODISCARD
-        virtual auto GetID() const -> UInt32_T { return m_Id; }
+        KT_NODISCARD virtual auto GetID() const -> UInt32_T { return m_Id; }
 
-        // Temporary for OpenGL VertexBuffer
-        virtual auto BindBufferData() const -> void = 0;
-        virtual auto UnbindBufferData() const -> void = 0;
+        virtual auto Bind() const -> void = 0;
+        virtual auto Unbind() const -> void = 0;
 
         virtual auto SetBufferLayout(const BufferLayout& layout) -> void = 0;
-        KT_NODISCARD
-        virtual auto GetBufferLayout() const -> const BufferLayout& = 0;
+        KT_NODISCARD virtual auto GetBufferLayout() const -> const BufferLayout& = 0;
 
         /**
          * Returns the total size in bytes of the contents of this Vertex buffer
          * @return total size in bytes of the vertices of this buffer
          * */
-        [[nodiscard]]
-        auto GetSize() const -> std::size_t { return m_Size; }
+        KT_NODISCARD auto GetSize() const -> std::size_t { return m_Size; }
+        KT_NODISCARD auto IsEmpty() const -> bool { return m_Size == 0; }
 
-        auto IsEmpty() const -> bool { return m_Size == 0; }
-
-        static auto CreateBuffer(const std::vector<float>& data) -> std::shared_ptr<VertexBuffer>;
+        KT_NODISCARD static auto CreateBuffer(const std::vector<float>& data) -> std::shared_ptr<VertexBuffer>;
 
     protected:
         UInt32_T m_Id{};

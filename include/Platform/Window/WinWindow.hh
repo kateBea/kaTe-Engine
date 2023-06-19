@@ -10,15 +10,15 @@
 
 namespace kaTe {
     /**
-     * Window specialization for MS Windows. May be changed
+     * Window specialization for MS Windows. Not needed for now
      * */
-    class WinWindow : public Window {
+    class Win32Window : public Window {
     public:
 
     private:
 
     };
 
-}   // END NAMESPACE kT
+}   // END NAMESPACE kaTe
 
-#endif //KATE_ENGINE_WIN32WINDOW_HH
+#endif //KATE_ENGINE_WIN32_WINDOW_HH

@@ -25,7 +25,7 @@
 #include <Renderer/RenderCommand.hh>
 
 namespace kaTe {
-    auto TestLayer::onAttach() -> void {
+    auto TestLayer::OnAttach() -> void {
         Window& window{ Application::Get().GetMainWindow() };
 
         std::vector<float> data {
@@ -56,16 +56,16 @@ namespace kaTe {
 
         m_ColorShader = BaseShader::CreateShader("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/colorShader.glsl");
         m_ColorTextureShader = BaseShader::CreateShader("../assets/shaders/textureVert.glsl", "../assets/shaders/textureFrag.glsl");
-        m_CameraController = std::make_shared<OrthographicCameraController>(window.getWidth(), window.getHeight(), true, nullptr);
+        m_CameraController = std::make_shared<OrthographicCameraController>(window.GetWidth(), window.GetHeight(), true, nullptr);
         m_ColorTextureShader->SetInt("u_TextSampler", 0);
     }
 
-    auto TestLayer::onUpdate() -> void {
+    auto TestLayer::OnUpdate() -> void {
         auto deltaTime{ TimeManager::GetDeltaTime() };
-        if (InputManager::isKeyPressed(KT_KEY_J)) m_SquarePos.x -= m_CameraMovementSpeed * deltaTime;
-        if (InputManager::isKeyPressed(KT_KEY_L)) m_SquarePos.x += m_CameraMovementSpeed * deltaTime;
-        if (InputManager::isKeyPressed(KT_KEY_I)) m_SquarePos.y += m_CameraMovementSpeed * deltaTime;
-        if (InputManager::isKeyPressed(KT_KEY_K)) m_SquarePos.y -= m_CameraMovementSpeed * deltaTime;
+        if (InputManager::IsKeyPressed(KT_KEY_J)) m_SquarePos.x -= m_CameraMovementSpeed * deltaTime;
+        if (InputManager::IsKeyPressed(KT_KEY_L)) m_SquarePos.x += m_CameraMovementSpeed * deltaTime;
+        if (InputManager::IsKeyPressed(KT_KEY_I)) m_SquarePos.y += m_CameraMovementSpeed * deltaTime;
+        if (InputManager::IsKeyPressed(KT_KEY_K)) m_SquarePos.y -= m_CameraMovementSpeed * deltaTime;
 
         m_CameraController->OnUpdate();
         m_ColorShader->SetVec4("u_Color", glm::vec4(m_SquareColor, 1.0));
@@ -99,17 +99,17 @@ namespace kaTe {
         Renderer::EndScene();
     }
 
-    auto TestLayer::onImGuiRender() -> void {
+    auto TestLayer::OnImGuiRender() -> void {
         ImGui::Begin("Color");
         ImGui::ColorEdit3("Color", glm::value_ptr(m_SquareColor));
         ImGui::End();
     }
 
-    auto TestLayer::onEvent(Event &event) -> void {
+    auto TestLayer::OnEvent(Event &event) -> void {
         m_CameraController->OnEvent(event);
     }
 
-    auto TestLayer::onDetach() -> void {
+    auto TestLayer::OnDetach() -> void {
 
     }
 }

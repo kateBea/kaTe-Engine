@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include <glm/mat4x4.hpp>
+#include <glm/glm.hpp>
 
 #include <Renderer/Material/BaseShader.hh>
 #include "Renderer/Buffers/IndexBuffer.hh"
@@ -51,7 +51,7 @@ namespace kaTe {
         static auto OnWindowResize(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void;
 
         static auto GetActiveGraphicsAPI() -> GraphicsAPI { return s_ActiveAPI;  }
-    private:
+    public:
         // Forbidden operations
         Renderer(const Renderer&) = delete;
         auto operator=(const Renderer&) -> Renderer& = delete;

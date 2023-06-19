@@ -93,8 +93,7 @@ namespace kaTe {
             :   m_Type{ type }, m_Categories{ categories }, m_Handled{ false } {}
 
 
-        Event(const Event& other)
-            :   m_Type{ other.m_Type }, m_Categories{ other.m_Categories }, m_Handled{ other.m_Handled } {}
+        Event(const Event& other) = default;
 
         /**
          * Returns the type of this event. Can be used to query the type of
@@ -121,7 +120,7 @@ namespace kaTe {
         auto IsHandled() const -> bool { return m_Handled; }
 
         KT_NODISCARD
-        auto isInCategory(EventCategory cat) const -> bool { return GetCategoryFlags() & cat; }
+        auto IsInCategory(EventCategory cat) const -> bool { return GetCategoryFlags() & cat; }
 
         /**
          * Returns a formatted string representing the data, if any,
@@ -194,11 +193,12 @@ namespace kaTe {
         template<typename EventClassType>
             requires HasStaticGetType<EventClassType>
         KT_NODISCARD
-        auto forward(EventFunc_T<EventClassType> func) -> bool {
+        auto Forward(EventFunc_T<EventClassType> func) -> bool {
             if (m_Event.GetType() == EventClassType::GetStaticType()) {
                 m_Event.m_Handled = func(*(static_cast<EventClassType*>(&m_Event)));
                 return true;
             }
+
             return false;
         }
 
@@ -254,7 +254,7 @@ namespace kaTe {
     /**
      * Helper to print an Event to console
      * */
-    inline std::ostream& operator<<(std::ostream& out, const Event& e) {
+    inline auto operator<<(std::ostream& out, const Event& e) -> std::ostream& {
         return out << "Type: " << e.GetNameStr();
     }
 

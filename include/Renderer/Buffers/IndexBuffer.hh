@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "Tools/Common.hh"
+#include <Tools/Common.hh>
 
 namespace kaTe {
     /**
@@ -18,14 +18,17 @@ namespace kaTe {
          IndexBuffer() = default;
          virtual ~IndexBuffer() = default;
 
-         virtual auto GetID() const -> UInt32_T { return m_Id; }
-         virtual auto GetCount() const -> UInt32_T { return m_Count; }
+         KT_NODISCARD virtual auto GetID() const -> UInt32_T { return m_Id; }
+         KT_NODISCARD virtual auto GetCount() const -> UInt32_T { return m_Count; }
 
          // Temporary for OpenGL IndexBuffer
          virtual auto BindBuffer() const -> void {}
          virtual auto UnbindBuffer() const -> void {}
 
          static auto CreateBuffer(const std::vector<UInt32_T>& data) -> std::shared_ptr<IndexBuffer>;
+     protected:
+         explicit IndexBuffer(UInt32_T id, UInt32_T count = 0) : m_Id{ id }, m_Count{ count } {}
+
      protected:
          UInt32_T m_Id{};
          UInt32_T m_Count{};

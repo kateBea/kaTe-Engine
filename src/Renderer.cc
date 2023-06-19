@@ -7,10 +7,11 @@
 #include <Renderer/Renderer.hh>
 #include <Renderer/RenderCommand.hh>
 #include <Renderer/OpenGL/OpenGLShader.hh>
+#include <utility>
 
 namespace kaTe {
     auto Renderer::BeginScene(std::shared_ptr<OrthographicCamera> camera) -> void {
-        s_SceneData->camera = camera;
+        s_SceneData->camera = std::move(camera);
     }
 
     auto Renderer::Submit(std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
@@ -18,14 +19,14 @@ namespace kaTe {
     }
 
     auto Renderer::Submit(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
-        RenderCommand::DrawIndexed(vertexBuffer, indexBuffer);
+        RenderCommand::DrawIndexed(std::move(vertexBuffer), std::move(indexBuffer));
     }
 
     auto Renderer::Submit(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, const glm::mat4 &transform) -> void {
         // Currently submit draws our geometry directly, not buffered
-        shader->SetMat4("u_ProjectionView", s_SceneData->camera->getProjectionView());
+        shader->SetMat4("u_ProjectionView", s_SceneData->camera->GetProjectionView());
         shader->SetMat4("u_Transform", transform);
-        RenderCommand::DrawIndexed(shader, vertexBuffer, indexBuffer);
+        RenderCommand::DrawIndexed(shader, std::move(vertexBuffer), std::move(indexBuffer));
     }
 
     auto Renderer::EndScene() -> void {

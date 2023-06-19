@@ -14,8 +14,9 @@
 
 // Project Headers
 #include <Platform/Window/Window.hh>
-#include <Tools/Common.hh>
 #include <Renderer/RenderContext.hh>
+
+#include <Tools/Common.hh>
 
 namespace kaTe {
     /**
@@ -31,39 +32,36 @@ namespace kaTe {
     public:
         explicit CrossPlatformWindow(const WindowProperties& properties = WindowProperties{});
 
-        [[nodiscard]]
-        auto getWidth() const -> Int32_T override { return m_Properties.getWidth(); }
-        [[nodiscard]]
-        auto getHeight() const -> Int32_T override { return m_Properties.getHeight(); }
+        KT_NODISCARD auto GetWidth() const -> Int32_T override { return m_Properties.GetWidth(); }
+        KT_NODISCARD auto GetHeight() const -> Int32_T override { return m_Properties.GetHeight(); }
         /**
          * Returns a pointer to a structure containing the
          * native Window structure
          * */
-        [[nodiscard]]
-        auto getNativeWindow() -> std::any override { return m_Window; }
+        KT_NODISCARD auto GetNativeWindow() -> std::any override { return m_Window; }
 
-        auto init() -> void override;
-        auto onUpdate() -> void override;
-        auto shutDown() -> void override;
-        auto setEventCallback(EventCallbackFunc_T func) -> void override { m_Callback = func; }
-        [[nodiscard]]
-        auto isVSyncEnabled() const -> bool override { return m_VSync; }
-        auto enableVSync() -> void override;
-        auto disableVSync() -> void override;
+        auto Init() -> void override;
+        auto OnUpdate() -> void override;
+        auto ShutDown() -> void override;
+        auto SetEventCallback(EventCallbackFunc_T func) -> void override { m_Callback = func; }
+
+        KT_NODISCARD auto IsVSyncEnabled() const -> bool override { return m_VSync; }
+        auto EnableVSync() -> void override;
+        auto DisableVSync() -> void override;
 
         ~CrossPlatformWindow() override = default;
 
     private:
         // Helpers
-        auto setCallbacks() -> void;
-        auto spawnOnCenter() const -> void;
-        static auto getActiveAPIContext() -> RenderContext*;
-        static auto initGLFW() -> void;
+        auto SetCallbacks() -> void;
+        auto SpawnOnCenter() const -> void;
+        static auto GetActiveAPIContext() -> RenderContext*;
+        static auto InitGLFW() -> void;
 
-        RenderContext* m_Context{};
-        GLFWwindow* m_Window{};
+        RenderContext*      m_Context{};
+        GLFWwindow*         m_Window{};
         EventCallbackFunc_T m_Callback{};
-        bool m_VSync{};
+        bool                m_VSync{};
     };
 
 }   // END NAMESPACE kT

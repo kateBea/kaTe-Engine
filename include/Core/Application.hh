@@ -10,13 +10,12 @@
 #include <memory>
 
 // Project Headers
-#include <Tools/Singleton.hh>
-#include <Platform/Window/Window.hh>
 #include <Core/Events/Event.hh>
 #include <Core/Layers/LayerStack.hh>
 #include <Core/TimeManager.hh>
-
 #include <Core/Events/AppEvents.hh>
+#include <Platform/Window/Window.hh>
+#include <Tools/Singleton.hh>
 
 namespace kaTe {
     /**
@@ -26,40 +25,18 @@ namespace kaTe {
      * */
     class Application : public Singleton<Application> {
     public:
-        /**
-         * This functions forwards the received event to the appropriate
-         * event handler. For more see the CALLBACK HANDLERS section of this file
-         * @param event event to be dispatched
-         * */
-        auto OnEvent(Event& event) -> void;
-
-        /**
-         * Adds a the <code>layer</code> to the Layer stack
-         * @param layer layer to be stacked
-         * */
-        auto PushLayer(std::shared_ptr<Layer> layer) -> void;
-
-        /**
-         * Adds a the <code>overlay</code> to the Layer stack
-         * @param overlay overlay to be stacked
-         * */
-        auto PushOverlay(std::shared_ptr<Layer> overlay) -> void;
-
-        /**
-         * Returns a reference to the Application main window
-         * @returns main window
-         * */
-        auto GetMainWindow() -> Window&;
-
-        /**
-         * Initializes the subsystems of the
-         * application
-         * */
         auto Init() -> void;
         auto ShutDown() -> void;
-        auto UpdateState() -> void;
 
+        auto OnEvent(Event& event) -> void;
+
+        auto PushLayer(std::shared_ptr<Layer> layer) -> void;
+        auto PushOverlay(std::shared_ptr<Layer> overlay) -> void;
+
+        auto UpdateState() -> void;
         auto IsRunning() -> bool;
+
+        auto GetMainWindow() -> Window&;
 
 
     private:

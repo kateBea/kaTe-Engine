@@ -31,8 +31,8 @@ namespace kaTe {
 
         static auto UpdateDeltaTime() -> void {
             TimePoint_T now{ Clock_T::now() };
-            s_TimeStep = std::chrono::duration_cast<Sec_T>(now - s_LasFrameTime).count();
-            s_LasFrameTime = now;
+            s_TimeStep = std::chrono::duration_cast<Sec_T>(now - s_LastFrameTime).count();
+            s_LastFrameTime = now;
         }
 
         static auto GetDeltaTime(TimeUnit unit = TimeUnit::SECONDS) -> double {
@@ -43,11 +43,8 @@ namespace kaTe {
                 case TimeUnit::NANOSECONDS:     return s_TimeStep / SEC_TO_NANO;
 
                 case TimeUnit::NONE:
-                    [[fallthrough]];
-                case TimeUnit::COUNT:
-                    [[fallthrough]];
-                default:
-                    return -1;
+                case TimeUnit::COUNT:   [[fallthrough]];
+                default:                return -1;
             }
         }
 
@@ -59,11 +56,8 @@ namespace kaTe {
                 case TimeUnit::NANOSECONDS:     return std::chrono::duration_cast<Nano_T>(Clock_T::now() - s_InitTimePoint).count();
 
                 case TimeUnit::NONE:
-                    [[fallthrough]];
-                case TimeUnit::COUNT:
-                    [[fallthrough]];
-                default:
-                    return -1;
+                case TimeUnit::COUNT:   [[fallthrough]];
+                default:                return -1;
             }
         }
 
@@ -85,13 +79,10 @@ namespace kaTe {
     private:
         static auto TransformToSeconds(double time, TimeUnit unit) -> double {
             switch (unit) {
-                case TimeUnit::MILLISECONDS:
-                    return time / SEC_TO_MILLI;
-                case TimeUnit::MICROSECONDS:
-                    return time / SEC_TO_MICRO;
-                case TimeUnit::NANOSECONDS:
-                    return time / SEC_TO_NANO;
-                default: return -1;
+                case TimeUnit::MILLISECONDS:    return time / SEC_TO_MILLI;
+                case TimeUnit::MICROSECONDS:    return time / SEC_TO_MICRO;
+                case TimeUnit::NANOSECONDS:     return time / SEC_TO_NANO;
+                default:                        return -1;
             }
         }
 
@@ -104,7 +95,7 @@ namespace kaTe {
 
         // Time in seconds
         inline static double s_TimeStep{};
-        inline static TimePoint_T s_LasFrameTime{};
+        inline static TimePoint_T s_LastFrameTime{};
         inline static TimePoint_T s_InitTimePoint{};
     };
 }

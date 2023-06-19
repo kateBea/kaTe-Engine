@@ -22,7 +22,7 @@ set(PLATFORM_SOURCES
         src/Application.cc
         src/CrossPlatformWindow.cc
         src/WinWindow.cc
-        src/InputManagerGLFW.cc)
+        src/CrossPlatformInputManager.cc)
 
 set(RENDERER_SOURCES
         src/OpenGLVertexArray.cc

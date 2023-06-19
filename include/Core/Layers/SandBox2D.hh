@@ -18,11 +18,11 @@
 namespace kaTe {
     class SandBox2D : public Layer {
     public:
-        auto onAttach() -> void override;
-        auto onDetach() -> void override;
-        auto onUpdate() -> void override;
-        auto onEvent(Event& event) -> void override;
-        auto onImGuiRender() -> void override;
+        auto OnAttach() -> void override;
+        auto OnDetach() -> void override;
+        auto OnUpdate() -> void override;
+        auto OnEvent(Event& event) -> void override;
+        auto OnImGuiRender() -> void override;
     private:
         std::shared_ptr<BaseShader> m_ColorShader{};
         std::shared_ptr<OrthographicCameraController> m_CameraController{};

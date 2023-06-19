@@ -5,8 +5,9 @@
 #include <chrono>
 
 #include <Core/TimeManager.hh>
-#include <Core/Logger.hh>
 #include <Core/Timer.hh>
+
+#include <Tools/Common.hh>
 
 namespace kaTe {
 
@@ -16,20 +17,14 @@ namespace kaTe {
 
     auto Timer::GetCurrentProgress(TimeUnit unit) -> double {
         switch (unit) {
-            case TimeUnit::SECONDS:
-                return std::chrono::duration_cast<Sec_T>(Clock_T::now() - m_TimeSinceStart).count();
-            case TimeUnit::MILLISECONDS:
-                return std::chrono::duration_cast<Milli_T>(Clock_T::now() - m_TimeSinceStart).count();
-            case TimeUnit::MICROSECONDS:
-                return std::chrono::duration_cast<Micro_T>(Clock_T::now() - m_TimeSinceStart).count();
-            case TimeUnit::NANOSECONDS:
-                return std::chrono::duration_cast<Nano_T>(Clock_T::now() - m_TimeSinceStart).count();
-            case TimeUnit::NONE:
-                [[fallthrough]];
-            case TimeUnit::COUNT:
-                [[fallthrough]];
-            default:
-                return -1;
+            case TimeUnit::SECONDS:         return std::chrono::duration_cast<Sec_T>(Clock_T::now() - m_TimeSinceStart).count();
+            case TimeUnit::MILLISECONDS:    return std::chrono::duration_cast<Milli_T>(Clock_T::now() - m_TimeSinceStart).count();
+            case TimeUnit::MICROSECONDS:    return std::chrono::duration_cast<Micro_T>(Clock_T::now() - m_TimeSinceStart).count();
+            case TimeUnit::NANOSECONDS:     return std::chrono::duration_cast<Nano_T>(Clock_T::now() - m_TimeSinceStart).count();
+
+            case TimeUnit::NONE:            [[fallthrough]];
+            case TimeUnit::COUNT:           [[fallthrough]];
+            default:                        return -1;
         }
     }
 
@@ -42,17 +37,14 @@ namespace kaTe {
     }
     auto Timer::GetUnitStr(TimeUnit unit) -> std::string_view {
         switch (unit) {
-            case TimeUnit::SECONDS: return "s";
-            case TimeUnit::MILLISECONDS: return "ms";
-            case TimeUnit::MICROSECONDS: return "µs";
-            case TimeUnit::NANOSECONDS: return "ns";
+            case TimeUnit::SECONDS:         return "s";
+            case TimeUnit::MILLISECONDS:    return "ms";
+            case TimeUnit::MICROSECONDS:    return "µs";
+            case TimeUnit::NANOSECONDS:     return "ns";
 
-            case TimeUnit::NONE:
-                [[fallthrough]];
-            case TimeUnit::COUNT:
-                [[fallthrough]];
-            default:
-                return "";
+            case TimeUnit::NONE:            [[fallthrough]];
+            case TimeUnit::COUNT:           [[fallthrough]];
+            default:                        return "";
         }
     }
 }

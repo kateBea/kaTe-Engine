@@ -21,26 +21,21 @@
 namespace kaTe {
     class WindowProperties {
     public:
-        explicit WindowProperties(std::string_view name = "kaTe Engine", std::int32_t width = 1280, std::int32_t height = 720)
+        explicit WindowProperties(std::string_view name = "kaTe Engine", Int32_T width = 1280, Int32_T height = 720)
             :   m_Title{ name }, m_Width{ width }, m_Height{ height }
         {}
 
-        KT_NODISCARD
-        auto getName() const -> const std::string& { return m_Title; }
+        KT_NODISCARD auto GetName() const -> const std::string& { return m_Title; }
+        KT_NODISCARD auto GetWidth() const -> Int32_T { return m_Width; }
+        KT_NODISCARD auto GetHeight() const -> Int32_T { return m_Height; }
 
-        KT_NODISCARD
-        auto getWidth() const -> Int32_T { return m_Width; }
-
-        KT_NODISCARD
-        auto getHeight() const -> Int32_T { return m_Height; }
-
-        auto setWidth(Int32_T width) -> void { m_Width = width; }
-        auto setHeight(Int32_T height) -> void { m_Height = height; }
+        auto SetWidth(Int32_T width) -> void { m_Width = width; }
+        auto SetHeight(Int32_T height) -> void { m_Height = height; }
 
     private:
         std::string m_Title{};
-        Int32_T  m_Width{};
-        Int32_T  m_Height{};
+        Int32_T    m_Width{};
+        Int32_T    m_Height{};
     };
 
     /**
@@ -64,40 +59,33 @@ namespace kaTe {
         explicit Window(const WindowProperties& props = WindowProperties{})
             :   m_WindowCreateSuccess{ false } {}
 
-        KT_NODISCARD
-        virtual auto getWidth() const -> Int32_T = 0;
-        KT_NODISCARD
-        virtual auto getHeight() const -> Int32_T = 0;
+        KT_NODISCARD virtual auto GetWidth() const -> Int32_T = 0;
+        KT_NODISCARD virtual auto GetHeight() const -> Int32_T = 0;
 
-        /**
-         * Returns a pointer to a structure containing the
-         * native Window structure
-         * */
-        KT_NODISCARD
-        virtual auto getNativeWindow() -> std::any = 0;
+        KT_NODISCARD virtual auto GetNativeWindow() -> std::any = 0;
 
-        virtual auto init() -> void = 0;
-        virtual auto onUpdate() -> void = 0;
-        virtual auto shutDown() -> void = 0;
-        virtual auto setEventCallback(EventCallbackFunc_T func) -> void = 0;
+        virtual auto Init() -> void = 0;
+        virtual auto OnUpdate() -> void = 0;
+        virtual auto ShutDown() -> void = 0;
+        virtual auto SetEventCallback(EventCallbackFunc_T func) -> void = 0;
 
         KT_NODISCARD
-        virtual auto isVSyncEnabled() const -> bool = 0;
-        virtual auto enableVSync() -> void = 0;
-        virtual auto disableVSync() -> void = 0;
+        virtual auto IsVSyncEnabled() const -> bool = 0;
+        virtual auto EnableVSync() -> void = 0;
+        virtual auto DisableVSync() -> void = 0;
 
         virtual ~Window() = default;
-    private:
+    public:
         Window(const Window&) = delete;
         auto operator=(const Window&) noexcept -> Window& = delete;
 
         Window(Window&&) = delete;
         auto operator=(Window&&) noexcept -> Window& = delete;
     protected:
-        bool m_WindowCreateSuccess{};
-        WindowProperties m_Properties{};
+        WindowProperties    m_Properties{};
+        bool                m_WindowCreateSuccess{};
     };
 
-}   // END NAMESPACE kT
+}   // END NAMESPACE kaTe
 
 #endif // KATE_ENGINE_WINDOW_HH

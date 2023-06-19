@@ -29,7 +29,6 @@ namespace kaTe {
         :   m_AspectRatio{ (double)width / height }, m_EnableRotation{ enableRotation }
     {
         if (target == nullptr)
-            // these are for now magic numbers
             m_TargetCamera = std::make_shared<OrthographicCamera>(-m_AspectRatio * m_Zoom, m_AspectRatio * m_Zoom, -m_Zoom, m_Zoom);
         else
             m_TargetCamera = target;
@@ -41,22 +40,22 @@ namespace kaTe {
 
         // Try using the event system instead
         if (m_EnableRotation) {
-            if (InputManager::isKeyPressed(KT_KEY_Q)) m_TargetCameraRotation += m_TargetCameraRotationSpeed * deltaTime;
-            if (InputManager::isKeyPressed(KT_KEY_E)) m_TargetCameraRotation -= m_TargetCameraRotationSpeed * deltaTime;
+            if (InputManager::IsKeyPressed(KT_KEY_Q)) m_TargetCameraRotation += m_TargetCameraRotationSpeed * deltaTime;
+            if (InputManager::IsKeyPressed(KT_KEY_E)) m_TargetCameraRotation -= m_TargetCameraRotationSpeed * deltaTime;
         }
         else {
-            if (InputManager::isKeyPressed(KT_KEY_Q) || InputManager::isKeyPressed(KT_KEY_E))
+            if (InputManager::IsKeyPressed(KT_KEY_Q) || InputManager::IsKeyPressed(KT_KEY_E))
                 KATE_CORE_LOGGER_WARN("Trying to rotate camera but rotation is disabled for this controller");
 
         }
 
-        if (InputManager::isKeyPressed(KT_KEY_A)) m_TargetCameraPosition.x -= m_TargetCameraMovementSpeed * deltaTime;
-        if (InputManager::isKeyPressed(KT_KEY_D)) m_TargetCameraPosition.x += m_TargetCameraMovementSpeed * deltaTime;
-        if (InputManager::isKeyPressed(KT_KEY_W)) m_TargetCameraPosition.y += m_TargetCameraMovementSpeed * deltaTime;
-        if (InputManager::isKeyPressed(KT_KEY_S)) m_TargetCameraPosition.y -= m_TargetCameraMovementSpeed * deltaTime;
+        if (InputManager::IsKeyPressed(KT_KEY_A)) m_TargetCameraPosition.x -= m_TargetCameraMovementSpeed * deltaTime;
+        if (InputManager::IsKeyPressed(KT_KEY_D)) m_TargetCameraPosition.x += m_TargetCameraMovementSpeed * deltaTime;
+        if (InputManager::IsKeyPressed(KT_KEY_W)) m_TargetCameraPosition.y += m_TargetCameraMovementSpeed * deltaTime;
+        if (InputManager::IsKeyPressed(KT_KEY_S)) m_TargetCameraPosition.y -= m_TargetCameraMovementSpeed * deltaTime;
 
-        m_TargetCamera->setPosition(m_TargetCameraPosition.x, m_TargetCameraPosition.y);
-        m_TargetCamera->setRotation(m_TargetCameraRotation);
+        m_TargetCamera->SetPosition(m_TargetCameraPosition.x, m_TargetCameraPosition.y);
+        m_TargetCamera->SetRotation(m_TargetCameraRotation);
 
         m_TargetCameraMovementSpeed = m_Zoom;
     }
@@ -64,24 +63,24 @@ namespace kaTe {
     auto OrthographicCameraController::OnEvent(Event &event) -> void {
         EventDispatcher dispatcher{ event };
 
-        dispatcher.forward<MouseScrollEvent>(KT_BIND_EVENT_FUNC(OrthographicCameraController::OnMouseScrolledEvent));
-        dispatcher.forward<WindowResizedEvent>(KT_BIND_EVENT_FUNC(OrthographicCameraController::OnWindowResized));
+        dispatcher.Forward<MouseScrollEvent>(KT_BIND_EVENT_FUNC(OrthographicCameraController::OnMouseScrolledEvent));
+        dispatcher.Forward<WindowResizedEvent>(KT_BIND_EVENT_FUNC(OrthographicCameraController::OnWindowResized));
     }
 
     auto OrthographicCameraController::SetProjection(double left, double right, double bottom, double top) -> void {
-        m_TargetCamera->setProjection(left, right, bottom, top);
+        m_TargetCamera->SetProjection(left, right, bottom, top);
     }
 
     auto OrthographicCameraController::OnMouseScrolledEvent(MouseScrollEvent& event) -> bool {
         m_Zoom += event.GetOffsetY() * m_FieldOfViewSensitivity;
         m_Zoom = std::max(m_Zoom, s_MaxZoom);
-        m_TargetCamera->setProjection(-m_AspectRatio * m_Zoom, m_AspectRatio * m_Zoom, -m_Zoom, m_Zoom);
+        m_TargetCamera->SetProjection(-m_AspectRatio * m_Zoom, m_AspectRatio * m_Zoom, -m_Zoom, m_Zoom);
         return false;
     }
 
-    auto OrthographicCameraController::OnWindowResized(WindowResizedEvent &event) -> bool {
+    auto OrthographicCameraController::OnWindowResized(WindowResizedEvent& event) -> bool {
         m_AspectRatio = (double)event.GetWidth() / event.GetHeight();
-        m_TargetCamera->setProjection(-m_AspectRatio * m_Zoom, m_AspectRatio * m_Zoom, -m_Zoom, m_Zoom);
+        m_TargetCamera->SetProjection(-m_AspectRatio * m_Zoom, m_AspectRatio * m_Zoom, -m_Zoom, m_Zoom);
         return false;
     }
 

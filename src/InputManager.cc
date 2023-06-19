@@ -2,46 +2,47 @@
 // Created by kate on 6/9/23.
 //
 
+#include <memory>
 #include <utility>
 
 #include <Core/Assert.hh>
 #include <Core/Logger.hh>
 
+#include <Platform/CrossPlatformInputManager.hh>
 #include <Platform/InputManager.hh>
-#include <Platform/InputManagerGLFW.hh>
 
 namespace kaTe {
-    auto InputManager::init() -> void {
+    auto InputManager::Init() -> void {
         KATE_CORE_LOGGER_INFO("kaTe Engine: Input Manager initialization");
-        s_InputManager = new InputManagerGLFW();
+        s_InputManager = std::make_unique<CrossPlatformInputManager>();
     }
 
-    auto InputManager::isKeyPressed(Int32_T keyCode) -> bool {
+    auto InputManager::IsKeyPressed(Int32_T keyCode) -> bool {
         KT_ASSERT(s_InputManager, "InputManager singleton ptr is NULL");
-        return s_InputManager->isKeyPressedNative(keyCode);
+        return s_InputManager->IsKeyPressedNative(keyCode);
     }
 
-    auto InputManager::isMouseKeyPressed(Int32_T button) -> bool {
+    auto InputManager::IsMouseKeyPressed(Int32_T button) -> bool {
         KT_ASSERT(s_InputManager, "InputManager singleton ptr is NULL");
-        return s_InputManager->isMouseKeyPressedNative(button);
+        return s_InputManager->IsMouseKeyPressedNative(button);
     }
 
-    auto InputManager::getMouseX() -> double {
+    auto InputManager::GetMouseX() -> double {
         KT_ASSERT(s_InputManager, "InputManager singleton ptr is NULL");
-        return s_InputManager->getMouseXNative();
+        return s_InputManager->GetMouseXNative();
     }
 
-    auto InputManager::getMouseY() -> double {
+    auto InputManager::GetMouseY() -> double {
         KT_ASSERT(s_InputManager, "InputManager singleton ptr is NULL");
-        return s_InputManager->getMouseYNative();
+        return s_InputManager->GetMouseYNative();
     }
 
-    auto InputManager::getMousePos() -> std::pair<double, double> {
+    auto InputManager::GetMousePos() -> std::pair<double, double> {
         KT_ASSERT(s_InputManager, "InputManager singleton ptr is NULL");
-        return s_InputManager->getMousePosNative();
+        return s_InputManager->GetMousePosNative();
     }
 
-    auto InputManager::shutDown() -> void {
-        delete s_InputManager;
+    auto InputManager::ShutDown() -> void {
+
     }
 }

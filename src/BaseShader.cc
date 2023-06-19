@@ -10,7 +10,7 @@
 
 namespace kaTe {
 
-    auto BaseShader::CreateShader(const std::filesystem::path &vertStage, const std::filesystem::path &pixelStage) -> std::shared_ptr<BaseShader> {
+    auto BaseShader::CreateShader(const Path_T& vertStage, const Path_T& pixelStage) -> std::shared_ptr<BaseShader> {
         switch(Renderer::GetActiveGraphicsAPI()) {
             case Renderer::GraphicsAPI::OPENGL_API:
                 return std::make_shared<OpenGLShader>(vertStage, pixelStage);

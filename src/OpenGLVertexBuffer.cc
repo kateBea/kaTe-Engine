@@ -37,10 +37,10 @@ namespace kaTe {
         }
 
         if (!vertices.empty()) {
-            BindBufferData();
+            Bind();
             m_Size = vertices.size() * sizeof(float);
             glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Size), vertices.data(), usage);
-            UnbindBufferData();
+            Unbind();
         }
     }
 }

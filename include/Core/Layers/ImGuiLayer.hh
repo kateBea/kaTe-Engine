@@ -7,15 +7,14 @@
 #define KATE_ENGINE_IMGUI_LAYER_HH
 
 // Third-Party Libraries
-#include "imgui.h"
+#include <imgui.h>
 
 // Project Headers
-#include "Core/Layers/Layer.hh"
-
-#include "Core/Events/AppEvents.hh"
-#include "Core/Events/Event.hh"
-#include "Core/Events/KeyEvents.hh"
-#include "Core/Events/MouseEvents.hh"
+#include <Core/Layers/Layer.hh>
+#include <Core/Events/AppEvents.hh>
+#include <Core/Events/Event.hh>
+#include <Core/Events/KeyEvents.hh>
+#include <Core/Events/MouseEvents.hh>
 
 namespace kaTe {
     /**
@@ -25,18 +24,18 @@ namespace kaTe {
     class ImGuiLayer : public Layer {
     public:
         explicit ImGuiLayer() noexcept;
-        ~ImGuiLayer();
+        ~ImGuiLayer() override;
 
-        auto onAttach() -> void override;
-        auto onDetach() -> void override;
-        auto onUpdate() -> void override;
-        auto onImGuiRender() -> void override;
+        auto OnAttach() -> void override;
+        auto OnDetach() -> void override;
+        auto OnUpdate() -> void override;
+        auto OnImGuiRender() -> void override;
 
-        static auto beginFrame() -> void;
-        static auto endFrame() -> void;
+        static auto BeginFrame() -> void;
+        static auto EndFrame() -> void;
 
     private:
-        static auto setupCustomImGuiStyle() -> void;
+        static auto SetupCustomImGuiStyle() -> void;
 
     };
 

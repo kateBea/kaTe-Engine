@@ -29,10 +29,10 @@ namespace kaTe {
         {}
 
         KT_NODISCARD
-        auto GetPositionX() -> double { return m_PositionX; }
+        auto GetPositionX() const -> double { return m_PositionX; }
 
         KT_NODISCARD
-        auto GetPositionY() -> double { return m_PositionY; }
+        auto GetPositionY() const -> double { return m_PositionY; }
 
         KT_NODISCARD
         auto GetType() const -> EventType override { return GetStaticType(); }
@@ -64,16 +64,15 @@ namespace kaTe {
 
     class MouseButtonPressedEvent : public MouseEvent {
     public:
-        MouseButtonPressedEvent(Int32_T button, Int32_T modifiers = 0)
-                :   MouseEvent{ EventType::MOUSE_BUTTON_PRESSED_EVENT, MOUSE_BUTTON_EVENT_CATEGORY}
-                ,   m_Button{ button }, m_Modifiers{ modifiers }
+        explicit MouseButtonPressedEvent(Int32_T button, Int32_T modifiers = 0)
+            :   MouseEvent{ EventType::MOUSE_BUTTON_PRESSED_EVENT, MOUSE_BUTTON_EVENT_CATEGORY}, m_Button{ button }, m_Modifiers{ modifiers }
         {}
 
         KT_NODISCARD
-        auto GetMouseButton() -> Int32_T { return m_Button; }
+        auto GetMouseButton() const -> Int32_T { return m_Button; }
 
         KT_NODISCARD
-        auto GetModifiers() -> Int32_T { return m_Modifiers; }
+        auto GetModifiers() const -> Int32_T { return m_Modifiers; }
 
         KT_NODISCARD
         auto GetType() const -> EventType override { return GetStaticType(); }
@@ -101,13 +100,12 @@ namespace kaTe {
 
     class MouseButtonReleasedEvent : public MouseEvent {
     public:
-        MouseButtonReleasedEvent(Int32_T button)
-            :    MouseEvent{ EventType::MOUSE_BUTTON_RELEASED_EVENT, MOUSE_BUTTON_EVENT_CATEGORY }
-            ,    m_Button{ button }
+        explicit MouseButtonReleasedEvent(Int32_T button)
+            :    MouseEvent{ EventType::MOUSE_BUTTON_RELEASED_EVENT, MOUSE_BUTTON_EVENT_CATEGORY }, m_Button{ button }
         {}
 
         KT_NODISCARD
-        auto GetMouseButton() -> Int32_T { return m_Button; }
+        auto GetMouseButton() const -> Int32_T { return m_Button; }
 
         KT_NODISCARD
         auto GetType() const -> EventType override { return getStaticType(); }
@@ -135,15 +133,14 @@ namespace kaTe {
     class MouseScrollEvent : public MouseEvent {
     public:
         MouseScrollEvent(double xOffset, double yOffset)
-            :   MouseEvent{ EventType::MOUSE_SCROLLED_EVENT }
-            ,   m_OffsetX{ xOffset }, m_OffsetY{ yOffset }
+            :   MouseEvent{ EventType::MOUSE_SCROLLED_EVENT }, m_OffsetX{ xOffset }, m_OffsetY{ yOffset }
         {}
 
         KT_NODISCARD
-        auto GetOffsetX() -> double { return m_OffsetX; }
+        auto GetOffsetX() const -> double { return m_OffsetX; }
 
         KT_NODISCARD
-        auto GetOffsetY() -> double { return m_OffsetY; }
+        auto GetOffsetY() const -> double { return m_OffsetY; }
 
         KT_NODISCARD
         auto GetType() const -> EventType override { return GetStaticType(); }

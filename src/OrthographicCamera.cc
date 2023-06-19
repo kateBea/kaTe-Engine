@@ -20,7 +20,7 @@ namespace kaTe {
         m_ProjectionAndView = m_Projection * m_ViewMatrix;
     }
 
-    auto OrthographicCamera::recomputeViewMatrix() -> void {
+    auto OrthographicCamera::RecomputeViewMatrix() -> void {
         constexpr glm::mat4 identityMatrix(1.0f);
         constexpr glm::vec3 zAxis{ 0.0f, 0.0f, 1.0f };
 
@@ -31,14 +31,14 @@ namespace kaTe {
         m_ProjectionAndView = m_Projection * m_ViewMatrix;
     }
 
-    void OrthographicCamera::updateProjection(const Window &window) {
-        double width{ static_cast<double>(window.getWidth()) };
-        double height{ static_cast<double>(window.getHeight()) };
+    void OrthographicCamera::UpdateProjection(const std::shared_ptr<Window>& window) {
+        double width{ static_cast<double>(window->GetWidth()) };
+        double height{ static_cast<double>(window->GetHeight()) };
         m_AspectRatio = height / height;
         m_Projection = glm::ortho(0.0, width, 0.0, height, s_DefaultNearPlane, s_DefaultFarPlane);
     }
 
-    auto OrthographicCamera::setProjection(double left, double right, double bottom, double top) -> void {
+    auto OrthographicCamera::SetProjection(double left, double right, double bottom, double top) -> void {
         m_Projection = glm::ortho(left, right, bottom, top, s_DefaultNearPlane, s_DefaultFarPlane);
         m_ProjectionAndView = m_Projection * m_ViewMatrix;
     }

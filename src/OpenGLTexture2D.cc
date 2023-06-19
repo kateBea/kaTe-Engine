@@ -34,6 +34,8 @@ namespace kaTe {
             // free the data if we do not want to keep it
             if (!m_RetainData)
                 stbi_image_free(m_TextureFileData);
+            else
+                m_TextureFileData = nullptr;
         }
         else {
             throw std::runtime_error("Could not load Texture data");
@@ -92,17 +94,5 @@ namespace kaTe {
         glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_Id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTextureSubImage2D(m_Id, 0, 0, 0, m_Width, m_Height, m_Format, GL_UNSIGNED_BYTE, data);
-    }
-
-    auto OpenGLTexture2D::GetByteChar(const Path_T &path) -> std::string {
-        std::string fileDir(4096, '\0');
-#ifdef defined(_WIN32) || defined(_WIN64)
-        // fileDir.size() will return the amount of elements of fileDir, since it contains char which are byte sized
-        wcstombs_s(nullptr, fileDir.data(), fileDir.size(), path.c_str(), 4096);
-#else
-        std::copy(path.native().begin(), path.native().end(), fileDir.begin());
-#endif
-
-        return fileDir;
     }
 }

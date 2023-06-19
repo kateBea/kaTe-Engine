@@ -9,6 +9,8 @@
 
 #include <glm/glm.hpp>
 
+#include <Tools/Common.hh>
+
 namespace kaTe {
     class BaseShader {
     public:
@@ -27,7 +29,7 @@ namespace kaTe {
         virtual auto SetMat3(std::string_view name, const glm::mat3& mat) -> void = 0;
         virtual auto SetMat4(std::string_view name, const glm::mat4& mat) -> void = 0;
 
-        static auto CreateShader(const std::filesystem::path& vertStage, const std::filesystem::path& pixelStage) -> std::shared_ptr<BaseShader>;
+        static auto CreateShader(const Path_T& vertStage, const Path_T& pixelStage) -> std::shared_ptr<BaseShader>;
     };
 }
 

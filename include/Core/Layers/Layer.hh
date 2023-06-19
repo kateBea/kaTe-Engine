@@ -30,20 +30,19 @@ namespace kaTe {
 
         virtual ~Layer() = default;
 
-        virtual auto onAttach() -> void = 0;
-        virtual auto onDetach() -> void = 0;
-        virtual auto onUpdate() -> void = 0;
-        virtual auto onEvent(Event& event) -> void {}
-        virtual auto onImGuiRender() -> void {}
+        virtual auto OnAttach() -> void = 0;
+        virtual auto OnDetach() -> void = 0;
+        virtual auto OnUpdate() -> void = 0;
+        virtual auto OnEvent(Event& event) -> void {}
+        virtual auto OnImGuiRender() -> void {}
 
         /**
          * For debugging purposes
          * */
         KT_NODISCARD
-        auto getName() const -> const std::string& { return m_Name; }
+        auto GetName() const -> const std::string& { return m_Name; }
 
     private:
-
         std::string m_Name{};
     };
 

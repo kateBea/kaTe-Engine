@@ -2,24 +2,28 @@
 // Created by kate on 6/4/23.
 //
 
+// C++ Standard Library
 #include <any>
 
-#include "GL/glew.h"
-#include "GLFW/glfw3.h"
+// Third-Party Libraries
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
-#include "Core/Application.hh"
-#include "Core/Assert.hh"
-#include "Core/Logger.hh"
-#include "Renderer/OpenGL/OpenGLContext.hh"
-#include "Tools/Common.hh"
+// Project Headers
+#include <Tools/Common.hh>
+
+#include <Core/Assert.hh>
+#include <Core/Logger.hh>
+
+#include <Renderer/OpenGL/OpenGLContext.hh>
 
 namespace kaTe {
 
-    auto OpenGLContext::init(std::any windowHandle) -> void {
+    auto OpenGLContext::Init(std::any windowHandle) -> void {
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*
-            m_Handle = std::any_cast<GLFWwindow*>(Application::Get().GetMainWindow().getNativeWindow());
-            KT_ASSERT(m_Handle, "OpenGLContext::init() window handle is NULL");
+            m_Handle = std::any_cast<GLFWwindow*>(windowHandle);
+            KT_ASSERT(m_Handle, "Window handle for OpenGL context initialization is NULL");
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, KT_OPENGL_VERSION_MAJOR);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, KT_OPENGL_VERSION_MINOR);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -39,15 +43,15 @@ namespace kaTe {
 
         }
         catch (const std::bad_any_cast& exception) {
-            KATE_APP_LOGGER_ERROR("Exception thrown std::any_cast at OpenGLContext::init. What: {}", exception.what());
+            KATE_APP_LOGGER_ERROR("Exception thrown std::any_cast at OpenGLContext::Init(). What: {}", exception.what());
         }
     }
 
-    auto OpenGLContext::shutDown() -> void {
+    auto OpenGLContext::ShutDown() -> void {
 
     }
 
-    auto OpenGLContext::swapBuffers() -> void {
+    auto OpenGLContext::SwapBuffers() -> void {
         glfwSwapBuffers(m_Handle);
     }
 }

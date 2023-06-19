@@ -33,14 +33,16 @@ namespace kaTe {
         using Clock_T = std::chrono::high_resolution_clock;
         using TimePoint_T = std::chrono::time_point<Clock_T>;
 
-        std::string_view m_Identifier{};
+        std::string m_Identifier{};
         TimePoint_T m_TimeSinceStart{};
         TimeUnit m_DefaultUnit{};
     };
 }
 
-// Call at the beginning of the scope
-#define KT_PROFILE_SCOPE()  Timer _Timer{ __PRETTY_FUNCTION__ }
+// Call first at the beginning of the scope
+#if defined(NDEBUG) || defined(_DEBUG)
+    #define KT_PROFILE_SCOPE()  Timer _Timer{ ConcatStr(__LINE__, " @line ", __PRETTY_FUNCTION__) }
+#endif
 
 
 #endif//KATE_ENGINE_TIMER_HH

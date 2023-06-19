@@ -12,21 +12,21 @@
 #include <backends/imgui_impl_opengl3.h>
 
 // Project Headers
+#include <Tools/Common.hh>
+
 #include <Core/Logger.hh>
 #include <Core/KeyCodes.hh>
 
-#include "Core/Application.hh"
-#include <Tools/Common.hh>
+#include <Core/Application.hh>
 
-#include "Core/Layers/ImGuiLayer.hh"
-#include "Platform/InputManager.hh"
-#include <Core/TimeManager.hh>
+#include <Core/Layers/ImGuiLayer.hh>
+#include <Platform/InputManager.hh>
 
 namespace kaTe {
     ImGuiLayer::ImGuiLayer() noexcept
         :   Layer{ "ImGuiLayer" } {}
 
-    auto ImGuiLayer::onAttach() -> void {
+    auto ImGuiLayer::OnAttach() -> void {
         // Setup Dear ImGui context
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -46,12 +46,12 @@ namespace kaTe {
 
         // Configure ImGui Style
         ImGui::StyleColorsDark();
-        setupCustomImGuiStyle();
+        SetupCustomImGuiStyle();
         io.Fonts->AddFontFromFileTTF("../assets/Fonts/Inter/Inter-VariableFont.ttf", 15);
 
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*
-            GLFWwindow* window{ std::any_cast<GLFWwindow*>(Application::Get().GetMainWindow().getNativeWindow()) };
+            GLFWwindow* window{ std::any_cast<GLFWwindow*>(Application::Get().GetMainWindow().GetNativeWindow()) };
 
             // Setup Platform/Renderer backends
             ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -62,17 +62,17 @@ namespace kaTe {
         }
     }
 
-    auto ImGuiLayer::onDetach() -> void {
+    auto ImGuiLayer::OnDetach() -> void {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
         ImGui::DestroyContext();
     }
 
-    auto ImGuiLayer::onUpdate() -> void {
+    auto ImGuiLayer::OnUpdate() -> void {
 
     }
 
-    auto ImGuiLayer::setupCustomImGuiStyle() -> void {
+    auto ImGuiLayer::SetupCustomImGuiStyle() -> void {
         // Setup Dear ImGui style
         ImGuiStyle &style = ImGui::GetStyle();
 
@@ -124,16 +124,16 @@ namespace kaTe {
         style.TabRounding = 5.0f;
     }
 
-    auto ImGuiLayer::beginFrame() -> void {
+    auto ImGuiLayer::BeginFrame() -> void {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
     }
 
-    auto ImGuiLayer::endFrame() -> void {
+    auto ImGuiLayer::EndFrame() -> void {
         ImGuiIO& io{ ImGui::GetIO() };
-        Window& win{Application::Get().GetMainWindow() };
-        io.DisplaySize = ImVec2(win.getWidth(), win.getHeight());
+        Window& window{ Application::Get().GetMainWindow() };
+        io.DisplaySize = ImVec2(window.GetWidth(), window.GetHeight());
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -150,7 +150,7 @@ namespace kaTe {
         }
     }
 
-    auto ImGuiLayer::onImGuiRender() -> void {
+    auto ImGuiLayer::OnImGuiRender() -> void {
         bool bl{ true };
         ImGui::ShowDemoWindow(&bl);
         ImGui::Begin("Info");

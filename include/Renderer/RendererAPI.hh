@@ -17,6 +17,7 @@ namespace kaTe {
         explicit RendererAPI() = default;
 
 		/* It is not an enum class for ease with bit OR operations*/
+        // temporary
 		enum BufferBit {
 			NONE,
 			OPEN_GL_COLOR_BUFFER_BIT = GL_COLOR_BUFFER_BIT,
@@ -42,7 +43,7 @@ namespace kaTe {
 		virtual auto SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void = 0;
 
         virtual ~RendererAPI() = default;
-    private:
+    public:
         // Forbidden operations
         RendererAPI(const RendererAPI&) = delete;
         auto operator=(const RendererAPI&) -> RendererAPI& = delete;

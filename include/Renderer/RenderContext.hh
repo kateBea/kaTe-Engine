@@ -10,15 +10,14 @@
 namespace kaTe {
     class RenderContext {
     public:
-        RenderContext() = default;
+        explicit RenderContext() = default;
 
-        virtual auto init(std::any windowHandle) -> void = 0;
-        virtual auto shutDown() -> void = 0;
-        virtual auto swapBuffers() -> void = 0;
+        virtual auto Init(std::any windowHandle) -> void = 0;
+        virtual auto ShutDown() -> void = 0;
+        virtual auto SwapBuffers() -> void = 0;
 
         virtual ~RenderContext() = default;
-    private:
-        // Forbidden operations on Contexts
+    public:
         RenderContext(const RenderContext&) = delete;
         auto operator=(const RenderContext&) -> RenderContext& = delete;
 

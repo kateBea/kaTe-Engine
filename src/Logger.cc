@@ -1,3 +1,5 @@
+#include <memory>
+
 #include <Core/Logger.hh>
 #include <Core/Assert.hh>
 

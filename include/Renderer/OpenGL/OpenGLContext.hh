@@ -13,15 +13,15 @@
 namespace kaTe {
     class OpenGLContext : public RenderContext {
     public:
-        OpenGLContext() = default;
+        explicit OpenGLContext() = default;
 
-        auto init(std::any windowHandle) -> void;
-        auto shutDown() -> void override;
-        auto swapBuffers() -> void override;
+        auto Init(std::any windowHandle) -> void override;
+        auto ShutDown() -> void override;
+        auto SwapBuffers() -> void override;
 
-        ~OpenGLContext() = default;
+        ~OpenGLContext() override = default;
 
-    private:
+    public:
         // Forbidden operations on Contexts
         OpenGLContext(const OpenGLContext&) = delete;
         auto operator=(const OpenGLContext&) -> OpenGLContext& = delete;
@@ -29,9 +29,8 @@ namespace kaTe {
         OpenGLContext(OpenGLContext&&) = delete;
         auto operator=(OpenGLContext&&) -> OpenGLContext& = delete;
     private:
-        // We may want to have various OpenGL contexts
-        bool m_GLEWInitSuccess{ false };
         GLFWwindow* m_Handle{};
+        bool        m_GLEWInitSuccess{ false };
     };
 }
 

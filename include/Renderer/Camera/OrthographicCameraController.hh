@@ -7,9 +7,9 @@
 
 #include <memory>
 
-#include <glm/vec2.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec4.hpp>
+// Force radians always
+#define GLM_FORCE_RADIANS
+#include <glm/glm.hpp>
 
 #include <Tools/Common.hh>
 #include <Core/Events/Event.hh>

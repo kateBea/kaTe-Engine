@@ -7,45 +7,45 @@
 #define KATE_ENGINE_INPUT_MANAGER_HH
 
 // C++ Standard Library
+#include <memory>
 #include <utility>
 
 // Project Headers
+#include <Tools/Singleton.hh>
+#include <Tools/Common.hh>
+
 #include <Core/Assert.hh>
 
 #include <Platform/Window/Window.hh>
 
-#include <Tools/Singleton.hh>
-#include <Tools/Common.hh>
 
 namespace kaTe {
     class InputManager {
     public:
-        static auto init() -> void;
+        explicit InputManager() = default;
+        virtual ~InputManager() = default;
 
-        static auto isKeyPressed(Int32_T keyCode) -> bool;
-        static auto isMouseKeyPressed(Int32_T button) -> bool;
-        static auto getMouseX() -> double;
-        static auto getMouseY() -> double;
-        static auto getMousePos() -> std::pair<double, double>;
+        static auto Init() -> void;
 
-        static auto shutDown() -> void;
+        static auto IsKeyPressed(Int32_T keyCode) -> bool;
+        static auto IsMouseKeyPressed(Int32_T button) -> bool;
+        static auto GetMouseX() -> double;
+        static auto GetMouseY() -> double;
+        static auto GetMousePos() -> std::pair<double, double>;
+
+        static auto ShutDown() -> void;
 
     private:
-        inline static InputManager* s_InputManager{};
+        inline static std::unique_ptr<InputManager> s_InputManager{};
     protected:
         /* Keyboard Input */
-        KT_NODISCARD
-        virtual auto isKeyPressedNative(Int32_T keyCode) -> bool = 0;
+        KT_NODISCARD virtual auto IsKeyPressedNative(Int32_T keyCode) -> bool = 0;
 
         /* Mouse Input */
-        KT_NODISCARD
-        virtual auto isMouseKeyPressedNative(Int32_T button) -> bool = 0;
-        KT_NODISCARD
-        virtual auto getMouseXNative() -> double = 0;
-        KT_NODISCARD
-        virtual auto getMouseYNative() -> double = 0;
-        KT_NODISCARD
-        virtual auto getMousePosNative() -> std::pair<double, double> = 0;
+        KT_NODISCARD virtual auto IsMouseKeyPressedNative(Int32_T button) -> bool = 0;
+        KT_NODISCARD virtual auto GetMouseXNative() -> double = 0;
+        KT_NODISCARD virtual auto GetMouseYNative() -> double = 0;
+        KT_NODISCARD virtual auto GetMousePosNative() -> std::pair<double, double> = 0;
     };
 
 }

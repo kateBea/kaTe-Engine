@@ -17,13 +17,13 @@ namespace kaTe {
     auto OpenGLVertexArray::useVertexBuffer(std::shared_ptr<VertexBuffer> buffer) -> void {
         KT_ASSERT(!buffer->IsEmpty(), "Vertex Buffer is empty");
         bindVertexArray();
-        buffer->BindBufferData();
+        buffer->Bind();
 
         UInt32_T index{};
         for (const auto&i: buffer->GetBufferLayout()) {
             glEnableVertexAttribArray(index);
-            glVertexAttribPointer(index, i.getAttributeCount(), i.getOpenGLAttributeDataType(),
-                                  !i.isNormalized() ? GL_FALSE : GL_TRUE, buffer->GetBufferLayout().getStride(), (const void*)i.getOffset());
+            glVertexAttribPointer(index, i.GetAttributeCount(), i.GetOpenGLAttributeDataType(),
+                                  !i.IsNormalized() ? GL_FALSE : GL_TRUE, buffer->GetBufferLayout().GetStride(), (const void*) i.GetOffset());
             ++index;
         }
     }

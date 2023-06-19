@@ -12,7 +12,7 @@
 // Project Headers
 #include <Tools/Common.hh>
 
-#if defined(_WIND32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
     #define __PRETTY_FUNCTION__  __FUNCTION__
 #endif
 
@@ -26,10 +26,10 @@
 /**
  * Print __MESSAGE and abort program execution if __EXPR evaluates to false
  */
-#define KT_ASSERT(__EXPR, __MESSAGE)                                       \
+#define KT_ASSERT(__EXPR, __MESSAGE)                                      \
     do {                                                                   \
         if (!(__EXPR)) {                                                   \
-            KT_COLOR_PRINT_FORMATTED(fmt::color::red, "MESSAGE: {}\n"      \
+            KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_RED, "MESSAGE: {}\n"   \
                                                       "FUNCTION: {}\n"     \
                                                       "SRC: {}\n"          \
                                                       "LINE: {}\n",        \

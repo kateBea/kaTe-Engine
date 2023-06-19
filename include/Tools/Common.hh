@@ -235,21 +235,7 @@
 * ********************************************************+ */
 
 namespace kaTe {
-    /**
-         * Pointer to a T. Owns the held instance
-         * @tparam T held type
-         * */
-    template<typename T>
-    using Scope_T = std::unique_ptr<T>;
-
     using Path_T = std::filesystem::path;
-
-    /**
-         * Pointer to a T. May share the held instance
-         * @tparam T held type
-         * */
-    template<typename T>
-    using Ref_T = std::shared_ptr<T>;
 
     using Int8_T = std::int8_t;
     using Int16_T = std::int16_t;
@@ -268,6 +254,35 @@ namespace kaTe {
     using Short_T = unsigned short;
     using Long_T = unsigned long;
     using LongLong_T = long long;
+
+    /**
+     * Transforms wide char strings to byte char strings. On Windows
+     * std::filesystem::string returns a string of wide char types (wchar_t),
+     * whereas on windows it returns a string of  char
+     * @returns string of byte sized characters
+     * */
+    inline auto GetByteChar(const Path_T &path) -> std::string {
+        std::string fileDir(4096, '\0');
+#ifdef defined(_WIN32) || defined(_WIN64)
+        wcstombs_s(nullptr, fileDir.data(), fileDir.size(), path.c_str(), 4096);
+#else
+        std::copy(path.native().begin(), path.native().end(), fileDir.begin());
+#endif
+        return fileDir;
+    }
+
+    // temporary
+    template<typename T, typename... Args>
+    inline auto ConcatStr(const T& first, Args... args) -> std::string {
+        std::string result{};
+
+        if constexpr (sizeof...(args))
+            result = std::move(ConcatStr(args...));
+
+        result.append(fmt::to_string(first));
+
+        return result;
+    }
 }
 
 #endif // KATE_ENGINE_COMMON_HH

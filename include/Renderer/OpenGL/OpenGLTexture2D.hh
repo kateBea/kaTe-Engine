@@ -7,8 +7,8 @@
 
 #include <stb_image.h>
 
-#include <Tools/Common.hh>
 #include <Renderer/Material/Texture2D.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
     class OpenGLTexture2D : public Texture2D {
@@ -37,16 +37,15 @@ namespace kaTe {
          * Returns the identifier of this Texture
          * @return id of this object
          * */
-        [[nodiscard]]
-        auto GetId() const -> UInt32_T { return m_Id; }
+        KT_NODISCARD auto GetId() const -> UInt32_T { return m_Id; }
 
-        auto GetChannels() const -> UInt32_T { return m_Channels; }
-        auto GetWidth() -> UInt32_T override { return m_Width; }
-        auto GetHeight() -> UInt32_T override { return m_Height; }
+        KT_NODISCARD auto GetChannels() const -> UInt32_T { return m_Channels; }
+        KT_NODISCARD auto GetWidth() -> UInt32_T override { return m_Width; }
+        KT_NODISCARD auto GetHeight() -> UInt32_T override { return m_Height; }
 
         auto GetTextureFileData() const -> stbi_uc* { return m_TextureFileData; }
 
-        auto Bind(UInt32_T slot = 0) -> void override;
+        auto Bind(UInt32_T slot) -> void override;
 
         ~OpenGLTexture2D() override { glDeleteTextures(1, &m_Id); }
     private:
@@ -55,8 +54,6 @@ namespace kaTe {
         auto operator=(const OpenGLTexture2D& other) -> OpenGLTexture2D& = delete;
 
     private:
-        // Helper because on windows std::filesystem uses wchar_t
-        static auto GetByteChar(const Path_T& path) -> std::string;
         auto SetupTexture(const stbi_uc* data) -> void;
 
         UInt32_T    m_Id{};
@@ -69,7 +66,7 @@ namespace kaTe {
         GLenum      m_Format{};         // Specifies the format of the pixel data
 
         bool m_RetainData{};
-        stbi_uc* m_TextureFileData;
+        stbi_uc* m_TextureFileData{};
     };
 }
 

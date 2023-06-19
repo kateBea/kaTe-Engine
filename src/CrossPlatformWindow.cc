@@ -23,46 +23,49 @@ namespace kaTe {
     CrossPlatformWindow::CrossPlatformWindow(const WindowProperties& properties)
         :   Window{ properties }, m_Window{ nullptr }, m_Callback{}, m_VSync{ true } {}
 
-    auto CrossPlatformWindow::onUpdate() -> void {
+    auto CrossPlatformWindow::OnUpdate() -> void {
         glfwPollEvents();
 
         // should probably not be here and most likely
         // not be done when the window is minimized, it CPU waste
-        m_Context->swapBuffers();
+        m_Context->SwapBuffers();
     }
 
-    auto CrossPlatformWindow::enableVSync() -> void {
+    auto CrossPlatformWindow::EnableVSync() -> void {
         glfwSwapInterval(1);
         m_VSync = true;
     }
 
-    auto CrossPlatformWindow::disableVSync() -> void {
+    auto CrossPlatformWindow::DisableVSync() -> void {
         glfwSwapInterval(0);
         m_VSync = false;
     }
 
-    auto CrossPlatformWindow::init() -> void {
+    auto CrossPlatformWindow::Init() -> void {
         KATE_CORE_LOGGER_INFO("Main Window initialization");
-        initGLFW();
+        InitGLFW();
         KATE_CORE_LOGGER_INFO("Creating Window GLFW. Name '{}'. Dimensions [{}, {}]",
-                               m_Properties.getName(), m_Properties.getWidth(), m_Properties.getHeight());
+                              m_Properties.GetName(), m_Properties.GetWidth(), m_Properties.GetHeight());
 
-        m_Window = glfwCreateWindow(m_Properties.getWidth(), m_Properties.getHeight(), m_Properties.getName().c_str(), nullptr, nullptr);
+        // Hints
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+
+        m_Window = glfwCreateWindow(m_Properties.GetWidth(), m_Properties.GetHeight(), m_Properties.GetName().c_str(), nullptr, nullptr);
         m_WindowCreateSuccess = m_Window != nullptr;
         KT_ASSERT(m_WindowCreateSuccess, "Failed to create the Window GLFW");
 
-        m_Context = getActiveAPIContext();
+        m_Context = GetActiveAPIContext();
         KT_ASSERT(m_Context, "Graphics Rendering API context is NULL");
-        m_Context->init(getNativeWindow());
+        m_Context->Init(GetNativeWindow());
 
-        spawnOnCenter();
-        enableVSync();
-        setCallbacks();
+        SpawnOnCenter();
+        EnableVSync();
+        SetCallbacks();
     }
 
-    auto CrossPlatformWindow::shutDown() -> void {
+    auto CrossPlatformWindow::ShutDown() -> void {
         KATE_CORE_LOGGER_DEBUG("Shutting down Window GLFW. Name '{}'. Dimensions [{}, {}]",
-                               m_Properties.getName(), m_Properties.getWidth(), m_Properties.getHeight());
+                               m_Properties.GetName(), m_Properties.GetWidth(), m_Properties.GetHeight());
 
         delete m_Context;
 
@@ -72,14 +75,14 @@ namespace kaTe {
         glfwTerminate();
     }
 
-    auto CrossPlatformWindow::setCallbacks() -> void {
+    auto CrossPlatformWindow::SetCallbacks() -> void {
         glfwSetWindowUserPointer(m_Window, this);
 
         glfwSetWindowSizeCallback(m_Window,
             [](GLFWwindow* window, Int32_T width, Int32_T height) {
-                                      CrossPlatformWindow * data{static_cast<CrossPlatformWindow *>(glfwGetWindowUserPointer(window)) };
-                data->m_Properties.setWidth(width);
-                data->m_Properties.setHeight(height);
+                                      CrossPlatformWindow * data{static_cast<CrossPlatformWindow*>(glfwGetWindowUserPointer(window)) };
+                                      data->m_Properties.SetWidth(width);
+                                      data->m_Properties.SetHeight(height);
 
                 WindowResizedEvent wre{width, height};
                 data->m_Callback(wre);
@@ -161,7 +164,7 @@ namespace kaTe {
             }
         );
     }
-    auto CrossPlatformWindow::spawnOnCenter() const -> void {
+    auto CrossPlatformWindow::SpawnOnCenter() const -> void {
 #if defined(_DEBUG) || defined(NDEBUG)
         Int32_T count{};
         GLFWmonitor** monitors{ glfwGetMonitors(&count) };
@@ -178,23 +181,21 @@ namespace kaTe {
     }
 
 
-    auto CrossPlatformWindow::getActiveAPIContext() -> RenderContext* {
+    auto CrossPlatformWindow::GetActiveAPIContext() -> RenderContext* {
         KATE_CORE_LOGGER_WARN("Default Context is for OpenGL");
         return new OpenGLContext();
     }
 
-    auto CrossPlatformWindow::initGLFW() -> void {
+    auto CrossPlatformWindow::InitGLFW() -> void {
         if (!g_GLFWInitSuccess) {
             auto ret{ glfwInit() };
             KT_ASSERT(ret == GLFW_TRUE, "Failed to initialized the GLFW library");
 
             g_GLFWInitSuccess = true;
             glfwSetErrorCallback([](std::int32_t errCode, const char* desc) -> void {
-                KATE_CORE_LOGGER_ERROR("GLFW error code: {} Description: {}", errCode, desc);
-            }
+                    KATE_CORE_LOGGER_ERROR("GLFW error code: {} Description: {}", errCode, desc);
+                }
             );
-
-            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         }
     }
 }

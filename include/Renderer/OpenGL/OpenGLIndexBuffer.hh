@@ -13,9 +13,9 @@
 // Third-Party Libraries
 #include <GL/glew.h>
 
-// Project Libraries
-#include "Renderer/Buffers/IndexBuffer.hh"
+// Project Headers
 #include <Tools/Common.hh>
+#include <Renderer/Buffers/IndexBuffer.hh>
 
 namespace kaTe {
     class OpenGLIndexBuffer : public IndexBuffer {
@@ -26,7 +26,7 @@ namespace kaTe {
          * from indices. If no data is provided simply creates a new index buffer object with a valid id
          * @param indices buffer containing all the indices values
          * */
-        explicit OpenGLIndexBuffer(const std::vector<UInt32_T> &indices, GLenum usage = GL_STATIC_DRAW);
+        explicit OpenGLIndexBuffer(const std::vector<UInt32_T> &indices, GLbitfield usage = GL_DYNAMIC_STORAGE_BIT);
 
         /**
          * Mark this Vertex index buffer as current
@@ -45,25 +45,29 @@ namespace kaTe {
          * Move constructor
          * @param other moved from Vertex buffer
          * */
-        OpenGLIndexBuffer(OpenGLIndexBuffer && other) noexcept;
+        OpenGLIndexBuffer(OpenGLIndexBuffer&& other) noexcept;
 
         /**
          * Move assigment
          * @param other moved from Vertex buffer
          * */
-        auto operator=(OpenGLIndexBuffer && other) noexcept -> OpenGLIndexBuffer&;
+        auto operator=(OpenGLIndexBuffer&& other) noexcept -> OpenGLIndexBuffer&;
 
-        auto load(const std::vector<UInt32_T> &indices, GLenum usage = GL_STATIC_DRAW) -> void;
+        /**
+         * Creates and initializes a buffer object's immutable data store. Firstly, if this OpenGL index buffer
+         * does not contain a valid identifier, it is created.
+         * */
+        auto Upload(const std::vector<UInt32_T>& indices, GLbitfield flags = GL_DYNAMIC_STORAGE_BIT) -> void;
 
         /**
          * Releases resources from this Vertex index buffer
          * */
-        ~OpenGLIndexBuffer() { glDeleteBuffers(1, &m_Id); }
+        ~OpenGLIndexBuffer() override { glDeleteBuffers(1, &m_Id); }
 
-    private:
+    public:
         // Forbidden operations
-        OpenGLIndexBuffer(const OpenGLIndexBuffer &) = delete;
-        auto operator=(const OpenGLIndexBuffer &) -> OpenGLIndexBuffer & = delete;
+        OpenGLIndexBuffer(const OpenGLIndexBuffer&) = delete;
+        auto operator=(const OpenGLIndexBuffer&) -> OpenGLIndexBuffer& = delete;
 
     private:
         /**

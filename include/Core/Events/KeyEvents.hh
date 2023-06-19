@@ -76,7 +76,7 @@ namespace kaTe {
 
     class KeyReleasedEvent : public KeyEvent {
     public:
-        KeyReleasedEvent(Int32_T code)
+        explicit KeyReleasedEvent(Int32_T code)
             :   KeyEvent{ EventType::KEY_RELEASED_EVENT, code }
         {}
 
@@ -101,7 +101,7 @@ namespace kaTe {
 
     class KeyCharEvent : public Event {
     public:
-        KeyCharEvent(UInt32_T charCode)
+        explicit KeyCharEvent(UInt32_T charCode)
             :   Event{ EventType::KEY_CHAR_EVENT, static_cast<EventCategory>(INPUT_EVENT_CATEGORY | KEY_EVENT_CATEGORY) }
             ,   m_KeyChar{ charCode }
         {}
@@ -110,7 +110,7 @@ namespace kaTe {
         auto GetType() const -> EventType override { return GetStaticType(); }
 
         KT_NODISCARD
-        auto GetChar() -> UInt32_T { return m_KeyChar; }
+        auto GetChar() const -> UInt32_T { return m_KeyChar; }
 
         /**
          * Useful if we need to query the type of this event.

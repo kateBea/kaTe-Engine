@@ -1,46 +1,51 @@
 #include <vector>
 
-#include <Renderer/OpenGL/OpenGLIndexBuffer.hh>
 #include <Tools/Common.hh>
+#include <Core/Logger.hh>
+#include <Renderer/OpenGL/OpenGLIndexBuffer.hh>
 
 namespace kaTe {
-    OpenGLIndexBuffer::OpenGLIndexBuffer(const std::vector<UInt32_T>& indices, GLenum usage) {
+    OpenGLIndexBuffer::OpenGLIndexBuffer(const std::vector<UInt32_T>& indices, GLbitfield flags) {
         glCreateBuffers(1, &m_Id);
         m_ValidId = m_Id != 0;
 
-        load(indices, usage);
+        if (m_ValidId)
+            Upload(indices, flags);
+        else
+            KATE_CORE_LOGGER_ERROR("Failed to create a valid OpenGL element buffer object");
     }
 
-    auto OpenGLIndexBuffer::load(const std::vector<UInt32_T>& indices, GLenum usage) -> void {
+    auto OpenGLIndexBuffer::Upload(const std::vector<UInt32_T>& indices, GLbitfield flags) -> void {
         if (!m_ValidId) {
             glCreateBuffers(1, &m_Id);
             m_ValidId = m_Id != 0;
         }
 
-        if (!indices.empty()) {
-            BindBuffer();
+        if (!indices.empty() && m_ValidId) {
             m_Count = indices.size();
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, static_cast<GLsizeiptr>(m_Count) * sizeof(UInt32_T), indices.data(), usage);
-            UnbindBuffer();
+            glNamedBufferStorage(m_Id, static_cast<GLsizeiptr>(m_Count * sizeof(UInt32_T)), indices.data(), flags);
+            // For more see: https://docs.gl/gl4/glBufferStorage
         }
+        else
+            KATE_CORE_LOGGER_ERROR("No valid element buffer object to upload data");
     }
 
-    OpenGLIndexBuffer::OpenGLIndexBuffer(OpenGLIndexBuffer && other) noexcept {
+    OpenGLIndexBuffer::OpenGLIndexBuffer(OpenGLIndexBuffer&& other) noexcept
+        :   IndexBuffer{ other.GetID(), other.GetCount() }, m_ValidId{ other.m_ValidId }
+    {
+        other.m_Id = 0;
+        other.m_Count = 0;
+        other.m_ValidId = false;
+    }
+
+    auto OpenGLIndexBuffer::operator=(OpenGLIndexBuffer&& other) noexcept -> OpenGLIndexBuffer& {
         m_Id = other.GetID();
         m_Count = other.GetCount();
         m_ValidId = other.m_ValidId;
 
         other.m_Id = 0;
         other.m_Count = 0;
-    }
-
-    auto OpenGLIndexBuffer::operator=(OpenGLIndexBuffer && other) noexcept -> OpenGLIndexBuffer & {
-        m_Id = other.GetID();
-        m_Count = other.GetCount();
-        m_ValidId = other.m_ValidId;
-
-        other.m_Id = 0;
-        other.m_Count = 0;
+        other.m_ValidId = false;
         return *this;
     }
 }

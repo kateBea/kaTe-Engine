@@ -4,11 +4,9 @@
 
 #include <memory>
 
-#include <Core/Application.hh>
-
 #include <Renderer/Renderer.hh>
 
-#include "Renderer/Material/Texture2D.hh"
+#include <Renderer/Material/Texture2D.hh>
 #include <Renderer/OpenGL/OpenGLTexture2D.hh>
 #include <Core/Logger.hh>
 

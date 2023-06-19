@@ -42,7 +42,6 @@ namespace kaTe {
 
 
         inline static std::unique_ptr<Renderer2DDrawData> s_DrawData{};
-
     };
 }
 
