@@ -11,8 +11,8 @@
 #include <Core/Logger.hh>
 
 #include "Core/Timer.hh"
+#include "Editor/EditorLayer.hh"
 #include <Core/Layers/ImGuiLayer.hh>
-#include <Core/Layers/SandBox2D.hh>
 
 
 namespace kaTe {
@@ -21,8 +21,7 @@ namespace kaTe {
 
         try {
             application.Init();
-            application.PushLayer(std::make_shared<SandBox2D>());
-            application.PushOverlay(std::make_shared<ImGuiLayer>());
+            application.PushLayer(std::make_shared<EditorLayer>());
 
             while (application.IsRunning()) {
                 application.UpdateState();

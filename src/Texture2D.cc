@@ -21,4 +21,14 @@ namespace kaTe {
                 return nullptr;
         }
     }
+
+    auto Texture2D::CreateTextureRawPtr(const Path_T &path) -> Texture* {
+        switch(Renderer::GetActiveGraphicsAPI()) {
+            case Renderer::GraphicsAPI::OPENGL_API:
+                return new OpenGLTexture2D(path);
+            default:
+                KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API");
+                return nullptr;
+        }
+    }
 }

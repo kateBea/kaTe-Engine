@@ -62,10 +62,9 @@ namespace kaTe {
          * Returns the total count of vertices of this Vertex buffer
          * @return count of vertices
          * */
-        [[nodiscard]]
-        auto getCount() const -> std::size_t { return m_Size / sizeof(float); /* Assumes float for attribute components */ }
+        KT_NODISCARD auto GetCount() const -> std::size_t { return m_Size / sizeof(float); /* Assumes float for attribute components */ }
 
-        auto load(const std::vector<float>& vertices, GLenum usage = GL_STATIC_DRAW) -> void;
+        auto Upload(const std::vector<float>& vertices, GLenum usage = GL_STATIC_DRAW) -> void;
 
         auto SetBufferLayout(const BufferLayout& layout) -> void override { m_Layout = layout; }
 
@@ -74,8 +73,8 @@ namespace kaTe {
         /**
          * Releases resources from this Vertex buffer
          * */
-        ~OpenGLVertexBuffer() { glDeleteBuffers(1, &m_Id); }
-    private:
+        ~OpenGLVertexBuffer() override { glDeleteBuffers(1, &m_Id); }
+    public:
         // Forbidden operations
         OpenGLVertexBuffer(const OpenGLVertexBuffer & other) = delete;
         auto operator=(const OpenGLVertexBuffer & other) -> OpenGLVertexBuffer & = delete;

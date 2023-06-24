@@ -35,7 +35,7 @@ namespace kaTe {
         auto SetProjection(glm::mat4 proj) -> void { m_Projection = proj; RecomputeViewMatrix(); }
         auto SetProjection(double left, double right, double bottom, double top) -> void;
         auto SetView(glm::mat4 view) -> void { m_ViewMatrix = view; RecomputeViewMatrix(); }
-        auto UpdateProjection(const std::shared_ptr<Window> &window) -> void;
+        auto UpdateProjection(const std::shared_ptr<Window> &window, double zoom = 1.0) -> void;
     private:
         auto RecomputeViewMatrix() -> void;
     private:

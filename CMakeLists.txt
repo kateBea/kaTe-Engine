@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Libraries
 set(GLEW_CMAKE_DIR lib/glew/build/cmake)
 set(GLFW_CMAKE_DIR lib/glfw)
+set(ENTT_CMAKE_DIR lib/entt)
 set(FMT_CMAKE_DIR lib/fmt)
 
 # Projects source files
@@ -16,13 +17,13 @@ set(CORE_SOURCES
         src/LayerStack.cc
         src/ImGuiLayer.cc
         src/OpenGLContext.cc
-        src/TestLayer.cc src/InputManager.cc src/SandBox2D.cc src/Timer.cc)
+        src/TestLayer.cc src/InputManager.cc src/EditorLayer.cc src/Timer.cc)
 
 set(PLATFORM_SOURCES
         src/Application.cc
         src/CrossPlatformWindow.cc
         src/WinWindow.cc
-        src/CrossPlatformInputManager.cc)
+        )
 
 set(RENDERER_SOURCES
         src/OpenGLVertexArray.cc
@@ -34,7 +35,7 @@ set(RENDERER_SOURCES
         src/OpenGLShader.cc
         src/OpenGLRenderer.cc
         src/RendererAPI.cc
-        src/OrthographicCamera.cc src/Texture2D.cc include/Renderer/Material/Texture2D.hh src/OpenGLTexture2D.cc include/Renderer/OpenGL/OpenGLTexture2D.hh src/RenderCommand.cc src/Renderer2D.cc src/OrthographicCameraController.cc src/BaseShader.cc)
+        src/OrthographicCamera.cc src/Texture2D.cc include/Renderer/Material/Texture2D.hh src/OpenGLTexture2D.cc include/Renderer/OpenGL/OpenGLTexture2D.hh src/RenderCommand.cc src/Renderer2D.cc src/OrthographicCameraController.cc src/BaseShader.cc src/FrameBuffer.cc src/OpenGLFrameBuffer.cc)
 
 set(IMGUI_SOURCES
         lib/imgui/imgui.cpp
@@ -45,20 +46,29 @@ set(IMGUI_SOURCES
         lib/imgui/imgui_demo.cpp
         lib/imgui/backends/imgui_impl_opengl3.cpp)
 
+set(EDITOR_SOURCES
+        src/Editor.cc)
+
+set(SCENE_SOURCES
+        src/Scene.cc)
+
 set(SOURCES
         ${CORE_SOURCES}
         ${PLATFORM_SOURCES}
         ${IMGUI_SOURCES}
         ${RENDERER_SOURCES}
+        ${EDITOR_SOURCES}
+        ${SCENE_SOURCES}
         src/Engine.cc src/stb_image.cc)
 
 # External dependencies
 add_subdirectory(${GLEW_CMAKE_DIR})
 add_subdirectory(${GLFW_CMAKE_DIR})
 add_subdirectory(${FMT_CMAKE_DIR})
+add_subdirectory(${ENTT_CMAKE_DIR})
 
 # Libraries to link against target
-set(LIBRARIES glfw glew_s fmt)
+set(LIBRARIES glfw glew_s fmt EnTT::EnTT)
 
 # Compiler flags
 if (MSVC)
@@ -80,6 +90,7 @@ include_directories(lib/imgui)
 include_directories(lib/imgui/backends)
 include_directories(lib/glm/)
 include_directories(lib/stb/)
+include_directories(lib/entt/single_include)
 
 add_executable(kaTe_Engine src/EntryPoint.cc ${SOURCES})
 target_link_libraries(kaTe_Engine ${LIBRARIES})
@@ -95,3 +106,4 @@ target_compile_definitions(kaTe_Engine PRIVATE SPDLOG_FMT_EXTERNAL)
 # For Key and Mouse Codes we use the GLFW ones
 target_compile_definitions(kaTe_Engine PRIVATE USE_GLFW_KEY_CODES)
 target_compile_definitions(kaTe_Engine PRIVATE USE_GLFW_MOUSE_CODES)
+target_compile_definitions(kaTe_Engine PRIVATE USE_GLFW_INPUT)

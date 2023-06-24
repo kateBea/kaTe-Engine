@@ -2,47 +2,98 @@
 // Created by kate on 6/9/23.
 //
 
-#include <memory>
+#include <any>
 #include <utility>
 
-#include <Core/Assert.hh>
-#include <Core/Logger.hh>
+// Third-Party Libraries
+#include <GLFW/glfw3.h>
 
-#include <Platform/CrossPlatformInputManager.hh>
+// Project Headers
+#include <Core/Logger.hh>
+#include <Core/Application.hh>
+#include <Tools/Common.hh>
+
 #include <Platform/InputManager.hh>
 
-namespace kaTe {
-    auto InputManager::Init() -> void {
+namespace kaTe::InputManager {
+#if defined(USE_GLFW_INPUT)
+    auto IsKeyPressed(Int32_T keyCode) -> bool {
+        GLFWwindow* window{ nullptr };
+
+        try {
+            // We expect the native window for Linux Window to be a GLFWwindow*
+            window = std::any_cast<GLFWwindow*>(Application::Get().GetMainWindow().GetNativeWindow());
+            Int32_T state{ glfwGetKey(window, keyCode) };
+
+            return state == GLFW_PRESS;
+        }
+        catch (const std::bad_any_cast& exception) {
+            KATE_APP_LOGGER_ERROR("Exception thrown std::any_cast. What: {}", exception.what());
+        }
+
+        return false;
+    }
+
+    auto IsMouseKeyPressed(Int32_T button) -> bool {
+        GLFWwindow* window{ nullptr };
+
+        try {
+            // We expect the native window for Linux Window to be a GLFWwindow*
+            window = std::any_cast<GLFWwindow*>(Application::Get().GetMainWindow().GetNativeWindow());
+            Int32_T state{ glfwGetMouseButton(window, button) };
+
+            return state == GLFW_PRESS;
+        }
+        catch (const std::bad_any_cast& exception) {
+            KATE_APP_LOGGER_ERROR("Exception thrown std::any_cast. What: {}", exception.what());
+        }
+
+        return false;
+    }
+
+    auto GetMousePos() -> std::pair<double, double> {
+        double posX{};
+        double posY{};
+        GLFWwindow* window{ nullptr };
+
+        try {
+            // We expect the native window for Linux Window to be a GLFWwindow*
+            window = std::any_cast<GLFWwindow*>(Application::Get().GetMainWindow().GetNativeWindow());
+            glfwGetCursorPos(window, &posX, &posY);
+        }
+        catch (const std::bad_any_cast& exception) {
+            KATE_APP_LOGGER_ERROR("Exception thrown std::any_cast. What: {}", exception.what());
+        }
+
+        return std::make_pair(posX, posY);
+    }
+
+    auto GetMouseX() -> double {
+        auto [mouseX, mouseY]{ GetMousePos() };
+        return mouseX;
+    }
+
+    auto GetMouseY() -> double {
+        auto [mouseX, mouseY]{ GetMousePos() };
+        return mouseY;
+    }
+#endif
+
+    auto Init() -> void {
         KATE_CORE_LOGGER_INFO("kaTe Engine: Input Manager initialization");
-        s_InputManager = std::make_unique<CrossPlatformInputManager>();
-    }
-
-    auto InputManager::IsKeyPressed(Int32_T keyCode) -> bool {
-        KT_ASSERT(s_InputManager, "InputManager singleton ptr is NULL");
-        return s_InputManager->IsKeyPressedNative(keyCode);
-    }
-
-    auto InputManager::IsMouseKeyPressed(Int32_T button) -> bool {
-        KT_ASSERT(s_InputManager, "InputManager singleton ptr is NULL");
-        return s_InputManager->IsMouseKeyPressedNative(button);
-    }
-
-    auto InputManager::GetMouseX() -> double {
-        KT_ASSERT(s_InputManager, "InputManager singleton ptr is NULL");
-        return s_InputManager->GetMouseXNative();
-    }
-
-    auto InputManager::GetMouseY() -> double {
-        KT_ASSERT(s_InputManager, "InputManager singleton ptr is NULL");
-        return s_InputManager->GetMouseYNative();
-    }
-
-    auto InputManager::GetMousePos() -> std::pair<double, double> {
-        KT_ASSERT(s_InputManager, "InputManager singleton ptr is NULL");
-        return s_InputManager->GetMousePosNative();
-    }
-
-    auto InputManager::ShutDown() -> void {
 
     }
+
+    auto ShutDown() -> void {
+        KATE_CORE_LOGGER_INFO("kaTe Engine: Input Manager shut down");
+    }
+
+    auto PrintKey(KeyCode keycode) -> void {
+        KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Key: {}\n", GetStringRepresentation(keycode));
+    }
+
+    auto PrintButton(MouseButton button) -> void {
+        KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME, "Mouse button: {}\n", GetStringRepresentation(button));
+    }
+
 }

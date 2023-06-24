@@ -15,38 +15,25 @@
 #include <Tools/Common.hh>
 
 #include <Core/Assert.hh>
+#include <Core/KeyCodes.hh>
+#include <Core/MouseButtons.hh>
 
 #include <Platform/Window/Window.hh>
 
 
-namespace kaTe {
-    class InputManager {
-    public:
-        explicit InputManager() = default;
-        virtual ~InputManager() = default;
+namespace kaTe::InputManager {
+    auto Init() -> void;
 
-        static auto Init() -> void;
+    auto IsKeyPressed(Int32_T keyCode) -> bool;
+    auto IsMouseKeyPressed(Int32_T button) -> bool;
+    auto GetMouseX() -> double;
+    auto GetMouseY() -> double;
+    auto GetMousePos() -> std::pair<double, double>;
 
-        static auto IsKeyPressed(Int32_T keyCode) -> bool;
-        static auto IsMouseKeyPressed(Int32_T button) -> bool;
-        static auto GetMouseX() -> double;
-        static auto GetMouseY() -> double;
-        static auto GetMousePos() -> std::pair<double, double>;
+    auto PrintKey(KeyCode keycode) -> void;
+    auto PrintMouse(MouseButton button) -> void;
 
-        static auto ShutDown() -> void;
-
-    private:
-        inline static std::unique_ptr<InputManager> s_InputManager{};
-    protected:
-        /* Keyboard Input */
-        KT_NODISCARD virtual auto IsKeyPressedNative(Int32_T keyCode) -> bool = 0;
-
-        /* Mouse Input */
-        KT_NODISCARD virtual auto IsMouseKeyPressedNative(Int32_T button) -> bool = 0;
-        KT_NODISCARD virtual auto GetMouseXNative() -> double = 0;
-        KT_NODISCARD virtual auto GetMouseYNative() -> double = 0;
-        KT_NODISCARD virtual auto GetMousePosNative() -> std::pair<double, double> = 0;
-    };
+    auto ShutDown() -> void;
 
 }
 

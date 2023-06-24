@@ -8,7 +8,7 @@ namespace kaTe {
         glCreateBuffers(1, &m_Id);
         m_ValidId = m_Id != 0;
 
-        load(vertices, usage);
+        Upload(vertices, usage);
     }
 
 
@@ -30,7 +30,7 @@ namespace kaTe {
         return *this;
     }
 
-    auto OpenGLVertexBuffer::load(const std::vector<float> &vertices, GLenum usage) -> void {
+    auto OpenGLVertexBuffer::Upload(const std::vector<float> &vertices, GLenum usage) -> void {
         if (!m_ValidId) {
             glCreateBuffers(1, &m_Id);
             m_ValidId = m_Id != 0;

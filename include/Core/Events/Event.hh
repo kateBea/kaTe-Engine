@@ -99,35 +99,31 @@ namespace kaTe {
          * Returns the type of this event. Can be used to query the type of
          * this event in scenarios where polymorphism is used
          * */
-        KT_NODISCARD
-        virtual auto GetType() const -> EventType = 0;
+        KT_NODISCARD virtual auto GetType() const -> EventType = 0;
 
-        KT_NODISCARD
-        virtual auto GetCategoryFlags() const -> EventCategory { return m_Categories; };
+        KT_NODISCARD virtual auto GetCategoryFlags() const -> EventCategory { return m_Categories; };
 
         /**
          * Returns the string representation of this Event.
          * Mainly for debugging purposes
          * */
-        KT_NODISCARD
-        auto GetNameStr() const -> std::string_view { return ToString(); };
+        KT_NODISCARD auto GetNameStr() const -> std::string_view { return ToString(); };
 
         /**
          * Tells whether this event has been handled or not
          * @returns true if the event has been handled, false otherwise
          * */
-        KT_NODISCARD
-        auto IsHandled() const -> bool { return m_Handled; }
+        KT_NODISCARD auto IsHandled() const -> bool { return m_Handled; }
 
-        KT_NODISCARD
-        auto IsInCategory(EventCategory cat) const -> bool { return GetCategoryFlags() & cat; }
+        KT_NODISCARD auto IsInCategory(EventCategory cat) const -> bool { return GetCategoryFlags() & cat; }
 
         /**
          * Returns a formatted string representing the data, if any,
          * that this event holds. Used for debugging purposes
          * */
-        KT_NODISCARD
-        virtual auto DisplayData() const -> std::string = 0;
+        KT_NODISCARD virtual auto DisplayData() const -> std::string = 0;
+
+        auto SetHandled(bool value) -> void { m_Handled = value; }
 
         virtual ~Event() = default;
     private:

@@ -29,12 +29,17 @@ namespace kaTe {
         auto OnAttach() -> void override;
         auto OnDetach() -> void override;
         auto OnUpdate() -> void override;
+        auto OnEvent(Event& event) -> void override;
         auto OnImGuiRender() -> void override;
 
-        static auto BeginFrame() -> void;
-        static auto EndFrame() -> void;
+        auto SetBlockEvents(bool value) -> void { m_BlockEvents = value; }
+
+        auto BeginFrame() -> void;
+        auto EndFrame() -> void;
 
     private:
+        // Do not propagate events to this layer
+        bool m_BlockEvents{ false };
         static auto SetupCustomImGuiStyle() -> void;
 
     };

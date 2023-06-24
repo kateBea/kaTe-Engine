@@ -1,0 +1,35 @@
+//
+// Created by kate on 6/24/23.
+//
+
+#ifndef KATE_ENGINE_SCENE_HH
+#define KATE_ENGINE_SCENE_HH
+
+#include <entt/entt.hpp>
+
+#include <Tools/Common.hh>
+#include <Scene/Component.hh>
+
+namespace kaTe {
+    // forward declare Entity to not include it. Temporary
+    class Entity;
+
+    class Scene {
+    public:
+        explicit Scene();
+        ~Scene() = default;
+
+        auto OnUpdate() -> void;
+
+        // Should only construct entities from this function
+        KT_NODISCARD static auto CreateEntity(std::string_view entityNameTag, std::shared_ptr<Scene> scene) -> Entity;
+
+    private:
+        friend class Entity;
+        entt::registry m_Registry{};
+    };
+}
+
+
+
+#endif//KATE_ENGINE_SCENE_HH

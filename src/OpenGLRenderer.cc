@@ -33,7 +33,7 @@ namespace kaTe {
 
     auto OpenGLRenderer::DrawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
         std::dynamic_pointer_cast<OpenGLShader>(shader)->Bind();
-        m_VertexArray.useVertexBuffer(vertexBuffer);
+        m_VertexArray.UseVertexBuffer(vertexBuffer);
         indexBuffer->BindBuffer();
 
         glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);

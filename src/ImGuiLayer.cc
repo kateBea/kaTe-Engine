@@ -151,12 +151,16 @@ namespace kaTe {
     }
 
     auto ImGuiLayer::OnImGuiRender() -> void {
-        bool bl{ true };
-        ImGui::ShowDemoWindow(&bl);
-        ImGui::Begin("Info");
-        ImGui::SetWindowSize("Test", { 128, 64 });
-        ImGui::Text("Framerate: %.1f", ImGui::GetIO().Framerate);
-        ImGui::End();
+
+    }
+
+    auto ImGuiLayer::OnEvent(Event &event) -> void {
+        if (m_BlockEvents) {
+            ImGuiIO& io{ ImGui::GetIO() };
+            // To be revised: ImGuiLayer would not propagate mouse events and key events when and ImGui item captures them
+            event.SetHandled(event.IsInCategory(MOUSE_EVENT_CATEGORY) && io.WantCaptureMouse);
+            event.SetHandled(event.IsInCategory(KEY_EVENT_CATEGORY) && io.WantCaptureKeyboard);
+        }
     }
 
     ImGuiLayer::~ImGuiLayer() = default;

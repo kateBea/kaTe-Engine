@@ -14,6 +14,7 @@ namespace kaTe {
     class Texture2D : public Texture {
     public:
         static auto CreateTexture(const Path_T& path) -> std::shared_ptr<Texture>;
+        static auto CreateTextureRawPtr(const Path_T &path) -> Texture*;
     };
 }
 

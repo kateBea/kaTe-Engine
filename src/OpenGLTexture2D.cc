@@ -47,12 +47,12 @@ namespace kaTe {
         glBindTextureUnit(slot, m_Id);
     }
 
-    auto OpenGLTexture2D::operator=(OpenGLTexture2D &&other) noexcept -> OpenGLTexture2D& {
+    auto OpenGLTexture2D::operator=(OpenGLTexture2D&& other) noexcept -> OpenGLTexture2D& {
         m_Id        = other.GetId();
         m_Width     = other.GetWidth();
         m_Height    = other.GetHeight();
         m_Channels  = other.GetChannels();
-        m_TextureFileData = std::move(other.m_TextureFileData);
+        m_TextureFileData = other.m_TextureFileData;
 
         other.m_Id          = 0;
         other.m_Width       = 0;
@@ -64,7 +64,7 @@ namespace kaTe {
 
     OpenGLTexture2D::OpenGLTexture2D(OpenGLTexture2D &&other) noexcept
         :   m_Id{ other.GetId() }, m_Width{other.GetWidth() }, m_Height{other.GetHeight() }
-        ,   m_Channels{other.GetChannels() }, m_TextureFileData{ std::move(other.m_TextureFileData) }
+        ,   m_Channels{other.GetChannels() }, m_TextureFileData{ other.m_TextureFileData }
     {
         other.m_Id          = 0;
         other.m_Width       = 0;
@@ -94,5 +94,10 @@ namespace kaTe {
         glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_Id, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTextureSubImage2D(m_Id, 0, 0, 0, m_Width, m_Height, m_Format, GL_UNSIGNED_BYTE, data);
+    }
+
+    OpenGLTexture2D::~OpenGLTexture2D() {
+        KATE_APP_LOGGER_INFO("Deleting OpenGLTexture2D. Id {}", GetId());
+        glDeleteTextures(1, &m_Id);
     }
 }

@@ -10,10 +10,11 @@
 #include <memory>
 
 // Project Headers
+#include "Core/Layers/ImGuiLayer.hh"
+#include <Core/Events/AppEvents.hh>
 #include <Core/Events/Event.hh>
 #include <Core/Layers/LayerStack.hh>
 #include <Core/TimeManager.hh>
-#include <Core/Events/AppEvents.hh>
 #include <Platform/Window/Window.hh>
 #include <Tools/Singleton.hh>
 
@@ -33,8 +34,11 @@ namespace kaTe {
         auto PushLayer(std::shared_ptr<Layer> layer) -> void;
         auto PushOverlay(std::shared_ptr<Layer> overlay) -> void;
 
+        auto BlockImGuiLayerEvents(bool value) -> void;
+
         auto UpdateState() -> void;
         auto IsRunning() -> bool;
+        auto Stop() -> void;
 
         auto GetMainWindow() -> Window&;
 
@@ -75,6 +79,7 @@ namespace kaTe {
 
         std::unique_ptr<Window> m_MainWindow{};
         std::unique_ptr<LayerStack> m_LayerStack{};
+        std::shared_ptr<ImGuiLayer> m_ImGuiLayer{};
 
     };
 }

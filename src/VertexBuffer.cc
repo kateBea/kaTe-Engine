@@ -2,7 +2,6 @@
 // Created by kate on 6/5/23.
 //
 
-#include <Core/Application.hh>
 #include <Core/Logger.hh>
 
 #include "Renderer/Buffers/VertexBuffer.hh"

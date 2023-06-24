@@ -31,7 +31,7 @@ namespace kaTe {
     public:
         explicit LayerStack() = default;
 
-        auto init() -> void;
+        auto Init() -> void;
         auto shutDown() -> void { /*Empty for now */ }
 
         auto addLayer(std::shared_ptr<Layer> layer) -> void;

@@ -36,7 +36,7 @@ namespace kaTe {
 
     }
 
-    auto LayerStack::init() -> void {
+    auto LayerStack::Init() -> void {
         KATE_CORE_LOGGER_INFO("Layer Stack initialization");
     }
 

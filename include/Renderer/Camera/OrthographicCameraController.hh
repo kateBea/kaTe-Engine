@@ -38,6 +38,7 @@ namespace kaTe {
         auto OnEvent(Event& event) -> void;
 
         auto SetProjection(double left, double right, double bottom, double top) -> void;
+        auto AdjustViewport(UInt32_T width, UInt32_T height) -> void;
 
         /**
          * This function tells whether this OrthographicCameraController controls and external camera or not
@@ -45,34 +46,35 @@ namespace kaTe {
          * */
         auto HasCamera() -> bool { return m_TargetCamera != nullptr; }
 
-        auto GetCamera() const -> const std::shared_ptr<OrthographicCamera>&;
-        auto GetCamera() -> std::shared_ptr<OrthographicCamera>&;
+        KT_NODISCARD auto GetCamera() const -> const std::shared_ptr<OrthographicCamera>&;
+        KT_NODISCARD auto GetCamera() -> std::shared_ptr<OrthographicCamera>&;
+        KT_NODISCARD auto GetZoomLevel() const -> double { return m_Zoom; }
 
     private:
         auto OnMouseScrolledEvent(MouseScrollEvent& event) -> bool;
         auto OnWindowResized(WindowResizedEvent& event) -> bool;
-    private:
+    public:
         OrthographicCameraController(const OrthographicCameraController&) = delete;
         auto operator=(const OrthographicCameraController&) = delete;
 
         OrthographicCameraController(OrthographicCameraController&&) = delete;
         auto operator=(OrthographicCameraController&&) = delete;
     private:
-        static constexpr double s_MaxZoom{ 0.25 };
+        static constexpr float s_MaxZoom{ 0.25f };
 
-        double m_AspectRatio{};
-        double m_Zoom{ 1.0 };
-        double m_FieldOfViewSensitivity{ 0.08 };
+        float m_AspectRatio{};
+        float m_Zoom{ 1.0f };
+        float m_FieldOfViewSensitivity{ 0.08f };
         bool m_EnableRotation{};
 
         glm::vec3 m_TargetCameraPosition{};
-        double m_TargetCameraMovementSpeed{ 3.0 };
+        float m_TargetCameraMovementSpeed{ 1.5f };
 
         // In radians
-        double m_TargetCameraRotation{};
+        float m_TargetCameraRotation{};
         // Represents the rotation in degrees so radians/time_unit (time_unit could be seconds,
         // milliseconds, etc.). The default units are seconds
-        double m_TargetCameraRotationSpeed{ 90.0 };
+        float m_TargetCameraRotationSpeed{ 90.0f };
 
         std::shared_ptr<OrthographicCamera> m_TargetCamera{};
     };

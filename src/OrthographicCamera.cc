@@ -31,11 +31,11 @@ namespace kaTe {
         m_ProjectionAndView = m_Projection * m_ViewMatrix;
     }
 
-    void OrthographicCamera::UpdateProjection(const std::shared_ptr<Window>& window) {
+    void OrthographicCamera::UpdateProjection(const std::shared_ptr<Window> &window, double zoom) {
         double width{ static_cast<double>(window->GetWidth()) };
         double height{ static_cast<double>(window->GetHeight()) };
-        m_AspectRatio = height / height;
-        m_Projection = glm::ortho(0.0, width, 0.0, height, s_DefaultNearPlane, s_DefaultFarPlane);
+        m_AspectRatio = width / height;
+        SetProjection(-m_AspectRatio * zoom, m_AspectRatio * zoom, -zoom, zoom);
     }
 
     auto OrthographicCamera::SetProjection(double left, double right, double bottom, double top) -> void {

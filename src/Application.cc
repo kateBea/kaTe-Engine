@@ -11,7 +11,8 @@
 
 #include <Core/Layers/ImGuiLayer.hh>
 #include <Renderer/Renderer2D.hh>
-#include <Platform/CrossPlatformInputManager.hh>
+#include <Platform/InputManager.hh>
+#include <Platform/Window/CrossPlatformWindow.hh>
 
 #include <Renderer/Renderer.hh>
 #include <Renderer/RenderCommand.hh>
@@ -28,7 +29,9 @@ namespace kaTe {
         m_MainWindow->Init();
         m_MainWindow->SetEventCallback(KT_BIND_EVENT_FUNC(Application::OnEvent));
         KT_ASSERT(m_LayerStack != nullptr, "Layer Stack is NULL");
-        m_LayerStack->init();
+        m_LayerStack->Init();
+        m_ImGuiLayer = std::make_shared<ImGuiLayer>();
+        PushOverlay(m_ImGuiLayer);
 
         Renderer::Init();
         Renderer2D::Init();
@@ -108,10 +111,17 @@ namespace kaTe {
                 layer->OnUpdate();
         }
 
-        ImGuiLayer::BeginFrame();
+        m_ImGuiLayer->BeginFrame();
         for (auto& layer : *m_LayerStack)
             layer->OnImGuiRender();
-        ImGuiLayer::EndFrame();
+        m_ImGuiLayer->EndFrame();
         m_MainWindow->OnUpdate();
+    }
+    auto Application::Stop() -> void {
+        m_State = State::STOPPED;
+    }
+
+    auto Application::BlockImGuiLayerEvents(bool value) -> void {
+        m_ImGuiLayer->SetBlockEvents(value);
     }
 }

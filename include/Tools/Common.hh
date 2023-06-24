@@ -24,11 +24,6 @@
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
-// Project Headers
-#include <Core/KeyCodes.hh>
-#include <Core/MouseButtons.hh>
-
-
 /*************************************************************
 * MACROS -----------------------------------------------------
 * ********************************************************+ */
@@ -282,6 +277,19 @@ namespace kaTe {
         result.append(fmt::to_string(first));
 
         return result;
+    }
+
+    template<typename GLMMatrixType>
+    auto PrintMatrix(const GLMMatrixType& mat) -> void {
+        UInt32_T rowIdx{};
+        UInt32_T colIdx{};
+
+        for ( ; rowIdx < mat.length(); ++rowIdx) {
+            for ( ; colIdx < mat.length(); ++colIdx)
+                KT_PRINT_FORMATTED("{} ", mat[rowIdx][colIdx]);
+
+            KT_PRINT_FORMATTED("\n");
+        }
     }
 }
 

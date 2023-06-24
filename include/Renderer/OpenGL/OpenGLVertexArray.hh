@@ -17,8 +17,9 @@
 #include <GL/glew.h>
 
 // Project Libraries
-#include "Renderer/Buffers/VertexBuffer.hh"
 #include <Tools/Common.hh>
+
+#include <Renderer/Buffers/VertexBuffer.hh>
 
 namespace kaTe {
     class OpenGLVertexArray {
@@ -42,23 +43,22 @@ namespace kaTe {
          * Returns the identifier of this Vertex Array Object
          * @return identifier of this vao
          * */
-        [[nodiscard]]
-        auto getId() const -> UInt32_T { return m_Id; }
+        KT_NODISCARD auto GetId() const -> UInt32_T { return m_Id; }
 
         /**
          * Mark this Vertex Array Object as current
          * */
-        auto bindVertexArray() const -> void { glBindVertexArray(getId()); }
+        auto BindVertexArray() const -> void { glBindVertexArray(GetId()); }
 
         /**
          * Unbinds the currently bound Vertex Array Object
          * */
-        static auto unbindVertexArray() -> void { glBindVertexArray(0); }
+        static auto UnbindVertexArray() -> void { glBindVertexArray(0); }
 
-        auto useVertexBuffer(std::shared_ptr<VertexBuffer> buffer) -> void;
+        auto UseVertexBuffer(const std::shared_ptr<VertexBuffer>& buffer) const -> void;
 
         ~OpenGLVertexArray() { glDeleteVertexArrays(1, &m_Id); }
-    private:
+    public:
         // Forbidden operations
         OpenGLVertexArray(const OpenGLVertexArray & other) = delete;
         auto operator=(const OpenGLVertexArray & other) -> OpenGLVertexArray & = delete;

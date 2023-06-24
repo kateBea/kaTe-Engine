@@ -17,8 +17,11 @@
 namespace kaTe {
 
     auto Renderer2D::Init() -> void {
-        s_DrawData = std::make_unique<Renderer2DDrawData>();
+        s_DrawData          = std::make_unique<Renderer2DDrawData>();
+        s_RenderingStats    = std::make_unique<Renderer2DStats>();
         KT_ASSERT(s_DrawData, "Renderer 2D draw data pointer is NULL");
+        KT_ASSERT(s_RenderingStats, "Renderer 2D stats pointer is NULL");
+
         std::vector<float> squareData {
                 // Positions            // Texture coordinates
                 -0.5f,  -0.5f, 0.0f,     0.0f, 0.0f,   // bottom left
@@ -41,15 +44,22 @@ namespace kaTe {
     }
 
     auto Renderer2D::EndScene() -> void {
-
+        s_SavedSceneStats = std::make_unique<Renderer2DStats>(*s_RenderingStats);
+        s_RenderingStats->Reset();
     }
 
     auto Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, double angle) -> void {
         DrawQuad(glm::vec3(position, 0.0), size, color, angle);
+        // Rendering Stats management
+        s_RenderingStats->IncrementQuadCount(1);
+        // We increment the number of draw calls because for now
+        // The RenderCommand directly flushes the draw call
+        s_RenderingStats->IncrementDrawCallCount(1);
     }
 
     auto Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color, double angle) -> void {
 
+        // Data Setup
         static constexpr glm::vec3 ZAxis{ 0.0f, 0.0f, 1.0f };
         static constexpr glm::mat4 IdentityMatrix{ glm::mat4(1.0) };
 
@@ -59,9 +69,8 @@ namespace kaTe {
 
         s_DrawData->colorShader->SetVec4("u_Color", color);
         s_DrawData->colorShader->SetMat4("u_ProjectionView", s_DrawData->camera->GetProjectionView());
-        s_DrawData->colorShader->SetMat4("u_Transform", transform);
 
-        RenderCommand::DrawIndexed(s_DrawData->colorShader, s_DrawData->vertexBuffer, s_DrawData->indexBuffer);
+        DrawQuad(transform, color);
     }
 
     auto Renderer2D::ShutDown() -> void {
@@ -70,9 +79,14 @@ namespace kaTe {
 
     auto Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, std::shared_ptr<Texture> texture) -> void {
         DrawQuad(glm::vec3(position, 0.0), size, color, angle, std::move(texture));
+        s_RenderingStats->IncrementQuadCount(1);
+        // We increment the number of draw calls because for now
+        // The RenderCommand directly flushes the draw call
+        s_RenderingStats->IncrementDrawCallCount(1);
     }
 
     auto Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, std::shared_ptr<Texture> texture) -> void {
+        // Data Setup
         static constexpr glm::vec3 zAxis{ 0.0f, 0.0f, 1.0f };
         static constexpr glm::mat4 identMat{ glm::mat4(1.0) };
 
@@ -80,9 +94,36 @@ namespace kaTe {
         glm::mat4 rotation{ glm::rotate(identMat, (float)glm::radians(angle), zAxis) };
         glm::mat4 transform{ glm::translate(identMat, position) * scale * rotation };
 
+        DrawQuad(transform, texture);
+    }
+
+    auto Renderer2D::DrawQuad(const glm::mat4 &transform, const glm::vec4 &color) -> void {
+        s_DrawData->colorShader->SetVec4("u_Color", color);
+        s_DrawData->colorShader->SetMat4("u_ProjectionView", s_DrawData->camera->GetProjectionView());
+        s_DrawData->colorShader->SetMat4("u_Transform", transform);
+
+        // Render
+        RenderCommand::DrawIndexed(s_DrawData->colorShader, s_DrawData->vertexBuffer, s_DrawData->indexBuffer);
+
+        // Rendering Stats management
+        s_RenderingStats->IncrementQuadCount(1);
+        // We increment the number of draw calls because for now
+        // The RenderCommand directly flushes the draw call
+        s_RenderingStats->IncrementDrawCallCount(1);
+    }
+
+    auto Renderer2D::DrawQuad(const glm::mat4 &transform, std::shared_ptr<Texture> texture) -> void {
         s_DrawData->textureShader->SetMat4("u_ProjectionView", s_DrawData->camera->GetProjectionView());
         s_DrawData->textureShader->SetMat4("u_Transform", transform);
         texture->Bind();
+
+        // Render
         RenderCommand::DrawIndexed(s_DrawData->textureShader, s_DrawData->vertexBuffer, s_DrawData->indexBuffer);
+
+        // Rendering Stats management
+        s_RenderingStats->IncrementQuadCount(1);
+        // We increment the number of draw calls because for now
+        // The RenderCommand directly flushes the draw call
+        s_RenderingStats->IncrementDrawCallCount(1);
     }
 }
