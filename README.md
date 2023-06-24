@@ -2,16 +2,13 @@
 This is a simple engine written in modern C++. For now and quite some time 
 it will use OpenGL as its main rendering API, but the end goal is to integrate Vulkan.
 
-![kaTe Engine](assets/image/img4.png)
+![kaTe Engine](assets/image/img5.png)
 
 # Building
 
 Clone the repository, at the moment I only tested building on Linux. 
 The project already comes with a CMake file ready to use. 
 
-The following libraries are required on Linux:
-    
-1. OpenGL
 
 This project is done thanks to various third-party libraries:
 
