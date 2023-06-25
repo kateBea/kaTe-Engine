@@ -2,7 +2,7 @@
 This is a simple engine written in modern C++. For now and quite some time 
 it will use OpenGL as its main rendering API, but the end goal is to integrate Vulkan.
 
-![kaTe Engine](assets/image/img5.png)
+![kaTe Engine](assets/image/img6.png)
 
 # Building
 

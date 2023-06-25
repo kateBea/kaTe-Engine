@@ -14,6 +14,7 @@
 #include <Tools/Common.hh>
 #include <Renderer/Renderer.hh>
 #include <Renderer/Camera/OrthographicCamera.hh>
+#include <Renderer/Camera/Camera.hh>
 #include <Renderer/Material/BaseShader.hh>
 
 namespace kaTe {
@@ -22,18 +23,20 @@ namespace kaTe {
         static auto Init() -> void;
         static auto ShutDown() -> void;
 
+        static auto BeginScene(std::shared_ptr<Camera> camera) -> void;
         static auto BeginScene(std::shared_ptr<OrthographicCamera> camera) -> void;
+
         static auto EndScene() -> void;
 
         // NOTE: the angle is in degrees
-        static auto DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, double angle) -> void;
-        static auto DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, double angle) -> void;
+        static auto DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, double angle, bool useOrthoCamera = false) -> void;
+        static auto DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, double angle, bool useOrthoCamera = false) -> void;
 
-        static auto DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, double angle, std::shared_ptr<Texture> texture) -> void;
-        static auto DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, double angle, std::shared_ptr<Texture> texture) -> void;
+        static auto DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, double angle, std::shared_ptr<Texture> texture, bool useOrthoCamera = false) -> void;
+        static auto DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, double angle, std::shared_ptr<Texture> texture, bool useOrthoCamera = false) -> void;
 
-        static auto DrawQuad(const glm::mat4& transform, const glm::vec4& color) -> void;
-        static auto DrawQuad(const glm::mat4& transform, std::shared_ptr<Texture> texture) -> void;
+        static auto DrawQuad(const glm::mat4& transform, const glm::vec4& color, bool useOrthoCamera = false) -> void;
+        static auto DrawQuad(const glm::mat4& transform, std::shared_ptr<Texture> texture,  bool useOrthoCamera = false) -> void;
 
         KT_NODISCARD static auto QueryDrawCallsCount() -> UInt32_T { return s_SavedSceneStats->GetDrawCallsCount(); }
         KT_NODISCARD static auto QueryQuadCount() -> UInt32_T { return s_SavedSceneStats->GetQuadCount(); }
@@ -69,11 +72,14 @@ namespace kaTe {
             std::shared_ptr<IndexBuffer> indexBuffer{};
             std::shared_ptr<BaseShader> colorShader{};
             std::shared_ptr<BaseShader> textureShader{};
-            std::shared_ptr<OrthographicCamera> camera{};
+            std::shared_ptr<OrthographicCamera> orthographicCamera{};
+            std::shared_ptr<Camera> camera{};
         };
 
 
         inline static std::unique_ptr<Renderer2DDrawData>   s_DrawData{};
+
+        // TODO: implement thread safety
         inline static std::unique_ptr<Renderer2DStats>      s_RenderingStats{};
         inline static std::unique_ptr<Renderer2DStats>      s_SavedSceneStats{};
     };

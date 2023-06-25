@@ -1,0 +1,49 @@
+//
+// Created by kate on 6/25/23.
+//
+
+#ifndef KATE_ENGINE_INSPECTORPANEL_HH
+#define KATE_ENGINE_INSPECTORPANEL_HH
+
+#include <memory>
+
+#include <entt/entt.hpp>
+
+#include <Tools/Common.hh>
+#include <Scene/Scene.hh>
+#include <Editor/Panels/Panel.hh>
+#include <Editor/Panels/SceneHierarchyPanel.hh>
+
+namespace kaTe {
+    class InspectorPanel : public Panel {
+    public:
+
+        explicit InspectorPanel(std::shared_ptr<SceneHierarchyPanel> hierarchy);
+        ~InspectorPanel() override = default;
+
+        InspectorPanel(const InspectorPanel& other) = default;
+        InspectorPanel(InspectorPanel&& other) = default;
+
+        auto operator=(const InspectorPanel& other) -> InspectorPanel& = default;
+        auto operator=(InspectorPanel&& other) -> InspectorPanel& = default;
+
+        auto OnUpdate() -> void override;
+        auto OnEvent(Event& event) -> void override;
+        auto MakeVisible(bool value) -> void override { m_Visible = value; }
+
+        KT_NODISCARD auto IsHovered() const -> bool override { return m_Hovered; }
+        KT_NODISCARD auto IsFocused() const -> bool override { return m_Focused; }
+        KT_NODISCARD auto IsVisible() const -> bool override { return m_Visible; }
+    private:
+        // TODO: DrawInspectorComponent<ComponentType>(std::function);
+    private:
+        std::shared_ptr<SceneHierarchyPanel> m_Hierarchy{};
+        bool m_Visible{};
+        bool m_Hovered;
+        bool m_Focused;
+
+    };
+}
+
+
+#endif//KATE_ENGINE_INSPECTORPANEL_HH

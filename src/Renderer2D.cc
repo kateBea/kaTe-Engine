@@ -40,6 +40,10 @@ namespace kaTe {
     }
 
     auto Renderer2D::BeginScene(std::shared_ptr<OrthographicCamera> camera) -> void {
+        s_DrawData->orthographicCamera = std::move(camera);
+    }
+
+    auto Renderer2D::BeginScene(std::shared_ptr<Camera> camera) -> void {
         s_DrawData->camera = std::move(camera);
     }
 
@@ -48,16 +52,17 @@ namespace kaTe {
         s_RenderingStats->Reset();
     }
 
-    auto Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, double angle) -> void {
-        DrawQuad(glm::vec3(position, 0.0), size, color, angle);
-        // Rendering Stats management
-        s_RenderingStats->IncrementQuadCount(1);
-        // We increment the number of draw calls because for now
-        // The RenderCommand directly flushes the draw call
-        s_RenderingStats->IncrementDrawCallCount(1);
+    auto Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, bool useOrthoCamera) -> void {
+        DrawQuad(glm::vec3(position, 0.0), size, color, angle, useOrthoCamera);
     }
 
-    auto Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color, double angle) -> void {
+    auto Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, bool useOrthoCamera) -> void {
+        glm::mat4 cameraViewProj{};
+
+        if (!useOrthoCamera)
+            cameraViewProj = s_DrawData->camera->GetProjection() * s_DrawData->camera->GetTransform();
+        else
+            cameraViewProj = s_DrawData->orthographicCamera->GetProjectionView();
 
         // Data Setup
         static constexpr glm::vec3 ZAxis{ 0.0f, 0.0f, 1.0f };
@@ -68,7 +73,7 @@ namespace kaTe {
         glm::mat4 transform{ glm::translate(IdentityMatrix, position) * scale * rotation };
 
         s_DrawData->colorShader->SetVec4("u_Color", color);
-        s_DrawData->colorShader->SetMat4("u_ProjectionView", s_DrawData->camera->GetProjectionView());
+        s_DrawData->colorShader->SetMat4("u_ProjectionView", cameraViewProj);
 
         DrawQuad(transform, color);
     }
@@ -77,15 +82,11 @@ namespace kaTe {
 
     }
 
-    auto Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, std::shared_ptr<Texture> texture) -> void {
-        DrawQuad(glm::vec3(position, 0.0), size, color, angle, std::move(texture));
-        s_RenderingStats->IncrementQuadCount(1);
-        // We increment the number of draw calls because for now
-        // The RenderCommand directly flushes the draw call
-        s_RenderingStats->IncrementDrawCallCount(1);
+    auto Renderer2D::DrawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, std::shared_ptr<Texture> texture, bool useOrthoCamera) -> void {
+        DrawQuad(glm::vec3(position, 0.0), size, color, angle, std::move(texture), useOrthoCamera);
     }
 
-    auto Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, std::shared_ptr<Texture> texture) -> void {
+    auto Renderer2D::DrawQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, std::shared_ptr<Texture> texture, bool useOrthoCamera) -> void {
         // Data Setup
         static constexpr glm::vec3 zAxis{ 0.0f, 0.0f, 1.0f };
         static constexpr glm::mat4 identMat{ glm::mat4(1.0) };
@@ -94,12 +95,19 @@ namespace kaTe {
         glm::mat4 rotation{ glm::rotate(identMat, (float)glm::radians(angle), zAxis) };
         glm::mat4 transform{ glm::translate(identMat, position) * scale * rotation };
 
-        DrawQuad(transform, texture);
+        DrawQuad(transform, texture, useOrthoCamera);
     }
 
-    auto Renderer2D::DrawQuad(const glm::mat4 &transform, const glm::vec4 &color) -> void {
+    auto Renderer2D::DrawQuad(const glm::mat4 &transform, const glm::vec4 &color, bool useOrthoCamera) -> void {
+        glm::mat4 cameraViewProj{};
+
+        if (!useOrthoCamera)
+            cameraViewProj = s_DrawData->camera->GetProjection() * s_DrawData->camera->GetTransform();
+        else
+            cameraViewProj = s_DrawData->orthographicCamera->GetProjectionView();
+
         s_DrawData->colorShader->SetVec4("u_Color", color);
-        s_DrawData->colorShader->SetMat4("u_ProjectionView", s_DrawData->camera->GetProjectionView());
+        s_DrawData->colorShader->SetMat4("u_ProjectionView", cameraViewProj);
         s_DrawData->colorShader->SetMat4("u_Transform", transform);
 
         // Render
@@ -112,8 +120,15 @@ namespace kaTe {
         s_RenderingStats->IncrementDrawCallCount(1);
     }
 
-    auto Renderer2D::DrawQuad(const glm::mat4 &transform, std::shared_ptr<Texture> texture) -> void {
-        s_DrawData->textureShader->SetMat4("u_ProjectionView", s_DrawData->camera->GetProjectionView());
+    auto Renderer2D::DrawQuad(const glm::mat4 &transform, std::shared_ptr<Texture> texture, bool useOrthoCamera) -> void {
+        glm::mat4 cameraViewProj{};
+
+        if (!useOrthoCamera)
+            cameraViewProj = s_DrawData->camera->GetProjection() * s_DrawData->camera->GetTransform();
+        else
+            cameraViewProj = s_DrawData->orthographicCamera->GetProjectionView();
+
+        s_DrawData->textureShader->SetMat4("u_ProjectionView", cameraViewProj);
         s_DrawData->textureShader->SetMat4("u_Transform", transform);
         texture->Bind();
 

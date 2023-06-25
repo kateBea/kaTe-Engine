@@ -17,6 +17,23 @@ namespace kaTe {
     public:
         explicit Entity() = default;
 
+        Entity(Entity&& other) noexcept {
+            *this = std::move(other);
+        }
+
+        Entity(const Entity& other) = default;
+        auto operator=(const Entity& other) -> Entity& = default;
+
+        auto operator=(Entity&& other) noexcept -> Entity& {
+            m_EntityHandle = std::move(other.m_EntityHandle);
+
+            if (auto ptr{ other.m_Scene.lock() })
+                m_Scene = ptr;
+            else
+                KATE_CORE_LOGGER_ERROR("Other entity's scene has expired and no longer exists! Failed on moving operation");
+            return *this;
+        }
+
         template<typename... ComponentTypeList>
         KT_NODISCARD auto HasAllComponents() -> bool {
             if (auto ptr{ m_Scene.lock() }) {
@@ -90,20 +107,41 @@ namespace kaTe {
             return scene->m_Registry.valid(m_EntityHandle);
         }
 
+        KT_NODISCARD auto operator==(const Entity& other) -> bool { return m_EntityHandle == other.m_EntityHandle; /*&& m_Scene == other.m_Scene;*/ }
+
     private:
+        // usable by friends classes
         explicit Entity(std::shared_ptr<Scene> scene) {
             m_Scene = scene;
             m_EntityHandle = scene->m_Registry.create();
         }
+
+        // for implicit casts
+        operator entt::entity() const {
+            return m_EntityHandle;
+        }
     private:
         friend class Scene;
-        entt::entity m_EntityHandle{};
+        entt::entity m_EntityHandle{ entt::null };
 
         // The scene this entity belongs to
         // We do not use shared or unique pointers because the Scene
         // is not part of the entity and shouldn't extend its lifetime
         std::weak_ptr<Scene> m_Scene{};
     };
+
+    class ScriptableEntity : public Entity {
+    public:
+        explicit ScriptableEntity() = default;
+        ~ScriptableEntity() = default;
+
+        ScriptableEntity(const ScriptableEntity& other) = default;
+        ScriptableEntity(ScriptableEntity&& other) = default;
+
+        auto operator=(const ScriptableEntity& other) -> ScriptableEntity& = default;
+        auto operator=(ScriptableEntity&& other) -> ScriptableEntity& = default;
+    };
+
 }
 
 #endif//KATE_ENGINE_ENTITY_HH

@@ -16,6 +16,7 @@
 #include <functional>
 #include <cstdint>
 #include <filesystem>
+#include <utility>
 
 // Third-Party Libraries
 #include <GL/glew.h>
@@ -221,8 +222,10 @@
 #define KT_COLOR_STYLE_PRINT_FORMATTED(__COLOR, __STYLE, ...)     \
     fmt::print(fmt::fg(__COLOR) | __STYLE, __VA_ARGS__)
 
-#define KT_BIND_EVENT_FUNC(func) \
-    std::bind(&func, this, std::placeholders::_1)
+#define KT_BIND_EVENT_FUNC(function) \
+    [this](auto&&... args) -> decltype(auto) { \
+        return this->function(std::forward<decltype(args)>(args)...); \
+    }
 
 
 /*************************************************************

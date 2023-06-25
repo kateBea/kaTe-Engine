@@ -115,7 +115,7 @@ namespace kaTe {
         style.PopupBorderSize = 0.0f;
 
         // Rounding values
-        style.FrameRounding = 5.0f;
+        style.FrameRounding = 1.0f;
         style.GrabRounding = 5.0f;
         style.ChildRounding = 5.0f;
         style.WindowRounding = 5.0f;

@@ -17,7 +17,6 @@
 
 #include <Editor/Editor.hh>
 #include <Scene/Scene.hh>
-#include <Scene/Entity.hh>
 
 namespace kaTe {
     auto EditorLayer::OnAttach() -> void {
@@ -35,9 +34,45 @@ namespace kaTe {
 
         // Scene setup
         m_ActiveScene = std::make_unique<Scene>();
-        m_Square = Scene::CreateEntity("ColoredSquare", m_ActiveScene);
-        m_Square.AddComponent<SpriteRendererComponent>(glm::vec4{ m_SquareColor, 1.0f });
+        m_SquareEntity = Scene::CreateEntity("ColoredSquare", m_ActiveScene);
+        auto  other = Scene::CreateEntity("ColoredSquare", m_ActiveScene);
+        m_MainCamEntity = Scene::CreateEntity("MainCamera", m_ActiveScene);
 
+        double aspect{window.GetWidth() / (double)window.GetHeight() };
+        double zoom{ 1.0f };
+        m_MainCamera = std::make_shared<SceneCamera>(glm::ortho(-aspect * zoom, aspect * zoom, -zoom, zoom));
+
+        m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.3f, 0.6f, 0.1f, 1.0f });
+        other.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.3f, 0.2f, 0.8f, 1.0f });
+        m_MainCamEntity.AddComponent<CameraComponent>(m_MainCamera);
+
+        m_MainCamEntity.AddComponent<NativeScriptComponent>();
+
+        m_HierarchyPanel = std::make_shared<SceneHierarchyPanel>(m_ActiveScene);
+        m_InspectorPanel = std::make_shared<InspectorPanel>(m_HierarchyPanel);
+
+        {
+            // scripting test
+            class CameraController : public ScriptableEntity {
+            public:
+                auto OnCreate() -> void {
+
+                }
+
+                auto OnUpdate() -> void {
+
+                }
+
+                auto OnDestroy() -> void {
+
+                }
+
+
+            private:
+            };
+            // TODO: does not compile
+            //m_MainCamEntity.GetComponent<NativeScriptComponent>().Bind<CameraController>();
+        }
     }
 
     auto EditorLayer::OnDetach() -> void {
@@ -56,12 +91,7 @@ namespace kaTe {
             // Only update the state of the camera controller when the viewport panel is focused
             m_CameraController->OnUpdate();
 
-        Renderer2D::BeginScene(m_CameraController->GetCamera());
-
         m_ActiveScene->OnUpdate();
-
-        Renderer2D::EndScene();
-
         m_FrameBuffer->Unbind();
 
     }
@@ -70,17 +100,16 @@ namespace kaTe {
         // Only forward events to the camera controller when the viewport panel is focused
         if (m_ViewportIsFocused)
             m_CameraController->OnEvent(event);
+
+        m_HierarchyPanel->OnEvent(event);
     }
 
     auto EditorLayer::OnImGuiRender() -> void {
         Editor::DockControlFlags flags{};
 
         Editor::DisplayDockSpace(flags);
-        ImGui::Begin("Color");
-        glm::mat4 l{};
-        ImGui::ColorEdit3("QuadRGBA", glm::value_ptr(m_SquareColor));
+        ImGui::Begin("Editor");
         ImGui::ColorEdit3("Clear Color", glm::value_ptr(m_ClearColor));
-        m_Square.GetComponent<SpriteRendererComponent>().SetColor({ m_SquareColor, 1.0f });
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});
@@ -97,6 +126,7 @@ namespace kaTe {
             m_ViewPortHeight = viewPortDimensions.y;
             m_ViewPortWidth = viewPortDimensions.x;
             m_CameraController->AdjustViewport((UInt32_T)viewPortDimensions.x, (UInt32_T)viewPortDimensions.y);
+            m_ActiveScene->OnViewPortResize((UInt32_T)viewPortDimensions.x, (UInt32_T)viewPortDimensions.y);
         }
 
         ImTextureID textId{ reinterpret_cast<ImTextureID>(m_FrameBuffer->GetColorAttachmentId()) };
@@ -106,6 +136,16 @@ namespace kaTe {
 
         ImGui::End();
         ImGui::PopStyleVar();
+
+        {
+            // TODO: move other imgui windows to its panels
+            // Panel render
+            m_HierarchyPanel->OnUpdate();
+
+            // inscpector panel comes after because it needs data from
+            // the current state of the hierarchy
+            m_InspectorPanel->OnUpdate();
+        }
 
         ImGui::Begin("Statistics");
         ImGui::Text("Draw calls count: %d", Renderer2D::QueryDrawCallsCount());

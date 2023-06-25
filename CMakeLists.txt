@@ -22,7 +22,6 @@ set(CORE_SOURCES
 set(PLATFORM_SOURCES
         src/Application.cc
         src/CrossPlatformWindow.cc
-        src/WinWindow.cc
         )
 
 set(RENDERER_SOURCES
@@ -35,7 +34,7 @@ set(RENDERER_SOURCES
         src/OpenGLShader.cc
         src/OpenGLRenderer.cc
         src/RendererAPI.cc
-        src/OrthographicCamera.cc src/Texture2D.cc include/Renderer/Material/Texture2D.hh src/OpenGLTexture2D.cc include/Renderer/OpenGL/OpenGLTexture2D.hh src/RenderCommand.cc src/Renderer2D.cc src/OrthographicCameraController.cc src/BaseShader.cc src/FrameBuffer.cc src/OpenGLFrameBuffer.cc)
+        src/OrthographicCamera.cc src/Texture2D.cc include/Renderer/Material/Texture2D.hh src/OpenGLTexture2D.cc include/Renderer/OpenGL/OpenGLTexture2D.hh src/RenderCommand.cc src/Renderer2D.cc src/OrthographicCameraController.cc src/BaseShader.cc src/FrameBuffer.cc src/OpenGLFrameBuffer.cc src/Camera.cc)
 
 set(IMGUI_SOURCES
         lib/imgui/imgui.cpp
@@ -47,10 +46,10 @@ set(IMGUI_SOURCES
         lib/imgui/backends/imgui_impl_opengl3.cpp)
 
 set(EDITOR_SOURCES
-        src/Editor.cc)
+        src/Editor.cc src/SceneHierarchyPanel.cc include/Editor/Panels/InspectorPanel.cc)
 
 set(SCENE_SOURCES
-        src/Scene.cc)
+        src/Scene.cc src/SceneCamera.cc)
 
 set(SOURCES
         ${CORE_SOURCES}

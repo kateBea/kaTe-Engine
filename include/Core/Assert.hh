@@ -39,8 +39,21 @@
         }                                                                  \
     } while (false)
 
+#define KT_ASSERT_EXPR(__EXPR)                                                     \
+    do {                                                                   \
+        if (!(__EXPR)) {                                                   \
+            KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_RED, "Condition: {} failed\n"   \
+                                                      "FUNCTION: {}\n"     \
+                                                      "SRC: {}\n"          \
+                                                      "LINE: {}\n",        \
+                                     #__EXPR, __PRETTY_FUNCTION__,       \
+                                     __FILE__, __LINE__);                  \
+            std::abort();                                                  \
+        }                                                                  \
+    } while (false)
 #else
-    #define KT_ASSERT(__EXPR)
+    #define KT_ASSERT(__EXPR, __MESSAGE)
+    #define KT_ASSERT_EXPR(__EXPR)
 #endif
 
 

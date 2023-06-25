@@ -11,7 +11,7 @@
 #include <Scene/Component.hh>
 
 namespace kaTe {
-    // forward declare Entity to not include it. Temporary
+    // Forward declare Entity to not include it. Temporary
     class Entity;
 
     class Scene {
@@ -23,10 +23,22 @@ namespace kaTe {
 
         // Should only construct entities from this function
         KT_NODISCARD static auto CreateEntity(std::string_view entityNameTag, std::shared_ptr<Scene> scene) -> Entity;
+        auto DestroyEntity(Entity entity) -> void;
+
+        auto OnViewPortResize(UInt32_T width, UInt32_T height) -> void;
 
     private:
         friend class Entity;
+
+        friend class SceneHierarchyPanel;
+        friend class InspectorPanel;
+
         entt::registry m_Registry{};
+
+        UInt32_T m_ViewportWidth{};
+        UInt32_T m_ViewportHeight{};
+    private:
+        auto DestroyEntity(entt::entity entity) -> void;
     };
 }
 

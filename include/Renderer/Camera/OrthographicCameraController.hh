@@ -18,6 +18,7 @@
 #include <Core/Events/MouseEvents.hh>
 #include <Renderer/Camera/OrthographicCamera.hh>
 
+// TODO: move to OrthographicCamera.hh file
 namespace kaTe {
     /**
      * This class controls an orthographic camera. The camera can be an entity independent to
