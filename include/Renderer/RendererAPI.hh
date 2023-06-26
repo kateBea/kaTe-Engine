@@ -5,11 +5,12 @@
 
 #include <glm/vec4.hpp>
 
-#include "Renderer/Buffers/IndexBuffer.hh"
-#include "Renderer/Buffers/VertexBuffer.hh"
-#include "Renderer/Material/BaseShader.hh"
-
 #include <Tools/Common.hh>
+
+#include <Renderer/Buffers/IndexBuffer.hh>
+#include <Renderer/Buffers/VertexBuffer.hh>
+#include <Renderer/Material/BaseShader.hh>
+
 
 namespace kaTe {
 	class RendererAPI {
@@ -19,10 +20,8 @@ namespace kaTe {
 		/* It is not an enum class for ease with bit OR operations*/
         // temporary
 		enum BufferBit {
-			NONE,
 			OPEN_GL_COLOR_BUFFER_BIT = GL_COLOR_BUFFER_BIT,
 			OPEN_GL_DEPTH_BUFFER_BIT = GL_DEPTH_BUFFER_BIT,
-			COUNT,
 		};
 
         virtual auto Init() -> void = 0;
@@ -31,14 +30,14 @@ namespace kaTe {
 		virtual auto SetClearColor(float red, float green, float blue, float alpha) -> void = 0;
 		virtual auto Clear(BufferBit bufferBits) -> void = 0;
 
-		virtual auto DrawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
-        virtual auto DrawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
+		virtual auto DrawIndexed(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void = 0;
+        virtual auto DrawIndexed(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void = 0;
 
-        virtual auto Draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void = 0;
-		virtual auto Draw(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
+        virtual auto Draw(const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void = 0;
+		virtual auto Draw(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void = 0;
 
-		virtual auto Draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void = 0;
-        virtual auto Draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void = 0;
+		virtual auto Draw(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void = 0;
+        virtual auto Draw(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void = 0;
 
 		virtual auto SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void = 0;
 

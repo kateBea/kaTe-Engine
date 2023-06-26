@@ -1,18 +1,28 @@
+/**
+* Renderer.hh
+* Created by kate on 6/5/23.
+* */
+
 #ifndef KATE_ENGINE_RENDERER_HH
 #define KATE_ENGINE_RENDERER_HH
 
+// C++ Standard Library
 #include <memory>
 
+// Third-Party Libraries
 #include <glm/glm.hpp>
 
-#include <Renderer/Material/BaseShader.hh>
-#include "Renderer/Buffers/IndexBuffer.hh"
-#include "Renderer/Buffers/VertexBuffer.hh"
-#include "Renderer/Camera/OrthographicCamera.hh"
+// Project headers
+#include <Tools/Common.hh>
 
+#include <Renderer/Material/BaseShader.hh>
 #include <Renderer/Material/Texture.hh>
 
-#include <Tools/Common.hh>
+#include <Renderer/Buffers/IndexBuffer.hh>
+#include <Renderer/Buffers/VertexBuffer.hh>
+
+#include <Renderer/Camera/OrthographicCamera.hh>
+
 
 namespace kaTe {
     struct DrawData {
@@ -25,13 +35,9 @@ namespace kaTe {
 
     class Renderer {
     public:
-        explicit Renderer() = default;
-        virtual ~Renderer() = default;
         enum class GraphicsAPI {
-            NONE,
             OPENGL_API,
-            VULKAN_API,
-            COUNT,
+            VULKAN_API [[maybe_unused]], // temporarily unused
         };
 
         static auto Init() -> void;
@@ -41,14 +47,14 @@ namespace kaTe {
 
         static auto Submit(std::shared_ptr<VertexBuffer> vertexBuffer) -> void;
         static auto Submit(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
-        static auto Submit(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, const glm::mat4 &transform = glm::mat4(1.0)) -> void;
+        static auto Submit(const std::shared_ptr<BaseShader>& shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, const glm::mat4 &transform = glm::mat4(1.0)) -> void;
 
         static auto Submit(const DrawData& data) -> void;
         static auto Flush() -> void;
 
         static auto ShutDown() -> void;
 
-        static auto OnWindowResize(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void;
+        [[maybe_unused]] static auto OnWindowResize(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void;
 
         static auto GetActiveGraphicsAPI() -> GraphicsAPI { return s_ActiveAPI;  }
     public:

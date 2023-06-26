@@ -26,12 +26,12 @@ namespace kaTe {
         glViewport(x, y, width, height);
     }
 
-    auto OpenGLRenderer::DrawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
+    auto OpenGLRenderer::DrawIndexed([[maybe_unused]] const std::shared_ptr<VertexBuffer> &vertexBuffer, [[maybe_unused]] const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
 
 
     }
 
-    auto OpenGLRenderer::DrawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
+    auto OpenGLRenderer::DrawIndexed(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
         std::dynamic_pointer_cast<OpenGLShader>(shader)->Bind();
         m_VertexArray.UseVertexBuffer(vertexBuffer);
         indexBuffer->BindBuffer();
@@ -39,19 +39,19 @@ namespace kaTe {
         glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
     }
 
-    auto OpenGLRenderer::Draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
+    auto OpenGLRenderer::Draw(const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void {
 
     }
 
-    auto OpenGLRenderer::Draw(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
+    auto OpenGLRenderer::Draw(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer) -> void {
 
     }
 
-    auto OpenGLRenderer::Draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void {
+    auto OpenGLRenderer::Draw(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer) -> void {
 
     }
 
-    auto OpenGLRenderer::Draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
+    auto OpenGLRenderer::Draw(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
 
     }
 
@@ -64,5 +64,9 @@ namespace kaTe {
 
     auto OpenGLRenderer::Shutdown() -> void {
 
+    }
+
+    auto OpenGLRenderer::SetDefaultShader(const Path_T &vertShaderPath, const Path_T &pixelShaderPath) -> void {
+        m_DefaultVertexPixelShaders.Upload(vertShaderPath, pixelShaderPath);
     }
 }

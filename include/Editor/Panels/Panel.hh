@@ -7,15 +7,18 @@
 
 #include <Tools/Common.hh>
 #include <Core/Events/Event.hh>
+#include <utility>
 
 namespace kaTe {
     /**
-     * General interface for ImGui Panels
+     * General interface for panels. Panels are windows that
+     * can be dragged around our main window or simply dock
+     * into our level editor dock space
      * */
     class Panel {
     public:
-        // TODO: take path to icon for the panel
         explicit Panel() = default;
+        explicit Panel(Path_T  iconPath) : m_IconDirectory{ std::move( iconPath ) } {}
         virtual ~Panel() = default;
 
         Panel(const Panel& other) = default;
@@ -24,14 +27,17 @@ namespace kaTe {
         auto operator=(const Panel& other) -> Panel& = default;
         auto operator=(Panel&& other) -> Panel& = default;
 
+        KT_NODISCARD auto GetIconPath() const -> const Path_T& { return m_IconDirectory; }
+
         virtual auto OnUpdate() -> void = 0;
         virtual auto OnEvent(Event& event) -> void = 0;
-
         virtual auto MakeVisible(bool value) -> void = 0;
 
         KT_NODISCARD virtual auto IsHovered() const -> bool = 0;
         KT_NODISCARD virtual auto IsFocused() const -> bool = 0;
         KT_NODISCARD virtual auto IsVisible() const -> bool = 0;
+    private:
+        Path_T m_IconDirectory{};
     };
 }
 

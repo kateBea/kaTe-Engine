@@ -75,7 +75,7 @@ namespace kaTe {
         s_DrawData->colorShader->SetVec4("u_Color", color);
         s_DrawData->colorShader->SetMat4("u_ProjectionView", cameraViewProj);
 
-        DrawQuad(transform, color);
+        DrawQuad(transform, color, useOrthoCamera);
     }
 
     auto Renderer2D::ShutDown() -> void {

@@ -34,11 +34,11 @@ namespace kaTe {
         auto Init() -> void;
         auto shutDown() -> void { /*Empty for now */ }
 
-        auto addLayer(std::shared_ptr<Layer> layer) -> void;
-        auto addOverlay(std::shared_ptr<Layer> overlay) -> void;
+        auto addLayer(const std::shared_ptr<Layer>& layer) -> void;
+        auto addOverlay(const std::shared_ptr<Layer>& overlay) -> void;
 
-        auto popLayer(std::shared_ptr<Layer> layer) -> void;
-        auto popOverlay(std::shared_ptr<Layer> overlay) -> void;
+        auto popLayer(const std::shared_ptr<Layer>& layer) -> void;
+        auto popOverlay(const std::shared_ptr<Layer>& overlay) -> void;
 
         auto begin() -> std::vector<std::shared_ptr<Layer>>::iterator { return m_Layers.begin(); }
         auto end() -> std::vector<std::shared_ptr<Layer>>::iterator { return m_Layers.end(); }

@@ -7,7 +7,7 @@
 
 #include <any>
 
-#include <Platform/Window/CrossPlatformWindow.hh>
+#include <Platform/Window/MainWindow.hh>
 #include <Renderer/RenderContext.hh>
 
 namespace kaTe {

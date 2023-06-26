@@ -56,7 +56,7 @@ namespace kaTe {
          * @param fShaderPath path to pixel/fragment shader path
          * @throws std::runtime_error exception if any of the shader files could not be opened
          * */
-        auto load(const std::filesystem::path& vShaderPath, const std::filesystem::path& fShaderPath) -> void;
+        auto Upload(const Path_T& vShaderPath, const Path_T& fShaderPath) -> void;
 
         /**
          * Use this Shader program
@@ -82,7 +82,7 @@ namespace kaTe {
         auto SetMat3(std::string_view name, const glm::mat3& value) -> void override { SetUniformMat3(name, value); }
         auto SetMat4(std::string_view name, const glm::mat4& value) -> void override { SetUniformMat4(name, value); }
 
-        ~OpenGLShader() { glDeleteProgram(getProgram()); }
+        ~OpenGLShader() override { glDeleteProgram(getProgram()); }
     private:
         /**
          * Sets the given boolean value to the uniform identified by "name",
@@ -180,7 +180,7 @@ namespace kaTe {
          * This is a helper function for showing compilation status on Shader::compile()
          * @param type type of shader
          * */
-        constexpr auto getShaderTypeStr(ShaderType type) const -> std::string_view {
+        static constexpr auto getShaderTypeStr(ShaderType type) -> std::string_view {
             switch (type) {
                 case ShaderType::VERTEX_SHADER_TYPE: return "VERTEX_SHADER_TYPE";
                 case ShaderType::FRAGMENT_SHADER_TYPE:  return "FRAGMENT_SHADER_TYPE";

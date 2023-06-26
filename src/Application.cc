@@ -10,9 +10,9 @@
 #include <Tools/Common.hh>
 
 #include <Core/Layers/ImGuiLayer.hh>
-#include <Renderer/Renderer2D.hh>
 #include <Platform/InputManager.hh>
-#include <Platform/Window/CrossPlatformWindow.hh>
+#include <Platform/Window/MainWindow.hh>
+#include <Renderer/Renderer2D.hh>
 
 #include <Renderer/Renderer.hh>
 #include <Renderer/RenderCommand.hh>
@@ -22,7 +22,7 @@ namespace kaTe {
     auto Application::Init() -> void {
         TimeManager::Init();
         KATE_CORE_LOGGER_DEBUG("Initializing kaTe Engine {}", TimeManager::ToString(TimeManager::GetTime()));
-        m_MainWindow = std::make_unique<CrossPlatformWindow>();
+        m_MainWindow = std::make_unique<MainWindow>();
         m_LayerStack = std::make_unique<LayerStack>();
 
         KT_ASSERT(m_MainWindow != nullptr, "Window is NULL");
@@ -59,26 +59,25 @@ namespace kaTe {
         }
     }
 
-    bool Application::OnWindowClose(WindowCloseEvent& event) {
+    auto Application::OnWindowClose([[maybe_unused]] WindowCloseEvent& event) -> bool {
         m_State = State::STOPPED;
 
         // We don't want to propagate this event
         return true;
     }
 
-    bool Application::OnResizeEvent(WindowResizedEvent& event) {
+    auto Application::OnResizeEvent(WindowResizedEvent& event) -> bool {
         m_MainWindowMinimized = event.GetWidth() == 0 || event.GetHeight() == 0;
         m_State = m_MainWindowMinimized ? State::IDLE : State::RUNNING;
         RenderCommand::UpdateViewPort(0, 0, event.GetWidth(), event.GetHeight());
         return false;
     }
 
-    auto Application::PushLayer(std::shared_ptr<Layer> layer) -> void {
+    auto Application::PushLayer(const std::shared_ptr<Layer>& layer) -> void {
         m_LayerStack->addLayer(layer);
-        layer->OnAttach();
     }
 
-    auto Application::PushOverlay(std::shared_ptr<Layer> overlay) -> void {
+    auto Application::PushOverlay(const std::shared_ptr<Layer>& overlay) -> void {
         m_LayerStack->addOverlay(overlay);
         overlay->OnAttach();
     }

@@ -16,7 +16,7 @@
 namespace kaTe {
     class SceneHierarchyPanel : public Panel {
     public:
-        explicit SceneHierarchyPanel(std::shared_ptr<Scene> scene);
+        explicit SceneHierarchyPanel(std::shared_ptr<Scene> scene, const Path_T &iconPath = {});
         ~SceneHierarchyPanel() override = default;
 
         SceneHierarchyPanel(const SceneHierarchyPanel& other) = default;

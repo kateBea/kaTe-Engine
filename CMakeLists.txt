@@ -21,7 +21,7 @@ set(CORE_SOURCES
 
 set(PLATFORM_SOURCES
         src/Application.cc
-        src/CrossPlatformWindow.cc
+        src/MainWindow.cc
         )
 
 set(RENDERER_SOURCES
@@ -46,7 +46,7 @@ set(IMGUI_SOURCES
         lib/imgui/backends/imgui_impl_opengl3.cpp)
 
 set(EDITOR_SOURCES
-        src/Editor.cc src/SceneHierarchyPanel.cc include/Editor/Panels/InspectorPanel.cc)
+        src/Editor.cc src/SceneHierarchyPanel.cc src/InspectorPanel.cc)
 
 set(SCENE_SOURCES
         src/Scene.cc src/SceneCamera.cc)

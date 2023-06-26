@@ -28,9 +28,9 @@ namespace kaTe {
     /**
      * Window specialization for Linux.
      * */
-    class CrossPlatformWindow : public Window {
+    class MainWindow : public Window {
     public:
-        explicit CrossPlatformWindow(const WindowProperties& properties = WindowProperties{});
+        explicit MainWindow(const WindowProperties& properties = WindowProperties{});
 
         KT_NODISCARD auto GetWidth() const -> Int32_T override { return m_Properties.GetWidth(); }
         KT_NODISCARD auto GetHeight() const -> Int32_T override { return m_Properties.GetHeight(); }
@@ -49,7 +49,7 @@ namespace kaTe {
         auto EnableVSync() -> void override;
         auto DisableVSync() -> void override;
 
-        ~CrossPlatformWindow() override = default;
+        ~MainWindow() override = default;
 
     private:
         // Helpers

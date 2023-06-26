@@ -31,8 +31,8 @@ namespace kaTe {
 
         auto OnEvent(Event& event) -> void;
 
-        auto PushLayer(std::shared_ptr<Layer> layer) -> void;
-        auto PushOverlay(std::shared_ptr<Layer> overlay) -> void;
+        auto PushLayer(const std::shared_ptr<Layer>& layer) -> void;
+        auto PushOverlay(const std::shared_ptr<Layer>& overlay) -> void;
 
         auto BlockImGuiLayerEvents(bool value) -> void;
 

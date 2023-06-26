@@ -5,20 +5,20 @@
 #include <array>
 #include <utility>
 
-#include <entt/entt.hpp>
+#include "entt/entt.hpp"
 
-#include <glm/gtc/type_ptr.hpp>
+#include "glm/gtc/type_ptr.hpp"
 
-#include <imgui.h>
-#include <imgui_internal.h>
+#include "imgui.h"
+#include "imgui_internal.h"
 
-#include <Editor/Panels/SceneHierarchyPanel.hh>
 #include "Editor/Panels/InspectorPanel.hh"
+#include "Editor/Panels/SceneHierarchyPanel.hh"
 
 namespace kaTe {
 
-    InspectorPanel::InspectorPanel(std::shared_ptr<SceneHierarchyPanel> hierarchy)
-        :   m_Hierarchy{ std::move(hierarchy) }, m_Visible{ true }, m_Hovered{ false }, m_Focused{ false }
+    InspectorPanel::InspectorPanel(std::shared_ptr<SceneHierarchyPanel> hierarchy, const Path_T& iconPath)
+        :   Panel{ iconPath }, m_Hierarchy{ std::move(hierarchy) }, m_Visible{ true }, m_Hovered{ false }, m_Focused{ false }
     {}
 
     static auto DrawVec3Transform(std::string_view label, glm::vec3& data, double resetValue = 0.0 , float columWidth = 100.0f) {

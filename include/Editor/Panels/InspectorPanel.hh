@@ -18,7 +18,7 @@ namespace kaTe {
     class InspectorPanel : public Panel {
     public:
 
-        explicit InspectorPanel(std::shared_ptr<SceneHierarchyPanel> hierarchy);
+        explicit InspectorPanel(std::shared_ptr<SceneHierarchyPanel> hierarchy, const Path_T& iconPath = {});
         ~InspectorPanel() override = default;
 
         InspectorPanel(const InspectorPanel& other) = default;

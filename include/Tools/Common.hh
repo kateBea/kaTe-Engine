@@ -261,7 +261,7 @@ namespace kaTe {
      * */
     inline auto GetByteChar(const Path_T &path) -> std::string {
         std::string fileDir(4096, '\0');
-#ifdef defined(_WIN32) || defined(_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
         wcstombs_s(nullptr, fileDir.data(), fileDir.size(), path.c_str(), 4096);
 #else
         std::copy(path.native().begin(), path.native().end(), fileDir.begin());
@@ -269,7 +269,7 @@ namespace kaTe {
         return fileDir;
     }
 
-    // temporary
+    // TODO: temporary, need to specify args in reversed order
     template<typename T, typename... Args>
     inline auto ConcatStr(const T& first, Args... args) -> std::string {
         std::string result{};

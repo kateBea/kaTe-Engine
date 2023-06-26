@@ -38,14 +38,18 @@ namespace kaTe {
         auto  other = Scene::CreateEntity("ColoredSquare", m_ActiveScene);
         m_MainCamEntity = Scene::CreateEntity("MainCamera", m_ActiveScene);
 
+        m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.8f, 0.2f, 0.15f, 1.0f });
+        other.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.2f, 0.8f, 0.25f, 0.5f });
+
+        m_SquareEntity.GetComponent<TransformComponent>().SetTranslation({0.0f, 0.0f, .01f});
+        m_SquareEntity.GetComponent<TransformComponent>().SetRotation({0.0f, 0.0f, 45.0f});
+        other.GetComponent<TransformComponent>().SetTranslation(m_Position);
+
+
         double aspect{window.GetWidth() / (double)window.GetHeight() };
         double zoom{ 1.0f };
         m_MainCamera = std::make_shared<SceneCamera>(glm::ortho(-aspect * zoom, aspect * zoom, -zoom, zoom));
-
-        m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.3f, 0.6f, 0.1f, 1.0f });
-        other.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.3f, 0.2f, 0.8f, 1.0f });
         m_MainCamEntity.AddComponent<CameraComponent>(m_MainCamera);
-
         m_MainCamEntity.AddComponent<NativeScriptComponent>();
 
         m_HierarchyPanel = std::make_shared<SceneHierarchyPanel>(m_ActiveScene);
@@ -53,23 +57,6 @@ namespace kaTe {
 
         {
             // scripting test
-            class CameraController : public ScriptableEntity {
-            public:
-                auto OnCreate() -> void {
-
-                }
-
-                auto OnUpdate() -> void {
-
-                }
-
-                auto OnDestroy() -> void {
-
-                }
-
-
-            private:
-            };
             // TODO: does not compile
             //m_MainCamEntity.GetComponent<NativeScriptComponent>().Bind<CameraController>();
         }
@@ -91,9 +78,16 @@ namespace kaTe {
             // Only update the state of the camera controller when the viewport panel is focused
             m_CameraController->OnUpdate();
 
+#if 1
+        m_CameraController->OnUpdate();
+        Renderer2D::BeginScene(m_CameraController->GetCamera());
+        Renderer2D::DrawQuad({0.0f, 0.0f, .01f}, { 1.0f, 1.0f }, { 0.8f, 0.2f, 0.15f, 1.0f }, 45, true);
+        Renderer2D::DrawQuad(m_Position, { 1.0f, 1.0f }, { 0.2f, 0.8f, 0.25f, 0.5f }, 90, true);
+        Renderer2D::EndScene();
+#endif
         m_ActiveScene->OnUpdate();
-        m_FrameBuffer->Unbind();
 
+        m_FrameBuffer->Unbind();
     }
 
     auto EditorLayer::OnEvent(Event &event) -> void {

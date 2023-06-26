@@ -31,10 +31,10 @@ namespace kaTe {
             throw std::runtime_error("Error when creating shader program");
 
         m_ValidId = true;
-        load(vertexSourceDir, fragmentSourceDir);
+        Upload(vertexSourceDir, fragmentSourceDir);
     }
 
-    auto OpenGLShader::load(const std::filesystem::path& vShaderPath, const std::filesystem::path& fShaderPath) -> void {
+    auto OpenGLShader::Upload(const Path_T& vShaderPath, const Path_T& fShaderPath) -> void {
         if (!m_ValidId) {
             // Check, in case this shader does not contain a valid
             // OpenGL Shader identifier

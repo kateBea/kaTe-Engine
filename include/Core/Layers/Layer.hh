@@ -7,21 +7,21 @@
 #define KATE_ENGINE_LAYER_HH
 
 // C++ Standard Library
-#include <string_view>
 #include <string>
+#include <string_view>
 
 // Project Headers
-#include <Core/Events/Event.hh>
 #include <Tools/Common.hh>
+#include <Core/Events/Event.hh>
 
 namespace kaTe {
 
     /**
      * Describes a modular entity that helps encapsulate and organize
      * functionality of the engine, i.e. subsystems of our engine, e.g.:
-     * Render Layer which would handle rendering pipeline and graphics, amongst others.
+     * Editor Layer which encapsulates elements like scene viewport, scene entities hierarchy, etc
      *
-     * This class serves simply as a general interface for Layers
+     * This class serves simply as a general interface for those Layers
      * */
     class Layer {
     public:
@@ -33,14 +33,16 @@ namespace kaTe {
         virtual auto OnAttach() -> void = 0;
         virtual auto OnDetach() -> void = 0;
         virtual auto OnUpdate() -> void = 0;
-        virtual auto OnEvent(Event& event) -> void {}
-        virtual auto OnImGuiRender() -> void {}
+
+        // These functions are defined here because a layer may not need them,
+        // therefore, it should not provide a definition for them
+        virtual auto OnEvent([[maybe_unused]] Event& event) -> void {}
+        virtual auto OnImGuiRender()                        -> void {}
 
         /**
          * For debugging purposes
          * */
-        KT_NODISCARD
-        auto GetName() const -> const std::string& { return m_Name; }
+        KT_NODISCARD auto GetName() const -> const std::string& { return m_Name; }
 
     private:
         std::string m_Name{};

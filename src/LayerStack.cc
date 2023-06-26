@@ -11,16 +11,17 @@
 #include <Core/Layers/LayerStack.hh>
 
 namespace kaTe {
-    auto LayerStack::addLayer(std::shared_ptr<Layer> layer) -> void {
+    auto LayerStack::addLayer(const std::shared_ptr<Layer>& layer) -> void {
         m_Layers.emplace(m_Layers.begin() + m_LayerIndex, layer);
+        layer->OnAttach();
         ++m_LayerIndex;
     }
 
-    auto LayerStack::addOverlay(std::shared_ptr<Layer> overlay) -> void {
+    auto LayerStack::addOverlay(const std::shared_ptr<Layer>& overlay) -> void {
         m_Layers.emplace_back(overlay);
     }
 
-    auto LayerStack::popLayer(std::shared_ptr<Layer> layer) -> void {
+    auto LayerStack::popLayer(const std::shared_ptr<Layer>& layer) -> void {
         auto targetIt{ std::find(m_Layers.begin(), m_Layers.end(), layer) };
         if (targetIt != m_Layers.end()) {
             m_Layers.erase(targetIt);
@@ -29,7 +30,7 @@ namespace kaTe {
 
     }
 
-    auto LayerStack::popOverlay(std::shared_ptr<Layer> overlay) -> void {
+    auto LayerStack::popOverlay(const std::shared_ptr<Layer>& overlay) -> void {
         auto targetIt{ std::find(m_Layers.begin(), m_Layers.end(), overlay) };
         if (targetIt != m_Layers.end())
             m_Layers.erase(targetIt);

@@ -74,8 +74,8 @@ namespace kaTe {
 
     }
 
-    SceneHierarchyPanel::SceneHierarchyPanel(std::shared_ptr<Scene> scene)
-        :   m_Visible{ true }, m_Hovered{ false }, m_Focused{ false }
+    SceneHierarchyPanel::SceneHierarchyPanel(std::shared_ptr<Scene> scene, const Path_T &iconPath)
+        :   Panel{ iconPath }, m_Visible{ true }, m_Hovered{ false }, m_Focused{ false }
     {
         SetScene(std::move(scene));
     }

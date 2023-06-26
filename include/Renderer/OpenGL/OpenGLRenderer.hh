@@ -17,6 +17,7 @@
 #include "Renderer/Buffers/VertexBuffer.hh"
 
 #include <Renderer/OpenGL/OpenGLVertexArray.hh>
+#include <Renderer/OpenGL/OpenGLShader.hh>
 
 namespace kaTe {
     class OpenGLRenderer : public RendererAPI {
@@ -31,19 +32,21 @@ namespace kaTe {
         auto Clear(BufferBit bufferBits) -> void override;
         auto SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void override;
 
-        auto DrawIndexed(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
-        auto DrawIndexed(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        auto DrawIndexed(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void override;
+        auto DrawIndexed(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void override;
 
         // virtual auto draw(const Mesh& mesh) -> void = 0;
-        auto Draw(std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
-        auto Draw(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        auto Draw(const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void override;
+        auto Draw(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void override;
         // There's no reason to draw a mesh indexed as it may probably have its own indices
 
         // virtual auto draw(const Shader& shader, const Mesh& mesh) -> void = 0;
-        auto Draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer) -> void override;
-        auto Draw(std::shared_ptr<BaseShader> shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void override;
+        auto Draw(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void override;
+        auto Draw(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void override;
 
-    private:
+        auto SetDefaultShader(const Path_T& vertShaderPath, const Path_T& pixelShaderPath) -> void;
+
+    public:
         // Forbidden operations
         OpenGLRenderer(const OpenGLRenderer&) = delete;
         auto operator=(const OpenGLRenderer&) -> OpenGLRenderer& = delete;
@@ -51,6 +54,9 @@ namespace kaTe {
         OpenGLRenderer(OpenGLRenderer&&) = delete;
         auto operator=(OpenGLRenderer&&) -> OpenGLRenderer& = delete;
     private:
+        // This shader can be used if none is provided to Draw() family functions when they are invoked without a shader
+        OpenGLShader m_DefaultVertexPixelShaders{};
+
         /**
 		 * See: https://learnopengl.com/Getting-started/Hello-Triangle
 		 * A vertex array object (also known as VAO) can be bound just like a vertex buffer
