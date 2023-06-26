@@ -46,7 +46,11 @@ namespace kaTe {
 
 
         KT_NODISCARD auto GetProjectionType() -> ProjectionType { return m_Projection; }
-        auto SetProjectionType(ProjectionType type) -> void { m_Projection = type; }
+        auto SetProjectionType(ProjectionType type) -> void {
+            m_Projection = type;
+
+            // call SetOrthographic() or SetPerspective() accordingly
+        }
 
         ~SceneCamera() override = default;
 
@@ -60,7 +64,7 @@ namespace kaTe {
         ProjectionType m_Projection{};
 
         // Orthographic camera info
-        double m_OrthographicSize{ 10.0f };
+        double m_OrthographicSize{ 3.5f };
         double m_OrthographicNearPlane{ -1.0f };
         double m_OrthographicFarPlane{ 1.0f };
 

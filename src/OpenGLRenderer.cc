@@ -27,11 +27,13 @@ namespace kaTe {
     }
 
     auto OpenGLRenderer::DrawIndexed([[maybe_unused]] const std::shared_ptr<VertexBuffer> &vertexBuffer, [[maybe_unused]] const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
-
-
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
     }
 
     auto OpenGLRenderer::DrawIndexed(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
         std::dynamic_pointer_cast<OpenGLShader>(shader)->Bind();
         m_VertexArray.UseVertexBuffer(vertexBuffer);
         indexBuffer->BindBuffer();
@@ -40,25 +42,27 @@ namespace kaTe {
     }
 
     auto OpenGLRenderer::Draw(const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void {
-
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
     }
 
     auto OpenGLRenderer::Draw(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer) -> void {
-
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
     }
 
     auto OpenGLRenderer::Draw(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer) -> void {
-
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
     }
 
     auto OpenGLRenderer::Draw(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
-
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
     }
 
     auto OpenGLRenderer::Init() -> void {
-        glEnable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         KATE_CORE_LOGGER_INFO("Render blending enabled");
     }
 

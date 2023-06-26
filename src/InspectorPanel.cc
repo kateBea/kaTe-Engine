@@ -106,6 +106,7 @@ namespace kaTe {
                         transform.SetTranslation(translation);
                         transform.SetRotation(rotation);
                         transform.SetScale(scale);
+
                         ImGui::TreePop();
                     }
                 }
@@ -140,30 +141,34 @@ namespace kaTe {
 
                         if (camera.GetCameraPtr()->GetProjectionType() == SceneCamera::ProjectionType::ORTHOGRAPHIC) {
                             float size{ (float)camera.GetCameraPtr()->GetOrthographicSize() };
-                            if (ImGui::SliderFloat("Size", &size, 2.0f, 10.0f))
+                            if (ImGui::SliderFloat("Orthographic Size", &size, 2.0f, 10.0f))
                                 camera.GetCameraPtr()->SetOrthographicSize(size);
 
                             float nearPlane{ (float)camera.GetCameraPtr()->GetOrthographicNearPlane() };
-                            if (ImGui::SliderFloat("Near", &nearPlane, -5.0, -1.0))
+                            if (ImGui::SliderFloat("Orthographic Near", &nearPlane, -5.0, -1.0))
                                 camera.GetCameraPtr()->SetOrthographicNearPlane(nearPlane);
 
                             float farPlane{ (float)camera.GetCameraPtr()->GetOrthographicFarPlane() };
-                            if (ImGui::SliderFloat("Far", &farPlane, 1.0, 5.0))
+                            if (ImGui::SliderFloat("Orthographic Far", &farPlane, 1.0, 5.0))
                                 camera.GetCameraPtr()->SetOrthographicFarPlane(farPlane);
+
+                            camera.GetCameraPtr()->SetOrthographic(nearPlane, farPlane, size);
                         }
 
                         if (camera.GetCameraPtr()->GetProjectionType() == SceneCamera::ProjectionType::PERSPECTIVE) {
                             float fov{ (float)camera.GetCameraPtr()->GetPerspectiveFOV() };
-                            if (ImGui::SliderFloat("FOV", &fov, 45.0f, 90.0f))
+                            if (ImGui::SliderFloat("Perspective FOV", &fov, 45.0f, 90.0f))
                                 camera.GetCameraPtr()->SetPerspectiveFOV(fov);
 
                             float nearPlane{ (float)camera.GetCameraPtr()->GetPerspectiveNearPlane() };
-                            if (ImGui::SliderFloat("Near", &nearPlane, 0.001f, 1.0))
+                            if (ImGui::SliderFloat("Perspective Near", &nearPlane, 0.001f, 1.0))
                                 camera.GetCameraPtr()->SetPerspectiveNearPlane(nearPlane);
 
                             float farPlane{ (float)camera.GetCameraPtr()->GetPerspectiveFarPlane() };
-                            if (ImGui::SliderFloat("Far", &farPlane, 100.0f, 10000.0f))
+                            if (ImGui::SliderFloat("Perspective Far", &farPlane, 100.0f, 10000.0f))
                                 camera.GetCameraPtr()->SetPerspectiveFarPlane(farPlane);
+
+                            camera.GetCameraPtr()->SetPerspective(nearPlane, farPlane, fov);
                         }
 
                         ImGui::TreePop();

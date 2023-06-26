@@ -23,19 +23,19 @@ namespace kaTe {
         auto operator=(Camera&& other) -> Camera& = default;
 
         KT_NODISCARD auto GetProjection() const -> const glm::mat4& { return m_Projection; }
-        auto SetProjection(const glm::mat4& projection = glm::mat4(0)) -> void { m_Projection = projection; }
+        auto SetProjection(const glm::mat4& projection = glm::mat4(1.0)) -> void { m_Projection = projection; }
 
         KT_NODISCARD auto GetTransform() const -> const glm::mat4& { return m_Transform; }
         KT_NODISCARD auto GetTransform() -> glm::mat4& { return m_Transform; }
-        auto SetTransform(const glm::mat4& transform = glm::mat4(0)) -> void { m_Transform = transform; }
+        auto SetTransform(const glm::mat4& transform = glm::mat4(1.0)) -> void { m_Transform = transform; }
 
         auto SetPosition(const glm::vec3& position, const glm::vec3& angles = glm::vec3(0.0f)) -> void {
             m_Translation = position;
             m_Rotation = angles;
 
-            glm::mat4 rotationX{ glm::rotate(identMat, (float)glm::radians(angles[0]), xAxis) };
-            glm::mat4 rotationY{ glm::rotate(rotationX, (float)glm::radians(angles[1]), yAxis) };
-            glm::mat4 rotation{ glm::rotate(rotationY, (float)glm::radians(angles[2]), zAxis) };
+            glm::mat4 rotationX{ glm::rotate(identMat, (float)glm::radians(m_Rotation[0]), xAxis) };
+            glm::mat4 rotationY{ glm::rotate(rotationX, (float)glm::radians(m_Rotation[1]), yAxis) };
+            glm::mat4 rotation{ glm::rotate(rotationY, (float)glm::radians(m_Rotation[2]), zAxis) };
 
             m_Transform = glm::translate(identMat, position) * rotation;
         }

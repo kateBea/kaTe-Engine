@@ -36,6 +36,7 @@ namespace kaTe {
         glCreateFramebuffers(1, &m_Id);
         glBindFramebuffer(GL_FRAMEBUFFER, m_Id);
 
+
         glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorAttachment);
         glBindTexture(GL_TEXTURE_2D, m_ColorAttachment);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_FrameBufferCreateInfo.width, m_FrameBufferCreateInfo.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
@@ -48,6 +49,18 @@ namespace kaTe {
         glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_FrameBufferCreateInfo.width, m_FrameBufferCreateInfo.height, 0,
                      GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
+
+#if 1
+        // Step 3: Enable blending
+        glEnable(GL_BLEND);
+
+        // Step 4: Set the blend equation and blending factors
+        glBlendEquation(GL_FUNC_ADD);  // Default blend equation
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // Default blending factors
+
+        // Step 5: Optionally, set separate blend function for the alpha channel
+        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+#endif
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
 

@@ -34,21 +34,20 @@ namespace kaTe {
 
         // Scene setup
         m_ActiveScene = std::make_unique<Scene>();
-        m_SquareEntity = Scene::CreateEntity("ColoredSquare", m_ActiveScene);
-        auto  other = Scene::CreateEntity("ColoredSquare", m_ActiveScene);
+        m_SquareEntity = Scene::CreateEntity("RedColoredSquare", m_ActiveScene);
+        auto  other = Scene::CreateEntity("GreenColoredSquare", m_ActiveScene);
         m_MainCamEntity = Scene::CreateEntity("MainCamera", m_ActiveScene);
 
         m_SquareEntity.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.8f, 0.2f, 0.15f, 1.0f });
         other.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.2f, 0.8f, 0.25f, 0.5f });
 
         m_SquareEntity.GetComponent<TransformComponent>().SetTranslation({0.0f, 0.0f, .01f});
-        m_SquareEntity.GetComponent<TransformComponent>().SetRotation({0.0f, 0.0f, 45.0f});
         other.GetComponent<TransformComponent>().SetTranslation(m_Position);
 
+        m_SquareEntity.GetComponent<TransformComponent>().SetRotation({0.0f, 0.0f, 45.0f});
 
-        double aspect{window.GetWidth() / (double)window.GetHeight() };
-        double zoom{ 1.0f };
-        m_MainCamera = std::make_shared<SceneCamera>(glm::ortho(-aspect * zoom, aspect * zoom, -zoom, zoom));
+        double aspect{ window.GetWidth() / (double)window.GetHeight() };
+        m_MainCamera = std::make_shared<SceneCamera>(glm::ortho(-aspect, aspect, -1.0, 1.0));
         m_MainCamEntity.AddComponent<CameraComponent>(m_MainCamera);
         m_MainCamEntity.AddComponent<NativeScriptComponent>();
 
@@ -78,13 +77,6 @@ namespace kaTe {
             // Only update the state of the camera controller when the viewport panel is focused
             m_CameraController->OnUpdate();
 
-#if 1
-        m_CameraController->OnUpdate();
-        Renderer2D::BeginScene(m_CameraController->GetCamera());
-        Renderer2D::DrawQuad({0.0f, 0.0f, .01f}, { 1.0f, 1.0f }, { 0.8f, 0.2f, 0.15f, 1.0f }, 45, true);
-        Renderer2D::DrawQuad(m_Position, { 1.0f, 1.0f }, { 0.2f, 0.8f, 0.25f, 0.5f }, 90, true);
-        Renderer2D::EndScene();
-#endif
         m_ActiveScene->OnUpdate();
 
         m_FrameBuffer->Unbind();
@@ -104,6 +96,8 @@ namespace kaTe {
         Editor::DisplayDockSpace(flags);
         ImGui::Begin("Editor");
         ImGui::ColorEdit3("Clear Color", glm::value_ptr(m_ClearColor));
+        ImGui::DragFloat3("Pos red", glm::value_ptr(m_Position));
+        ImGui::ColorPicker4("Color green", glm::value_ptr(m_Color));
         ImGui::End();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{0,0});

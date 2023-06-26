@@ -15,9 +15,9 @@ namespace kaTe {
     }
 
     auto SceneCamera::SetPerspective(double nearPlane, double farPlane, double fov) -> void {
-        m_Projection = ProjectionType::ORTHOGRAPHIC;
+        m_Projection = ProjectionType::PERSPECTIVE;
         m_PerspectiveNearPlane = nearPlane;
-        m_PerspectiveFarPlane = nearPlane;
+        m_PerspectiveFarPlane = farPlane;
         m_PerspectiveFieldOfView = fov;
         RecomputeProjection();
     }
@@ -37,8 +37,7 @@ namespace kaTe {
             SetProjection(glm::ortho(orthographicLeft, orthographicRight, orthographicBottom,
                                      orthographicTop, m_OrthographicNearPlane, m_OrthographicFarPlane));
         }
-
-        if (m_Projection == ProjectionType::PERSPECTIVE) {
+        else if (m_Projection == ProjectionType::PERSPECTIVE) {
             SetProjection(glm::perspective(glm::radians(m_PerspectiveFieldOfView), m_AspectRatio, m_PerspectiveNearPlane, m_PerspectiveFarPlane));
         }
     }

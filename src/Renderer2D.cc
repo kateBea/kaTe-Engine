@@ -60,7 +60,8 @@ namespace kaTe {
         glm::mat4 cameraViewProj{};
 
         if (!useOrthoCamera)
-            cameraViewProj = s_DrawData->camera->GetProjection() * s_DrawData->camera->GetTransform();
+            // inverse transform matrix to get the camera View matrix
+            cameraViewProj = s_DrawData->camera->GetProjection() * glm::inverse(s_DrawData->camera->GetTransform());
         else
             cameraViewProj = s_DrawData->orthographicCamera->GetProjectionView();
 
@@ -102,6 +103,7 @@ namespace kaTe {
         glm::mat4 cameraViewProj{};
 
         if (!useOrthoCamera)
+            // inverse transform matrix to get the camera View matrix
             cameraViewProj = s_DrawData->camera->GetProjection() * s_DrawData->camera->GetTransform();
         else
             cameraViewProj = s_DrawData->orthographicCamera->GetProjectionView();
@@ -120,11 +122,12 @@ namespace kaTe {
         s_RenderingStats->IncrementDrawCallCount(1);
     }
 
-    auto Renderer2D::DrawQuad(const glm::mat4 &transform, std::shared_ptr<Texture> texture, bool useOrthoCamera) -> void {
+    auto Renderer2D::DrawQuad(const glm::mat4 &transform, const std::shared_ptr<Texture>& texture, bool useOrthoCamera) -> void {
         glm::mat4 cameraViewProj{};
 
         if (!useOrthoCamera)
-            cameraViewProj = s_DrawData->camera->GetProjection() * s_DrawData->camera->GetTransform();
+            // inverse transform matrix to get the camera View matrix
+            cameraViewProj = s_DrawData->camera->GetProjection() * glm::inverse(s_DrawData->camera->GetTransform());
         else
             cameraViewProj = s_DrawData->orthographicCamera->GetProjectionView();
 

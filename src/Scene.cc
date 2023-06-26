@@ -24,7 +24,7 @@ namespace kaTe {
 
         }
 
-        std::shared_ptr<Camera> mainCam{};
+        std::shared_ptr<SceneCamera> mainCam{};
         bool sceneHasMainCam{ false };
         {
             auto view{ m_Registry.view<TransformComponent, CameraComponent>() };
@@ -37,8 +37,8 @@ namespace kaTe {
                 if (sceneHasMainCam) {
                     mainCam = std::move(camera.GetCameraPtr());
 
-                    // The camera's position, etc depends on its transform component
-                    mainCam->SetTransform(transform.GetTransform());
+                    // The camera's position, etc. depends on its transform component
+                    mainCam->SetPosition(transform.GetTranslation(), transform.GetRotation());
                     break;
                 }
             }

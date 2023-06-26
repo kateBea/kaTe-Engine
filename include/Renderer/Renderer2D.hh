@@ -36,7 +36,7 @@ namespace kaTe {
         static auto DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, double angle, std::shared_ptr<Texture> texture, bool useOrthoCamera = false) -> void;
 
         static auto DrawQuad(const glm::mat4& transform, const glm::vec4& color, bool useOrthoCamera = false) -> void;
-        static auto DrawQuad(const glm::mat4& transform, std::shared_ptr<Texture> texture,  bool useOrthoCamera = false) -> void;
+        static auto DrawQuad(const glm::mat4& transform, const std::shared_ptr<Texture>& texture,  bool useOrthoCamera = false) -> void;
 
         KT_NODISCARD static auto QueryDrawCallsCount() -> UInt32_T { return s_SavedSceneStats->GetDrawCallsCount(); }
         KT_NODISCARD static auto QueryQuadCount() -> UInt32_T { return s_SavedSceneStats->GetQuadCount(); }
