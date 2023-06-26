@@ -27,6 +27,9 @@ namespace kaTe {
         auto Init() -> void override;
         auto Shutdown() -> void override;
 
+        virtual auto EnableWireframeMode() -> void override;
+        virtual auto DisableWireframeMode() -> void override;
+
         auto SetClearColor(const glm::vec4& color) -> void override;
         auto SetClearColor(float red, float green, float blue, float alpha) -> void override;
         auto Clear(BufferBit bufferBits) -> void override;

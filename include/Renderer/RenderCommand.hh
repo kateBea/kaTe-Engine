@@ -21,6 +21,9 @@ namespace kaTe {
         static auto Init() -> void;
         static auto ShutDown() -> void;
 
+        static auto EnableWireframeMode() -> void;
+        static auto DisableWireframeMode() -> void;
+
         static auto Clear(RendererAPI::BufferBit bufferBit) -> void;
         static auto SetClearColor(const glm::vec4& color) -> void;
         static auto SetClearColor(float red, float green, float blue, float alpha) -> void;

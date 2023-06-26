@@ -16,7 +16,7 @@
 namespace kaTe {
     class SceneHierarchyPanel : public Panel {
     public:
-        explicit SceneHierarchyPanel(std::shared_ptr<Scene> scene, const Path_T &iconPath = {});
+        explicit SceneHierarchyPanel(const std::shared_ptr<Scene>& scene, const Path_T &iconPath = {});
         ~SceneHierarchyPanel() override = default;
 
         SceneHierarchyPanel(const SceneHierarchyPanel& other) = default;
@@ -27,7 +27,7 @@ namespace kaTe {
 
         auto OnUpdate() -> void override;
         auto OnEvent(Event& event) -> void override;
-        auto SetScene(std::shared_ptr<Scene> scene) -> void;
+        auto SetScene(const std::shared_ptr<Scene>& scene) -> void;
         auto MakeVisible(bool value) -> void override { m_Visible = value; }
 
         KT_NODISCARD auto IsHovered() const -> bool override { return m_Hovered; }

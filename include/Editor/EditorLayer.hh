@@ -34,6 +34,7 @@ namespace kaTe {
         float m_ViewPortWidth{};
         float m_ViewPortHeight{};
         bool m_VerticalSyncEnabled{};
+        bool m_WireframeMode{};
         bool m_ViewportIsFocused{ false };
         bool m_ViewportIsHovered{ false };
 

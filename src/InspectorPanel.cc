@@ -85,6 +85,13 @@ namespace kaTe {
                     TagComponent& tag{ ptr->m_Registry.get<TagComponent>(m_Hierarchy->m_ContextSelection) };
                     std::string value{ tag.GetTag() };
                     // TODO: check imgui_demo for usage with std::string
+                    // Tells wether we want to disable this component or not,
+                    // NOTE: not remove it, just disable it so it no longers appears in the scene
+                    // show is static just for testing purposes for now
+                    static bool show{ true };
+
+                    ImGui::Checkbox("##show", &show);
+                    ImGui::SameLine();
                     if (ImGui::InputText("Tag", value.data(), value.size() + 1))
                         tag.SetTag(value);
 

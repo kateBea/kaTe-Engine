@@ -5,6 +5,59 @@
 #include <Editor/Editor.hh>
 
 namespace kaTe::Editor {
+    auto SetupCustomImGuiStyle() -> void {
+        // Setup Dear ImGui style
+        ImGuiStyle &style = ImGui::GetStyle();
+
+        style.Colors[ImGuiCol_TitleBg] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
+        style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+        style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+
+        style.Colors[ImGuiCol_Tab] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
+
+        style.Colors[ImGuiCol_Button] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
+        style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.26f, 0.26f, 0.26f, 1.0f);
+        style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+
+        style.Colors[ImGuiCol_TabHovered] = ImVec4(0.26f, 0.26f, 0.26f, 1.0f);
+        style.Colors[ImGuiCol_TabActive] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+        style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
+        style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.20f, 0.20f, 0.20f, 1.0f);
+
+        style.Colors[ImGuiCol_Header] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
+        style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.26f, 0.26f, 0.26f, 1.0f);
+        style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
+
+        style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
+
+        style.Colors[ImGuiCol_FrameBg] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
+        style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+        style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
+
+        style.Colors[ImGuiCol_Border] = ImVec4(0.26f, 0.26f, 0.26f, 1.0f);
+        style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
+
+        style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
+        style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
+        style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
+
+
+        // borders
+        style.WindowBorderSize = 0.0f;
+        style.FrameBorderSize = 0.0f;
+        style.PopupBorderSize = 0.0f;
+
+        // Rounding values
+        style.FrameRounding = 1.0f;
+        style.GrabRounding = 5.0f;
+        style.ChildRounding = 5.0f;
+        style.WindowRounding = 5.0f;
+        style.PopupRounding = 5.0f;
+        style.ScrollbarRounding = 5.0f;
+        style.TabRounding = 5.0f;
+    }
+
+
     void ShowDockingDisabledMessage() {
         ImGuiIO& io = ImGui::GetIO();
         ImGui::Text("ERROR: Docking is not enabled! See Demo > Configuration.");
@@ -84,6 +137,7 @@ namespace kaTe::Editor {
             ShowDockingDisabledMessage();
 
         if (ImGui::BeginMenuBar()) {
+            // File menubar. Need to extract to separated function
             if (ImGui::BeginMenu("File")) {
                 // Disabling fullscreen would allow the window to be moved to the front of other windows,
                 // which we can't undo at the moment without finer window depth/z control.
@@ -108,6 +162,27 @@ namespace kaTe::Editor {
                     "This demo app has nothing to do with enabling docking!" "\n\n"
                     "This demo app only demonstrate the use of ImGui::DockSpace() which allows you to manually create a docking node _within_ another window." "\n\n"
                     "Read comments in ShowExampleAppDockSpace() for more details.");
+
+            // Window. Need to extract to separated function
+            if (ImGui::BeginMenu("Window")) {
+                if (ImGui::BeginMenu("Panels")) {
+                    if (ImGui::MenuItem("Scene properties")) {}
+                    if (ImGui::MenuItem("Scene hierarchy")) {}
+
+                    ImGui::EndMenu();
+                }
+
+                if (ImGui::BeginMenu("Theme")) {
+                    if (ImGui::MenuItem("Classic")) { ImGui::StyleColorsClassic(); }
+                    if (ImGui::MenuItem("Minimalist")) { ImGui::StyleColorsDark(); SetupCustomImGuiStyle(); }
+                    if (ImGui::MenuItem("Focused")) { ImGui::StyleColorsDark(); }
+                    if (ImGui::MenuItem("Blindness")) { ImGui::StyleColorsLight(); }
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMenu();
+            }
+
+            HelpMarker("This help is temporary. This menu helps to change window stuff like the theme");
 
             ImGui::EndMenuBar();
         }

@@ -92,8 +92,8 @@ namespace kaTe {
 
     auto EditorLayer::OnImGuiRender() -> void {
         Editor::DockControlFlags flags{};
-
         Editor::DisplayDockSpace(flags);
+
         ImGui::Begin("Editor");
         ImGui::ColorEdit3("Clear Color", glm::value_ptr(m_ClearColor));
         ImGui::DragFloat3("Pos red", glm::value_ptr(m_Position));
@@ -142,6 +142,7 @@ namespace kaTe {
         ImGui::Text("Vertex count: %d", Renderer2D::QueryVertexCount());
         ImGui::Text("Frame rate: %.1f", ImGui::GetIO().Framerate);
 
+        ImGui::Separator();
         if (ImGui::Checkbox("VSync Enabled", &m_VerticalSyncEnabled)) {
             if (m_VerticalSyncEnabled)
                 Application::Get().GetMainWindow().EnableVSync();
@@ -149,6 +150,12 @@ namespace kaTe {
                 Application::Get().GetMainWindow().DisableVSync();
         }
 
+        if (ImGui::Checkbox("Wireframe mode", &m_WireframeMode)) {
+            if (m_WireframeMode)
+                RenderCommand::EnableWireframeMode();
+            else
+                RenderCommand::DisableWireframeMode();
+        }
         ImGui::End();
 
         if (flags.applicationCloseFlag)

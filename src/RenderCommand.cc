@@ -74,4 +74,12 @@ namespace kaTe {
     auto RenderCommand::ShutDown() -> void {
         delete s_ActiveRendererAPI;
     }
+
+    auto RenderCommand::EnableWireframeMode() -> void {
+        s_ActiveRendererAPI->EnableWireframeMode();
+    }
+
+    auto RenderCommand::DisableWireframeMode() -> void {
+        s_ActiveRendererAPI->DisableWireframeMode();
+    }
 }

@@ -27,8 +27,7 @@ namespace kaTe {
     }
 
     auto OpenGLRenderer::DrawIndexed([[maybe_unused]] const std::shared_ptr<VertexBuffer> &vertexBuffer, [[maybe_unused]] const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
+
     }
 
     auto OpenGLRenderer::DrawIndexed(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
@@ -42,27 +41,25 @@ namespace kaTe {
     }
 
     auto OpenGLRenderer::Draw(const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void {
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
+
     }
 
     auto OpenGLRenderer::Draw(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer) -> void {
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
+
     }
 
     auto OpenGLRenderer::Draw(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer) -> void {
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
+
     }
 
     auto OpenGLRenderer::Draw(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
+
     }
 
     auto OpenGLRenderer::Init() -> void {
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         KATE_CORE_LOGGER_INFO("Render blending enabled");
     }
 
@@ -72,5 +69,13 @@ namespace kaTe {
 
     auto OpenGLRenderer::SetDefaultShader(const Path_T &vertShaderPath, const Path_T &pixelShaderPath) -> void {
         m_DefaultVertexPixelShaders.Upload(vertShaderPath, pixelShaderPath);
+    }
+
+    auto OpenGLRenderer::EnableWireframeMode() -> void {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
+    auto OpenGLRenderer::DisableWireframeMode() -> void {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 }

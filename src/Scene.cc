@@ -56,6 +56,8 @@ namespace kaTe {
                 TransformComponent& transform{ view.get<TransformComponent>(entity) };
                 SpriteRendererComponent& sprite{ view.get<SpriteRendererComponent>(entity) };
 
+                // TODO: fix rendering order for blending, objects that are nearer to the camera should be rendered first
+                // Right if an object is on top of another but it is rendered after before blending does not work
                 Renderer2D::DrawQuad(transform.GetTransform(), sprite.GetColor());
             }
 

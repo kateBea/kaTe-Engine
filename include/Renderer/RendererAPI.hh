@@ -26,6 +26,10 @@ namespace kaTe {
 
         virtual auto Init() -> void = 0;
         virtual auto Shutdown() -> void = 0;
+
+        virtual auto EnableWireframeMode() -> void = 0;
+        virtual auto DisableWireframeMode() -> void = 0;
+
 		virtual auto SetClearColor(const glm::vec4& color) -> void = 0;
 		virtual auto SetClearColor(float red, float green, float blue, float alpha) -> void = 0;
 		virtual auto Clear(BufferBit bufferBits) -> void = 0;

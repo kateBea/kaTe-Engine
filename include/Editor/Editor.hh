@@ -15,6 +15,7 @@ namespace kaTe::Editor {
         bool applicationCloseFlag{};
     };
 
+    auto SetupCustomImGuiStyle() -> void;
     auto ShowDockingDisabledMessage() -> void;
     auto HelpMarker(std::string_view description) -> void;
     auto DisplayDockSpace(DockControlFlags& flags) -> void;

@@ -40,8 +40,6 @@ namespace kaTe {
     private:
         // Do not propagate events to this layer
         bool m_BlockEvents{ false };
-        static auto SetupCustomImGuiStyle() -> void;
-
     };
 
 }   // END NAMESPACE kaTe

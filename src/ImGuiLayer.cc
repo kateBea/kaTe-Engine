@@ -21,6 +21,7 @@
 
 #include <Core/Layers/ImGuiLayer.hh>
 #include <Platform/InputManager.hh>
+#include <Editor/Editor.hh>
 
 namespace kaTe {
     ImGuiLayer::ImGuiLayer() noexcept
@@ -46,7 +47,7 @@ namespace kaTe {
 
         // Configure ImGui Style
         ImGui::StyleColorsDark();
-        SetupCustomImGuiStyle();
+        Editor::SetupCustomImGuiStyle();
         io.Fonts->AddFontFromFileTTF("../assets/Fonts/Inter/Inter-VariableFont.ttf", 15);
 
         try {
@@ -72,57 +73,6 @@ namespace kaTe {
 
     }
 
-    auto ImGuiLayer::SetupCustomImGuiStyle() -> void {
-        // Setup Dear ImGui style
-        ImGuiStyle &style = ImGui::GetStyle();
-
-        style.Colors[ImGuiCol_TitleBg] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
-        style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-        style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
-
-        style.Colors[ImGuiCol_Tab] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
-
-        style.Colors[ImGuiCol_Button] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
-        style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.26f, 0.26f, 0.26f, 1.0f);
-        style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
-
-        style.Colors[ImGuiCol_TabHovered] = ImVec4(0.26f, 0.26f, 0.26f, 1.0f);
-        style.Colors[ImGuiCol_TabActive] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
-        style.Colors[ImGuiCol_TabUnfocused] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
-        style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.20f, 0.20f, 0.20f, 1.0f);
-
-        style.Colors[ImGuiCol_Header] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
-        style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.26f, 0.26f, 0.26f, 1.0f);
-        style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.4f, 0.4f, 0.4f, 1.0f);
-
-        style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
-
-        style.Colors[ImGuiCol_FrameBg] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
-        style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
-        style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
-
-        style.Colors[ImGuiCol_Border] = ImVec4(0.26f, 0.26f, 0.26f, 1.0f);
-        style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
-
-        style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
-        style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
-        style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.16f, 0.16f, 0.16f, 1.0f);
-
-
-        // borders
-        style.WindowBorderSize = 0.0f;
-        style.FrameBorderSize = 0.0f;
-        style.PopupBorderSize = 0.0f;
-
-        // Rounding values
-        style.FrameRounding = 1.0f;
-        style.GrabRounding = 5.0f;
-        style.ChildRounding = 5.0f;
-        style.WindowRounding = 5.0f;
-        style.PopupRounding = 5.0f;
-        style.ScrollbarRounding = 5.0f;
-        style.TabRounding = 5.0f;
-    }
 
     auto ImGuiLayer::BeginFrame() -> void {
         ImGui_ImplOpenGL3_NewFrame();
