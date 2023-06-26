@@ -22,6 +22,7 @@ namespace kaTe {
             {
                 if (auto ptr{ m_Context.lock() }) {
                     auto view{ ptr->m_Registry.view<TagComponent>() };
+                    static entt::entity hoveredEntity{ entt::null };
 
                     for (const auto& entity : view) {
                         TagComponent& tag{ view.get<TagComponent>(entity) };
@@ -30,17 +31,11 @@ namespace kaTe {
                         ImGuiTreeNodeFlags flags{  (thisEntityIsSelected ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow };
 
                         bool expanded{ ImGui::TreeNodeEx((void*)entity, flags, "%s", tag.GetTag().c_str()) };
-                        if (ImGui::IsItemClicked(/* when we left-click it*/))
+                        if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
                             m_ContextSelection = entity;
 
-
-                        // If we click on blank space in this entity. Doesn't work
-                        if (ImGui::BeginPopupContextItem(nullptr)) {
-                            if (ImGui::MenuItem("Destroy entity")) {
-                                ptr->DestroyEntity(entity);
-                            }
-                            ImGui::EndPopup();
-                        }
+                        if (ImGui::IsItemHovered())
+                            hoveredEntity = entity;
 
                         if (expanded) {
                             // Recursively expand
@@ -53,8 +48,42 @@ namespace kaTe {
 
                     }
 
+
+                    // Menu options for entities
+                    // Just needs to be drawn once not per entity
+                    if (ImGui::BeginPopupContextItem("##EntityMenuOptions", ImGuiPopupFlags_MouseButtonRight)) {
+                        if (ImGui::BeginMenu("Add component")) {
+                            if (ImGui::MenuItem("Tag")) {
+
+                            }
+                            if (ImGui::MenuItem("Transform")) {
+
+                            }
+                            if (ImGui::MenuItem("Sprite")) {
+
+                            }
+                            if (ImGui::MenuItem("Camera")) {
+
+                            }
+                            if (ImGui::MenuItem("Script")) {
+
+                            }
+                            ImGui::EndMenu();
+                        }
+
+                        if (ImGui::BeginMenu("Options")) {
+                            if (ImGui::MenuItem("Destroy entity")) {
+                                ptr->DestroyEntity(hoveredEntity);
+                            }
+                            ImGui::EndMenu();
+                        }
+                        ImGui::EndPopup();
+                    }
+
+
+
                     // If we click on blank space in this panel
-                    if (ImGui::BeginPopupContextWindow(nullptr)) {
+                    if (ImGui::BeginPopupContextWindow("##HierarchyMenuOptions", ImGuiPopupFlags_NoOpenOverItems | ImGuiPopupFlags_MouseButtonRight)) {
                         if (ImGui::BeginMenu("New")) {
                             if (ImGui::MenuItem("Create entity")) {
                                 Scene::CreateEntity("Item", ptr);
@@ -64,6 +93,7 @@ namespace kaTe {
                         }
                         ImGui::EndPopup();
                     }
+
                 }
                 else
                     KATE_CORE_LOGGER_ERROR("Panel context has expired and no longer exists!");
