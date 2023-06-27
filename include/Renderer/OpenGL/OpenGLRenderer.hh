@@ -32,7 +32,7 @@ namespace kaTe {
 
         auto SetClearColor(const glm::vec4& color) -> void override;
         auto SetClearColor(float red, float green, float blue, float alpha) -> void override;
-        auto Clear(BufferBit bufferBits) -> void override;
+        auto Clear(const BufferBits& bufferBits) -> void override;
         auto SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void override;
 
         auto DrawIndexed(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void override;

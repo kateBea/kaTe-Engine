@@ -22,9 +22,9 @@ namespace kaTe {
         }
     }
 
-    auto RenderCommand::Clear(RendererAPI::BufferBit bufferBit) -> void {
+    auto RenderCommand::Clear(BufferBits bufferBits) -> void {
         KT_ASSERT(s_ActiveRendererAPI, "Render command active API is NULL");
-        s_ActiveRendererAPI->Clear(bufferBit);
+        s_ActiveRendererAPI->Clear(bufferBits);
     }
 
     auto RenderCommand::SetClearColor(const glm::vec4& color) -> void {

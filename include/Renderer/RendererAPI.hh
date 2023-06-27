@@ -17,12 +17,14 @@ namespace kaTe {
 	public:
         explicit RendererAPI() = default;
 
-		/* It is not an enum class for ease with bit OR operations*/
-        // temporary
 		enum BufferBit {
-			OPEN_GL_COLOR_BUFFER_BIT = GL_COLOR_BUFFER_BIT,
-			OPEN_GL_DEPTH_BUFFER_BIT = GL_DEPTH_BUFFER_BIT,
+            NONE,
+			COLOR_BUFFER_BIT = 0,
+			DEPTH_BUFFER_BIT = 1,
+            COUNT,
 		};
+
+        using BufferBits = std::array<bool, BufferBit::COUNT>;
 
         virtual auto Init() -> void = 0;
         virtual auto Shutdown() -> void = 0;
@@ -32,7 +34,7 @@ namespace kaTe {
 
 		virtual auto SetClearColor(const glm::vec4& color) -> void = 0;
 		virtual auto SetClearColor(float red, float green, float blue, float alpha) -> void = 0;
-		virtual auto Clear(BufferBit bufferBits) -> void = 0;
+		virtual auto Clear(const BufferBits& bufferBits) -> void = 0;
 
 		virtual auto DrawIndexed(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void = 0;
         virtual auto DrawIndexed(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void = 0;

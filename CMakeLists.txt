@@ -17,7 +17,7 @@ set(CORE_SOURCES
         src/LayerStack.cc
         src/ImGuiLayer.cc
         src/OpenGLContext.cc
-        src/TestLayer.cc src/InputManager.cc src/EditorLayer.cc src/Timer.cc)
+        src/InputManager.cc src/EditorLayer.cc src/Timer.cc)
 
 set(PLATFORM_SOURCES
         src/Application.cc

@@ -14,8 +14,14 @@ namespace kaTe {
         glClearColor(red, green, blue, alpha);
     }
 
-    auto OpenGLRenderer::Clear(BufferBit bufferBits) -> void {
-        glClear(bufferBits);
+    auto OpenGLRenderer::Clear(const BufferBits& bufferBits) -> void {
+        GLbitfield mask{};
+        using BufferBit = RendererAPI::BufferBit;
+
+        if (bufferBits[BufferBit::DEPTH_BUFFER_BIT]) mask = GL_DEPTH_BUFFER_BIT;
+        if (bufferBits[BufferBit::COLOR_BUFFER_BIT]) mask |= GL_COLOR_BUFFER_BIT;
+
+        glClear(mask);
     }
 
     auto OpenGLRenderer::SetClearColor(const glm::vec4 &color) -> void {

@@ -3,8 +3,6 @@
 //
 #include <memory>
 
-#include <imgui.h>
-
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Editor/EditorLayer.hh"
@@ -12,7 +10,6 @@
 
 #include <Platform/InputManager.hh>
 #include <Renderer/RenderCommand.hh>
-#include <Renderer/Renderer2D.hh>
 #include <Renderer/Buffers/FrameBuffer.hh>
 
 #include <Editor/Editor.hh>
@@ -36,9 +33,7 @@ namespace kaTe {
         m_ScenePanelInfo->SceneFrameBuffer = FrameBuffer::CreatFrameBuffer(createInfo);
         m_ScenePanelInfo->Viewport = std::make_unique<Scene>();
 
-
         m_StatsPanelInfo = std::make_shared<StatsPanelData>();
-
 
 
         // Scene pre setup
@@ -81,8 +76,12 @@ namespace kaTe {
         // Pre Setup
         m_ScenePanelInfo->SceneFrameBuffer->Bind();
         RenderCommand::SetClearColor(m_SettingsPanelInfo->ClearColor);
-        RenderCommand::Clear((RendererAPI::BufferBit)(RendererAPI::OPEN_GL_COLOR_BUFFER_BIT |
-                                                      RendererAPI::OPEN_GL_DEPTH_BUFFER_BIT));
+        RendererAPI::BufferBits bufferBits{};
+
+        bufferBits[RendererAPI::BufferBit::COLOR_BUFFER_BIT] = true;
+        bufferBits[RendererAPI::BufferBit::DEPTH_BUFFER_BIT] = true;
+
+        RenderCommand::Clear(bufferBits);
 
         m_ScenePanelInfo->Viewport->OnUpdate();
         m_ScenePanelInfo->SceneFrameBuffer->Unbind();
