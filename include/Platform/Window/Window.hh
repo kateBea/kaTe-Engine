@@ -15,8 +15,8 @@
 #include <any>
 
 // Project Headers
-#include <Core/Events/Event.hh>
 #include <Tools/Common.hh>
+#include <Core/Events/Event.hh>
 
 namespace kaTe {
     class WindowProperties {

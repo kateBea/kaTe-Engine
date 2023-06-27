@@ -6,6 +6,8 @@
 // C++ Standard Library
 #include <array>
 #include <utility>
+#include <iterator>
+#include <algorithm>
 
 // Third-Party Libraries
 #include <entt/entt.hpp>
@@ -23,8 +25,8 @@
 #include <Editor/Panels/InspectorPanel.hh>
 
 namespace kaTe {
-    InspectorPanel::InspectorPanel(std::shared_ptr<HierarchyPanel> hierarchy, const Path_T& iconPath)
-        :   Panel{ iconPath }, m_Hierarchy{ std::move(hierarchy) }, m_Visible{ true }, m_Hovered{ false }, m_Focused{ false }
+    InspectorPanel::InspectorPanel(const std::shared_ptr<HierarchyPanel> &hierarchy, const Path_T& iconPath)
+        :   Panel{ iconPath }, m_Hierarchy{ hierarchy }, m_Visible{ true }, m_Hovered{ false }, m_Focused{ false }
     {}
 
     static auto DrawVec3Transform(std::string_view label, glm::vec3& data, double resetValue = 0.0 , float columWidth = 100.0f) {
@@ -84,24 +86,34 @@ namespace kaTe {
     auto InspectorPanel::OnUpdate() -> void {
         if (IsVisible()) {
             ImGui::Begin("Inspector");
-            bool removeSprite{ false }; // Tells whether we want to remove the transform or not
+            bool removeSprite{ false };     // Tells whether we want to remove the Sprite or not
+            bool removeTransform{ false };  // Tells whether we want to remove the transform or not
+            bool removeCamera{ false };     // Tells whether we want to remove the camera or not
+            bool removeScript{ false };     // Tells whether we want to remove the script or not
 
             if (auto ptr{ m_Hierarchy->m_Context.lock() })
                 m_Hierarchy->m_ContextSelection.SetContext(ptr);
+
             // Tag Component
             if (m_Hierarchy->m_ContextSelection.HasComponent<TagComponent>()) {
                 TagComponent& tag{ m_Hierarchy->m_ContextSelection.GetComponent<TagComponent>() };
                 std::string value{ tag.GetTag() };
-                // TODO: check imgui_demo for usage with std::string
-                // Tells wether we want to disable this component or not,
-                // NOTE: not remove it, just disable it so it no longers appears in the scene
-                // show is static just for testing purposes for now
-                static bool show{ true };
+                static bool renderContextSelectionToScene{ true };
+                char contextSelectionTagName[1024]{};
+                std::copy(tag.GetTag().begin(), tag.GetTag().end(), contextSelectionTagName);
 
-                ImGui::Checkbox("##show", &show);
-                ImGui::SameLine();
-                if (ImGui::InputText("Tag", value.data(), value.size() + 1))
-                    tag.SetTag(value);
+                static Entity currentSelectionBackup{};
+
+                ImGui::Checkbox("##show", &renderContextSelectionToScene); ImGui::SameLine();
+                //bool transformComponentNodeOpen{ ImGui::TreeNodeEx((void*) typeid(TagComponent).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Tag") };
+
+                if (ImGui::InputText("##Tag", contextSelectionTagName, std::size(contextSelectionTagName))) {
+                    // backup the scene entity whose tag is being modified at the moment
+                    currentSelectionBackup.m_EntityHandle = m_Hierarchy->m_ContextSelection.m_EntityHandle;
+                    currentSelectionBackup.m_Scene = m_Hierarchy->m_ContextSelection.m_Scene;
+
+                    tag.SetTag(contextSelectionTagName);
+                }
 
             }
 
@@ -117,7 +129,7 @@ namespace kaTe {
 
                 if (ImGui::BeginPopup("PlusComponentSettingsButton")) {
                     if (ImGui::MenuItem("Remove Component")) {
-
+                        removeTransform = true;
                         ImGui::CloseCurrentPopup();
                     }
                     ImGui::EndPopup();
@@ -150,7 +162,9 @@ namespace kaTe {
                 auto cameraCurrentProjectionType{ camera.GetCameraPtr()->GetProjectionType() };
                 auto currentProjectionTypeStr{ cameraProjectionTypes[cameraCurrentProjectionType] };
 
-                if (ImGui::TreeNodeEx((void*) typeid(SceneCamera).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera")) {
+                bool cameraNodeOpen{ ImGui::TreeNodeEx((void*) typeid(SceneCamera).hash_code(), ImGuiTreeNodeFlags_DefaultOpen, "Camera") };
+
+                if (cameraNodeOpen) {
 
                     if (ImGui::BeginCombo("Projection", currentProjectionTypeStr.c_str())) {
                         UInt32_T projectionIndex{};
@@ -214,9 +228,9 @@ namespace kaTe {
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{ 4.0f, 4.0f });
                 ImGui::SameLine(ImGui::GetWindowWidth() - 25.0f);
                 if (ImGui::Button("+"))
-                    ImGui::OpenPopup("PlusComponentSettingsButton");
+                    ImGui::OpenPopup("PlusSpriteComponentSettingsButton");
 
-                if (ImGui::BeginPopup("PlusComponentSettingsButton")) {
+                if (ImGui::BeginPopup("PlusSpriteComponentSettingsButton")) {
                     if (ImGui::MenuItem("Remove Component")) {
                         removeSprite = true;
                         ImGui::CloseCurrentPopup();
@@ -245,7 +259,7 @@ namespace kaTe {
             if (removeSprite)
                 m_Hierarchy->m_ContextSelection.RemoveComponent<SpriteRendererComponent>();
 
-            // can not remove transform component for now, only sprite
+            // cannot remove the transform component for now, only sprite
 
             if (m_Hierarchy->m_ContextSelection.IsValid()) {
                 if (ImGui::Button("Add component"))

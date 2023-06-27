@@ -13,6 +13,10 @@
 
 
 namespace kaTe {
+    /**
+     * Describes a general Renderer interface for various graphic API e.g OpenGL
+     * which is the graphics API being used right now, Vulkan, etc.
+     * */
 	class RendererAPI {
 	public:
         explicit RendererAPI() = default;

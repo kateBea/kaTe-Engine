@@ -17,22 +17,14 @@
 
 #include <Renderer/Material/BaseShader.hh>
 #include <Renderer/Material/Texture.hh>
-
 #include <Renderer/Buffers/IndexBuffer.hh>
 #include <Renderer/Buffers/VertexBuffer.hh>
-
+#include <Renderer/Camera/Camera.hh>
 #include <Renderer/Camera/OrthographicCamera.hh>
+#include <Renderer/Material/BaseShader.hh>
 
 
 namespace kaTe {
-    struct DrawData {
-        std::shared_ptr<BaseShader> shader{};
-        std::shared_ptr<VertexBuffer> vertexBuffer{};
-        std::shared_ptr<IndexBuffer> indexBuffer{};
-        std::vector<std::shared_ptr<Texture>> textures{};
-        glm::mat4 transform{ glm::mat4(1.0) };
-    };
-
     class Renderer {
     public:
         enum class GraphicsAPI {
@@ -42,21 +34,40 @@ namespace kaTe {
 
         static auto Init() -> void;
 
+        static auto BeginScene(std::shared_ptr<Camera> camera) -> void;
         static auto BeginScene(std::shared_ptr<OrthographicCamera> camera) -> void;
+
         static auto EndScene() -> void;
 
-        static auto Submit(std::shared_ptr<VertexBuffer> vertexBuffer) -> void;
+        static auto Submit(const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void;
         static auto Submit(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
         static auto Submit(const std::shared_ptr<BaseShader>& shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, const glm::mat4 &transform = glm::mat4(1.0)) -> void;
 
-        static auto Submit(const DrawData& data) -> void;
         static auto Flush() -> void;
 
         static auto ShutDown() -> void;
 
-        [[maybe_unused]] static auto OnWindowResize(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void;
+        static auto OnWindowResize(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void;
 
         static auto GetActiveGraphicsAPI() -> GraphicsAPI { return s_ActiveAPI;  }
+
+        // For 2D drawing
+
+        // NOTE: the angle is in degrees
+        static auto SubmitQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, double angle, bool useOrthographicCamera = false) -> void;
+        static auto SubmitQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, double angle, bool useOrthographicCamera = false) -> void;
+
+        static auto SubmitQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, double angle, const std::shared_ptr<Texture> &texture, bool useOrthographicCamera = false) -> void;
+        static auto SubmitQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, double angle, const std::shared_ptr<Texture> &texture, bool useOrthographicCamera = false) -> void;
+
+        static auto SubmitQuad(const glm::mat4& transform, const glm::vec4& color, bool useOrthographicCamera = false) -> void;
+        static auto SubmitQuad(const glm::mat4& transform, const std::shared_ptr<Texture>& texture,  bool useOrthographicCamera = false) -> void;
+
+        KT_NODISCARD static auto QueryDrawCallsCount() -> UInt32_T { return s_SavedSceneStats->GetDrawCallsCount(); }
+        KT_NODISCARD static auto QueryQuadCount() -> UInt32_T { return s_SavedSceneStats->GetQuadCount(); }
+        KT_NODISCARD static auto QueryIndexCount() -> UInt32_T { return s_SavedSceneStats->GetIndexCount(); }
+        KT_NODISCARD static auto QueryVertexCount() -> UInt32_T { return s_SavedSceneStats->GetVertexCount(); }
+
     public:
         // Forbidden operations
         Renderer(const Renderer&) = delete;
@@ -71,14 +82,49 @@ namespace kaTe {
         // have more than one Renderer API specific active
         inline static GraphicsAPI s_ActiveAPI{ GraphicsAPI::OPENGL_API };
     private:
-        struct SceneData {
-            std::shared_ptr<OrthographicCamera> camera{};
+        // For 2D rendering
+        struct RenderingStats {
+            explicit RenderingStats() = default;
+            RenderingStats(const RenderingStats& other) = default;
+
+            KT_NODISCARD auto GetQuadCount() const -> UInt32_T { return m_QuadCount; }
+            KT_NODISCARD auto GetDrawCallsCount() const -> UInt32_T { return m_DrawCallsCount; }
+
+            // This value is fixed since all quads need 4 vertices at most
+            KT_NODISCARD auto GetVertexCount() const -> UInt32_T { return m_QuadCount * 4; }
+            // This value is fixed since all quads need 6 indices at most
+            KT_NODISCARD auto GetIndexCount() const -> UInt32_T { return m_QuadCount * 6; }
+
+            auto IncrementDrawCallCount(UInt32_T value) { m_DrawCallsCount += value; }
+            auto IncrementQuadCount(UInt32_T value) { m_QuadCount += value; }
+
+            auto Reset() -> void {
+                m_DrawCallsCount = 0;
+                m_QuadCount = 0;
+            }
+
+            UInt32_T m_DrawCallsCount{};
+            UInt32_T m_QuadCount{};
         };
 
-        inline static SceneData* s_SceneData{};
+        struct RendererDrawData {
+            std::shared_ptr<VertexBuffer> VertexBufferData{};
+            std::shared_ptr<IndexBuffer> IndexBufferData{};
+
+            std::shared_ptr<BaseShader> ColorShader{};
+            std::shared_ptr<BaseShader> TextureShader{};
+            std::shared_ptr<BaseShader> DefaultShader{};
+
+            std::shared_ptr<Camera> CameraForScene{};
+            std::shared_ptr<OrthographicCamera> OrthographicCameraForScene{};
+        };
+
+    private:
+        inline static std::unique_ptr<RendererDrawData> s_DrawData{};
+
+        inline static std::unique_ptr<RenderingStats>   s_RenderingStats{};
+        inline static std::unique_ptr<RenderingStats>   s_SavedSceneStats{};
     };
 }
-
-
 
 #endif
