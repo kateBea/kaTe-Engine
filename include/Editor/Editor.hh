@@ -12,13 +12,19 @@
 namespace kaTe::Editor {
 
     struct DockControlFlags {
-        bool applicationCloseFlag{};
+        bool ApplicationCloseFlag{};
+
+        bool HierarchyPanelVisible{ true };
+        bool InspectorPanelVisible{ true };
+        bool ScenePanelVisible{ true };
+        bool SettingPanelVisible{ true };
+        bool StatsPanelVisible{ true };
     };
 
     auto SetupCustomImGuiStyle() -> void;
     auto ShowDockingDisabledMessage() -> void;
     auto HelpMarker(std::string_view description) -> void;
-    auto DisplayDockSpace(DockControlFlags& flags) -> void;
+    auto OnDockSpaceUpdate(DockControlFlags& flags) -> void;
 
 
 }

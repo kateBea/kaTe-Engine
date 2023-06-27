@@ -7,13 +7,13 @@
 #include <entt/entt.hpp>
 #include <imgui.h>
 
-#include "Editor/Panels/SceneHierarchyPanel.hh"
+#include "Editor/Panels/HierarchyPanel.hh"
 #include "Scene/Entity.hh"
 #include <Core/Logger.hh>
 #include <Scene/Scene.hh>
 
 namespace kaTe {
-    auto SceneHierarchyPanel::OnUpdate() -> void {
+    auto HierarchyPanel::OnUpdate() -> void {
         if (IsVisible()) {
             // Show panel stuff if it is visible
             ImGui::Begin("Hierarchy");
@@ -104,17 +104,17 @@ namespace kaTe {
         }
     }
 
-    auto SceneHierarchyPanel::OnEvent(Event& event) -> void {
+    auto HierarchyPanel::OnEvent(Event& event) -> void {
 
     }
 
-    SceneHierarchyPanel::SceneHierarchyPanel(const std::shared_ptr<Scene>& scene, const Path_T &iconPath)
+    HierarchyPanel::HierarchyPanel(const std::shared_ptr<Scene>& scene, const Path_T &iconPath)
         :   Panel{ iconPath }, m_Visible{ true }, m_Hovered{ false }, m_Focused{ false }
     {
         SetScene(scene);
     }
 
-    auto SceneHierarchyPanel::SetScene(const std::shared_ptr<Scene>& scene) -> void {
+    auto HierarchyPanel::SetScene(const std::shared_ptr<Scene>& scene) -> void {
         m_Context = scene;
     }
 }

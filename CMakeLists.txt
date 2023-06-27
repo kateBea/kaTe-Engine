@@ -46,7 +46,7 @@ set(IMGUI_SOURCES
         lib/imgui/backends/imgui_impl_opengl3.cpp)
 
 set(EDITOR_SOURCES
-        src/Editor.cc src/SceneHierarchyPanel.cc src/InspectorPanel.cc)
+        src/Editor.cc src/HierarchyPanel.cc src/InspectorPanel.cc src/SettingsPanel.cc src/ScenePanel.cc src/StatsPanel.cc)
 
 set(SCENE_SOURCES
         src/Scene.cc src/SceneCamera.cc)

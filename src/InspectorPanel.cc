@@ -12,12 +12,12 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
+#include "Editor/Panels/HierarchyPanel.hh"
 #include "Editor/Panels/InspectorPanel.hh"
-#include "Editor/Panels/SceneHierarchyPanel.hh"
 
 namespace kaTe {
 
-    InspectorPanel::InspectorPanel(std::shared_ptr<SceneHierarchyPanel> hierarchy, const Path_T& iconPath)
+    InspectorPanel::InspectorPanel(std::shared_ptr<HierarchyPanel> hierarchy, const Path_T& iconPath)
         :   Panel{ iconPath }, m_Hierarchy{ std::move(hierarchy) }, m_Visible{ true }, m_Hovered{ false }, m_Focused{ false }
     {}
 

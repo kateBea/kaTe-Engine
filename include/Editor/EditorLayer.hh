@@ -8,8 +8,12 @@
 #include <memory>
 
 #include "Core/Layers/Layer.hh"
+#include "Editor.hh"
+#include "Editor/Panels/HierarchyPanel.hh"
 #include "Editor/Panels/InspectorPanel.hh"
-#include "Editor/Panels/SceneHierarchyPanel.hh"
+#include "Editor/Panels/ScenePanel.hh"
+#include "Editor/Panels/SettingsPanel.hh"
+#include "Editor/Panels/StatsPanel.hh"
 #include "Renderer/Buffers/FrameBuffer.hh"
 #include "Renderer/Buffers/IndexBuffer.hh"
 #include "Renderer/Buffers/VertexBuffer.hh"
@@ -18,10 +22,13 @@
 #include "Renderer/Material/BaseShader.hh"
 #include "Renderer/Material/Texture.hh"
 #include "Scene/Scene.hh"
+#include <Editor/Panels/Panel.hh>
+#include <Editor/Panels/PanelData.hh>
 #include <Renderer/Camera/Camera.hh>
 #include <Scene/Entity.hh>
 
 namespace kaTe {
+
     class EditorLayer : public Layer {
     public:
         auto OnAttach() -> void override;
@@ -30,28 +37,21 @@ namespace kaTe {
         auto OnEvent(Event& event) -> void override;
         auto OnImGuiRender() -> void override;
     private:
-        // ViewPort Framebuffer data
-        float m_ViewPortWidth{};
-        float m_ViewPortHeight{};
-        bool m_VerticalSyncEnabled{};
-        bool m_WireframeMode{};
-        bool m_ViewportIsFocused{ false };
-        bool m_ViewportIsHovered{ false };
-
-        std::shared_ptr<FrameBuffer> m_FrameBuffer{};
-        std::shared_ptr<BaseShader> m_ColorShader{};
-        std::shared_ptr<OrthographicCameraController> m_CameraController{};
         std::shared_ptr<SceneCamera> m_MainCamera{};
-        std::shared_ptr<SceneHierarchyPanel> m_HierarchyPanel{};
+
+        Editor::DockControlFlags m_DockEditorData{};
+
+        // Panels
+        std::shared_ptr<HierarchyPanel> m_HierarchyPanel{};
         std::shared_ptr<InspectorPanel> m_InspectorPanel{};
+        std::shared_ptr<SettingsPanel> m_SettingsPanel{};
+        std::shared_ptr<ScenePanel> m_ScenePanel{};
+        std::shared_ptr<StatsPanel> m_StatsPanel{};
 
-        std::shared_ptr<Scene> m_ActiveScene{};
-        Entity m_SquareEntity{};
-        Entity m_MainCamEntity{};
-
-        glm::vec4 m_ClearColor{ 0.2f, 0.2f, 0.2f, 1.0f };
-        glm::vec3 m_Position{ 1.0f, 0.0f, 1.0f };
-        glm::vec4 m_Color{ 0.2f, 0.8f, 0.25f, 0.5f };
+        // Panels data
+        std::shared_ptr<SettingsPanelData> m_SettingsPanelInfo{};
+        std::shared_ptr<ScenePanelData> m_ScenePanelInfo{};
+        std::shared_ptr<StatsPanelData> m_StatsPanelInfo{};
 
     };
 

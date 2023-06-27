@@ -30,7 +30,7 @@ namespace kaTe {
     private:
         friend class Entity;
 
-        friend class SceneHierarchyPanel;
+        friend class HierarchyPanel;
         friend class InspectorPanel;
 
         entt::registry m_Registry{};

@@ -58,7 +58,7 @@ namespace kaTe::Editor {
     }
 
 
-    void ShowDockingDisabledMessage() {
+    auto ShowDockingDisabledMessage() -> void {
         ImGuiIO& io = ImGui::GetIO();
         ImGui::Text("ERROR: Docking is not enabled! See Demo > Configuration.");
         ImGui::Text("Set io.ConfigFlags |= ImGuiConfigFlags_DockingEnable in your code, or ");
@@ -77,7 +77,7 @@ namespace kaTe::Editor {
         }
     }
 
-    auto DisplayDockSpace(DockControlFlags& flags) -> void {
+    auto OnDockSpaceUpdate(DockControlFlags& flags) -> void {
         // If you strip some features of, this demo is pretty much equivalent to calling DockSpaceOverViewport()!
         // In most cases you should be able to just call DockSpaceOverViewport() and ignore all the code below!
         // In this specific demo, we are not using DockSpaceOverViewport() because:
@@ -120,7 +120,7 @@ namespace kaTe::Editor {
         // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
         if (!opt_padding)
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("DockSpace Demo", &flags.applicationCloseFlag, window_flags);
+        ImGui::Begin("DockSpace Demo", &flags.ApplicationCloseFlag, window_flags);
         if (!opt_padding)
             ImGui::PopStyleVar();
 
@@ -148,7 +148,7 @@ namespace kaTe::Editor {
                 ImGui::Separator();
 
                 if (ImGui::MenuItem("Close", nullptr, false))
-                    flags.applicationCloseFlag = true;
+                    flags.ApplicationCloseFlag = true;
 
                 ImGui::EndMenu();
             }
@@ -166,9 +166,11 @@ namespace kaTe::Editor {
             // Window. Need to extract to separated function
             if (ImGui::BeginMenu("Window")) {
                 if (ImGui::BeginMenu("Panels")) {
-                    if (ImGui::MenuItem("Scene properties")) {}
-                    if (ImGui::MenuItem("Scene hierarchy")) {}
-
+                    if (ImGui::MenuItem("Hierarchy", nullptr, flags.HierarchyPanelVisible))   flags.HierarchyPanelVisible = !flags.HierarchyPanelVisible;
+                    if (ImGui::MenuItem("Inspector", nullptr, flags.InspectorPanelVisible))   flags.InspectorPanelVisible = !flags.InspectorPanelVisible;
+                    if (ImGui::MenuItem("Scene", nullptr, flags.ScenePanelVisible))       flags.ScenePanelVisible = !flags.ScenePanelVisible;
+                    if (ImGui::MenuItem("Settings", nullptr, flags.SettingPanelVisible))    flags.SettingPanelVisible = !flags.SettingPanelVisible;
+                    if (ImGui::MenuItem("Statistics", nullptr, flags.StatsPanelVisible))    flags.StatsPanelVisible = !flags.StatsPanelVisible;
                     ImGui::EndMenu();
                 }
 
@@ -183,6 +185,13 @@ namespace kaTe::Editor {
             }
 
             HelpMarker("This help is temporary. This menu helps to change window stuff like the theme");
+
+            if (ImGui::BeginMenu("Help")) {
+                if (ImGui::MenuItem("About"))
+                    ; // TODO: Display about engine info
+
+                ImGui::EndMenu();
+            }
 
             ImGui::EndMenuBar();
         }

@@ -9,16 +9,16 @@
 
 #include <entt/entt.hpp>
 
-#include <Tools/Common.hh>
-#include <Scene/Scene.hh>
+#include <Editor/Panels/HierarchyPanel.hh>
 #include <Editor/Panels/Panel.hh>
-#include <Editor/Panels/SceneHierarchyPanel.hh>
+#include <Scene/Scene.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
     class InspectorPanel : public Panel {
     public:
 
-        explicit InspectorPanel(std::shared_ptr<SceneHierarchyPanel> hierarchy, const Path_T& iconPath = {});
+        explicit InspectorPanel(std::shared_ptr<HierarchyPanel> hierarchy, const Path_T& iconPath = {});
         ~InspectorPanel() override = default;
 
         InspectorPanel(const InspectorPanel& other) = default;
@@ -37,7 +37,7 @@ namespace kaTe {
     private:
         // TODO: DrawInspectorComponent<ComponentType>(std::function);
     private:
-        std::shared_ptr<SceneHierarchyPanel> m_Hierarchy{};
+        std::shared_ptr<HierarchyPanel> m_Hierarchy{};
         bool m_Visible{};
         bool m_Hovered;
         bool m_Focused;

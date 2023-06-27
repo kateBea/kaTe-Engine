@@ -2,8 +2,8 @@
 // Created by kate on 6/25/23.
 //
 
-#ifndef KATE_ENGINE_SCENEHIERARCHYPANEL_HH
-#define KATE_ENGINE_SCENEHIERARCHYPANEL_HH
+#ifndef KATE_ENGINE_HIERARCHYPANEL_HH
+#define KATE_ENGINE_HIERARCHYPANEL_HH
 
 #include <memory>
 
@@ -14,16 +14,16 @@
 #include <Editor/Panels/Panel.hh>
 
 namespace kaTe {
-    class SceneHierarchyPanel : public Panel {
+    class HierarchyPanel : public Panel {
     public:
-        explicit SceneHierarchyPanel(const std::shared_ptr<Scene>& scene, const Path_T &iconPath = {});
-        ~SceneHierarchyPanel() override = default;
+        explicit HierarchyPanel(const std::shared_ptr<Scene>& scene, const Path_T &iconPath = {});
+        ~HierarchyPanel() override = default;
 
-        SceneHierarchyPanel(const SceneHierarchyPanel& other) = default;
-        SceneHierarchyPanel(SceneHierarchyPanel&& other) = default;
+        HierarchyPanel(const HierarchyPanel & other) = default;
+        HierarchyPanel(HierarchyPanel && other) = default;
 
-        auto operator=(const SceneHierarchyPanel& other) -> SceneHierarchyPanel& = default;
-        auto operator=(SceneHierarchyPanel&& other) -> SceneHierarchyPanel& = default;
+        auto operator=(const HierarchyPanel & other) -> HierarchyPanel & = default;
+        auto operator=(HierarchyPanel && other) -> HierarchyPanel & = default;
 
         auto OnUpdate() -> void override;
         auto OnEvent(Event& event) -> void override;
@@ -47,4 +47,4 @@ namespace kaTe {
     };
 }
 
-#endif//KATE_ENGINE_SCENEHIERARCHYPANEL_HH
+#endif//KATE_ENGINE_HIERARCHYPANEL_HH
