@@ -2,8 +2,8 @@
 // Created by kate on 6/25/23.
 //
 
-#ifndef KATE_ENGINE_HIERARCHYPANEL_HH
-#define KATE_ENGINE_HIERARCHYPANEL_HH
+#ifndef KATE_ENGINE_HIERARCHY_PANEL_HH
+#define KATE_ENGINE_HIERARCHY_PANEL_HH
 
 #include <memory>
 
@@ -12,6 +12,7 @@
 #include <Tools/Common.hh>
 #include <Scene/Scene.hh>
 #include <Editor/Panels/Panel.hh>
+#include <Scene/Entity.hh>
 
 namespace kaTe {
     class HierarchyPanel : public Panel {
@@ -38,8 +39,8 @@ namespace kaTe {
 
     private:
         // Helpers
-        auto DrawEntityNode(const entt::entity target) -> void;
-        auto EntityPopupMenu(const entt::entity &target) -> void;
+        auto DrawEntityNode(Entity& target) -> void;
+        auto EntityPopupMenu(Entity& target) -> void;
         auto BlankSpacePopupMenu() -> void;
     private:
         bool m_Visible{};
@@ -48,7 +49,7 @@ namespace kaTe {
         std::weak_ptr<Scene> m_Context{};
 
         // temporary, we may want to select more than one entity in our scene
-        entt::entity m_ContextSelection{ entt::null };
+        Entity m_ContextSelection{};
     };
 }
 

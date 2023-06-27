@@ -12,6 +12,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <Tools/Common.hh>
+
+#include <Core/Assert.hh>
+
 #include <Scene/SceneCamera.hh>
 
 namespace kaTe {
@@ -123,9 +126,11 @@ namespace kaTe {
 
     class CameraComponent {
     public:
-        explicit CameraComponent() = default;
-        explicit CameraComponent(std::shared_ptr<SceneCamera> camera, bool mainCam = true, bool fixedAspectRation = false)
-            :   m_Camera{ std::move(camera) }, m_MainCam{ mainCam }, m_FixedAspectRatio{ fixedAspectRation } {}
+        explicit CameraComponent(std::shared_ptr<SceneCamera> camera = nullptr, bool mainCam = true, bool fixedAspectRation = false)
+            :   m_Camera{ camera ? std::make_shared<SceneCamera>() : std::move(camera) }, m_MainCam{ mainCam }, m_FixedAspectRatio{ fixedAspectRation }
+        {
+            KT_ASSERT(m_Camera != nullptr, "Camera is NULL");
+        }
 
         CameraComponent(const CameraComponent& other) = default;
         CameraComponent(CameraComponent&& other) = default;
@@ -150,18 +155,6 @@ namespace kaTe {
     };
 
 
-    // support for other languages
-    class ScriptComponent {
-    public:
-
-
-    private:
-
-    };
-
-    // support for C+++ which is the native engine language
-    class ScriptableEntity;
-
     /**
      * Checks if a scriptable entity has an OnCreate, OnDestroy and OnUpdate function
      * needed when binding and scriptable entity to the native script component
@@ -174,6 +167,9 @@ namespace kaTe {
 
     template<typename ScriptableEntityType>
     concept HasOnDestroy = requires (std::shared_ptr<ScriptableEntityType> scriptable) { scriptable->OnDestroy(); };
+
+    // support for C+++ which is the native engine language
+    class ScriptableEntity;
 
     class NativeScriptComponent {
     public:

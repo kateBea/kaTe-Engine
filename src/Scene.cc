@@ -75,13 +75,10 @@ namespace kaTe {
         return result;
     }
 
-    auto Scene::DestroyEntity(Entity entity) -> void {
+    auto Scene::DestroyEntity(Entity& entity) -> void {
         // Cast necessary to call appropriate overload
-        DestroyEntity(static_cast<entt::entity>(entity));
-    }
-
-    auto Scene::DestroyEntity(entt::entity entity) -> void {
-        m_Registry.destroy(entity);
+        m_Registry.destroy(entity.m_EntityHandle);
+        entity.Invalidate();
     }
 
     auto Scene::OnViewPortResize(UInt32_T width, UInt32_T height) -> void {

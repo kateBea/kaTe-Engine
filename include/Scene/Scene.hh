@@ -8,6 +8,10 @@
 #include <entt/entt.hpp>
 
 #include <Tools/Common.hh>
+
+#include <Core/Assert.hh>
+#include <Core/Logger.hh>
+
 #include <Scene/Component.hh>
 
 namespace kaTe {
@@ -23,7 +27,7 @@ namespace kaTe {
 
         // Should only construct entities from this function
         KT_NODISCARD static auto CreateEntity(std::string_view entityNameTag, std::shared_ptr<Scene> scene) -> Entity;
-        auto DestroyEntity(Entity entity) -> void;
+        auto DestroyEntity(Entity& entity) -> void;
 
         auto OnViewPortResize(UInt32_T width, UInt32_T height) -> void;
 
@@ -32,13 +36,13 @@ namespace kaTe {
 
         friend class HierarchyPanel;
         friend class InspectorPanel;
+        friend class ScenePanel;
+
 
         entt::registry m_Registry{};
 
         UInt32_T m_ViewportWidth{};
         UInt32_T m_ViewportHeight{};
-    private:
-        auto DestroyEntity(entt::entity entity) -> void;
     };
 }
 

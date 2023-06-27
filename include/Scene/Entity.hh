@@ -12,6 +12,8 @@
 #include <Tools/Common.hh>
 #include <Core/Logger.hh>
 #include <Scene/Scene.hh>
+#include <Scene/Component.hh>
+
 namespace kaTe {
     class Entity {
     public:
@@ -80,14 +82,17 @@ namespace kaTe {
             return std::forward_as_tuple(m_Scene.lock()->m_Registry.get<ComponentTypeList>(m_EntityHandle)...);
         }
 
-        // Will return a reference to the newly created component
+        // Will return a reference to the newly created component if this entity does not contain it
         template<typename ComponentType, typename... Args>
         auto AddComponent(Args&&... args) -> decltype(auto) {
-            if (!m_Scene.lock())
+            std::shared_ptr<Scene> ptr{};
+            if (!(ptr = m_Scene.lock()))
                 KATE_CORE_LOGGER_ERROR("This entity's scene has expired and no longer exists!");
 
+            ComponentType& newComponent{ ptr->m_Registry.emplace_or_replace<ComponentType>(m_EntityHandle, std::forward<Args>(args)...) };
+            OnComponentAttach(newComponent);
 
-            return m_Scene.lock()->m_Registry.emplace<ComponentType>(m_EntityHandle, std::forward<Args>(args)...);
+            return newComponent;
         }
 
         // drops the component if and only if it exists,
@@ -96,6 +101,7 @@ namespace kaTe {
         auto RemoveComponent() -> void {
             if (auto ptr{ m_Scene.lock() }) {
                 ptr->m_Registry.remove<ComponentType>(m_EntityHandle);
+                // TODO: add OnComponentRemove similar to AddComponent
             }
             else
                 KATE_CORE_LOGGER_ERROR("This entity's scene has expired and no longer exists!");
@@ -103,11 +109,19 @@ namespace kaTe {
 
         // Returns true if the entity is valid for a given Scene
         // If the scene is nullptr it will return true if this Entity is valid Entity for a scene
-        auto IsValidSceneEntity(std::shared_ptr<Scene> scene) {
+        auto IsValidSceneEntity(const std::shared_ptr<Scene>& scene) {
             return scene->m_Registry.valid(m_EntityHandle);
         }
 
-        KT_NODISCARD auto operator==(const Entity& other) -> bool { return m_EntityHandle == other.m_EntityHandle; /*&& m_Scene == other.m_Scene;*/ }
+        KT_NODISCARD auto operator==(const Entity& other) const -> bool { return m_EntityHandle == other.m_EntityHandle; /*&& m_Scene == other.m_Scene;*/ }
+        KT_NODISCARD auto IsValid() const -> bool { return m_EntityHandle != entt::null; }
+
+        auto Invalidate() -> void { m_EntityHandle = entt::null; }
+
+        auto SetContext(const std::weak_ptr<Scene>& context) { m_Scene = context; }
+    private:
+        template<typename ComponentType>
+        auto OnComponentAttach(ComponentType& newComponent) -> void;
 
     private:
         // usable by friends classes
@@ -116,11 +130,15 @@ namespace kaTe {
             m_EntityHandle = scene->m_Registry.create();
         }
 
-        // for implicit casts
-        operator entt::entity() const {
-            return m_EntityHandle;
+        explicit Entity(entt::entity handle, const std::shared_ptr<Scene>& scene) {
+            m_Scene = scene;
+            m_EntityHandle = handle;
         }
     private:
+        friend class HierarchyPanel;
+        friend class InspectorPanel;
+        friend class ScenePanel;
+
         friend class Scene;
         entt::entity m_EntityHandle{ entt::null };
 
@@ -129,6 +147,40 @@ namespace kaTe {
         // is not part of the entity and shouldn't extend its lifetime
         std::weak_ptr<Scene> m_Scene{};
     };
+
+    template<typename ComponentType>
+    inline auto Entity::OnComponentAttach(ComponentType& newComponent) -> void {
+        static_assert("Invalid Component Type for OnComponentAttach");
+    }
+
+    template<>
+    inline auto Entity::OnComponentAttach<TagComponent>(TagComponent& newComponent) -> void {
+        KATE_CORE_LOGGER_INFO("Added new Tag Component");
+    }
+
+    template<>
+    inline auto Entity::OnComponentAttach<TransformComponent>(TransformComponent& newComponent) -> void {
+        KATE_CORE_LOGGER_INFO("Added new Transform Component");
+    }
+
+    template<>
+    inline auto Entity::OnComponentAttach<SpriteRendererComponent>(SpriteRendererComponent& newComponent) -> void {
+        KATE_CORE_LOGGER_INFO("Added new Sprite Renderer Component");
+    }
+
+    template<>
+    inline auto Entity::OnComponentAttach<CameraComponent>(CameraComponent& newComponent) -> void {
+        KATE_CORE_LOGGER_INFO("Added new Camera Component");
+        std::shared_ptr<Scene> ptr{};
+        if (!(ptr = m_Scene.lock()))
+            KATE_CORE_LOGGER_ERROR("This entity's scene has expired and no longer exists!");
+        newComponent.GetCameraPtr()->SetViewportSize(ptr->m_ViewportWidth, ptr->m_ViewportHeight);
+    }
+
+    template<>
+    inline auto Entity::OnComponentAttach<NativeScriptComponent>(NativeScriptComponent& newComponent) -> void {
+        KATE_CORE_LOGGER_INFO("Added new Native Script Component");
+    }
 
     class ScriptableEntity : public Entity {
     public:

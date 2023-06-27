@@ -36,6 +36,7 @@ namespace kaTe {
         KT_NODISCARD auto IsVisible() const -> bool override { return m_Visible; }
     private:
         // TODO: DrawInspectorComponent<ComponentType>(std::function);
+
     private:
         std::shared_ptr<HierarchyPanel> m_Hierarchy{};
         bool m_Visible{};

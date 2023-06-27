@@ -56,5 +56,7 @@
     #define KT_ASSERT_EXPR(__EXPR)
 #endif
 
+// TODO: add static assert
+
 
 #endif //KATE_ENGINE_ASSERT_HH

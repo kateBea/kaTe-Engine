@@ -1,16 +1,22 @@
-//
-// Created by kate on 6/25/23.
-//
+/**
+ * HierarchyPanel.cc
+ * Created by kate on 6/25/23.
+ * */
 
-#include <utility>
+// C++ Standard Library
+#include <memory>
 
-#include <entt/entt.hpp>
+// Third-Party Libraries
 #include <imgui.h>
 
-#include "Editor/Panels/HierarchyPanel.hh"
-#include "Scene/Entity.hh"
+// Project Headers
 #include <Core/Logger.hh>
+
 #include <Scene/Scene.hh>
+#include <Scene/Entity.hh>
+#include <Scene/Component.hh>
+
+#include <Editor/Panels/HierarchyPanel.hh>
 
 namespace kaTe {
     auto HierarchyPanel::OnUpdate() -> void {
@@ -20,12 +26,13 @@ namespace kaTe {
                 auto view{ ptr->m_Registry.view<TagComponent>() };
 
                 for (const auto& entity : view) {
-                    DrawEntityNode(entity);
-                    EntityPopupMenu(entity);
+                    Entity current{ entity, ptr };
+                    DrawEntityNode(current);
+                    EntityPopupMenu(current);
                 }
 
                 if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
-                    m_ContextSelection = entt::null;
+                    m_ContextSelection.Invalidate();
 
                 BlankSpacePopupMenu();
             }
@@ -34,49 +41,56 @@ namespace kaTe {
         }
     }
 
-    auto HierarchyPanel::DrawEntityNode(const entt::entity target) -> void {
-        if (auto ptr{ m_Context.lock() }) {
-            TagComponent& tag{ ptr->m_Registry.get<TagComponent>(target) };
-            bool thisEntityIsSelected{ target == m_ContextSelection};
-            ImGuiTreeNodeFlags flags{  (thisEntityIsSelected ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow };
+    auto HierarchyPanel::DrawEntityNode(Entity& target) -> void {
+        TagComponent& tag{ target.GetComponent<TagComponent>() };
+        bool thisEntityIsSelected{ target == m_ContextSelection };
+        ImGuiTreeNodeFlags flags{  (thisEntityIsSelected ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow };
+        ImGuiTreeNodeFlags childNodeFlags{ ImGuiTreeNodeFlags_DefaultOpen };
 
-            bool expanded{ ImGui::TreeNodeEx((void*)target, flags, "%s", tag.GetTag().c_str()) };
-            if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-                m_ContextSelection = target;
+        bool expanded{ ImGui::TreeNodeEx((void*)(target.m_EntityHandle), flags, "%s", tag.GetTag().c_str()) };
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+            m_ContextSelection = target;
 
-            if (expanded) {
-                // Recursively expand
+        if (expanded) {
+            // Temporary just to test nested nodes
+            if (ImGui::TreeNodeEx((void*)83124423, childNodeFlags, "%s", "Entity item")) {
+
                 ImGui::TreePop();
             }
+
+            ImGui::TreePop();
         }
 
     }
 
-    auto HierarchyPanel::EntityPopupMenu(const entt::entity &target) -> void {
-        if (auto ptr{ m_Context.lock() }) {
-            if (ImGui::BeginPopupContextItem(nullptr, ImGuiPopupFlags_MouseButtonRight)) {
+    auto HierarchyPanel::EntityPopupMenu(Entity& target) -> void {
+        std::shared_ptr<Scene> m_ContextSelectionScene{ m_ContextSelection.m_Scene.lock() };
+
+        if (m_ContextSelectionScene) {
+            ImGuiPopupFlags popupItemFlags{ ImGuiPopupFlags_MouseButtonRight };
+            if (ImGui::BeginPopupContextItem(nullptr, popupItemFlags)) {
                 if (ImGui::BeginMenu("Add component")) {
-                    if (ImGui::MenuItem("Tag")) {
-
-                    }
-                    if (ImGui::MenuItem("Transform")) {
-
-                    }
                     if (ImGui::MenuItem("Sprite")) {
-
+                        target.AddComponent<SpriteRendererComponent>();
+                        ImGui::CloseCurrentPopup();
                     }
                     if (ImGui::MenuItem("Camera")) {
-
+                        target.AddComponent<CameraComponent>();
+                        ImGui::CloseCurrentPopup();
                     }
-                    if (ImGui::MenuItem("Script")) {
 
+                    if (ImGui::MenuItem("Script")) {
+                        target.AddComponent<NativeScriptComponent>();
+                        ImGui::CloseCurrentPopup();
                     }
                     ImGui::EndMenu();
                 }
 
                 if (ImGui::BeginMenu("Options")) {
-                    if (ImGui::MenuItem("Destroy entity"))
-                        ptr->m_Registry.destroy(target);
+                    if (ImGui::MenuItem("Destroy entity")) {
+                        m_ContextSelectionScene->DestroyEntity(target);
+                        m_ContextSelection.Invalidate();
+                    }
                     ImGui::EndMenu();
                 }
                 ImGui::EndPopup();
@@ -86,8 +100,8 @@ namespace kaTe {
 
     auto HierarchyPanel::BlankSpacePopupMenu() -> void {
         if (auto ptr{ m_Context.lock() }) {
-            // If we click on blank space in this panel
-            if (ImGui::BeginPopupContextWindow("##HierarchyMenuOptions", ImGuiPopupFlags_NoOpenOverItems | ImGuiPopupFlags_MouseButtonRight)) {
+            ImGuiPopupFlags popupWindowFlags{ ImGuiPopupFlags_NoOpenOverItems | ImGuiPopupFlags_MouseButtonRight };
+            if (ImGui::BeginPopupContextWindow("##HierarchyMenuOptions", popupWindowFlags)) {
                 if (ImGui::BeginMenu("New")) {
                     if (ImGui::MenuItem("Create entity")) {
                         Scene::CreateEntity("Item", ptr);
