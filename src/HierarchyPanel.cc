@@ -14,93 +14,89 @@
 
 namespace kaTe {
     auto HierarchyPanel::OnUpdate() -> void {
-        if (IsVisible()) {
-            // Show panel stuff if it is visible
+        if (m_Visible) {
             ImGui::Begin("Hierarchy");
+            if (auto ptr{ m_Context.lock() }) {
+                auto view{ ptr->m_Registry.view<TagComponent>() };
 
-            // Display entities names
-            {
-                if (auto ptr{ m_Context.lock() }) {
-                    auto view{ ptr->m_Registry.view<TagComponent>() };
-                    static entt::entity hoveredEntity{ entt::null };
-
-                    for (const auto& entity : view) {
-                        TagComponent& tag{ view.get<TagComponent>(entity) };
-
-                        bool thisEntityIsSelected{ entity == m_ContextSelection};
-                        ImGuiTreeNodeFlags flags{  (thisEntityIsSelected ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow };
-
-                        bool expanded{ ImGui::TreeNodeEx((void*)entity, flags, "%s", tag.GetTag().c_str()) };
-                        if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-                            m_ContextSelection = entity;
-
-                        if (ImGui::IsItemHovered())
-                            hoveredEntity = entity;
-
-                        if (expanded) {
-                            // Recursively expand
-                            ImGui::TreePop();
-                        }
-
-                        // Deselect entity if needed
-                        if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
-                            m_ContextSelection = entt::null;
-
-                    }
-
-
-                    // Menu options for entities
-                    // Just needs to be drawn once not per entity
-                    if (ImGui::BeginPopupContextItem("##EntityMenuOptions", ImGuiPopupFlags_MouseButtonRight)) {
-                        if (ImGui::BeginMenu("Add component")) {
-                            if (ImGui::MenuItem("Tag")) {
-
-                            }
-                            if (ImGui::MenuItem("Transform")) {
-
-                            }
-                            if (ImGui::MenuItem("Sprite")) {
-
-                            }
-                            if (ImGui::MenuItem("Camera")) {
-
-                            }
-                            if (ImGui::MenuItem("Script")) {
-
-                            }
-                            ImGui::EndMenu();
-                        }
-
-                        if (ImGui::BeginMenu("Options")) {
-                            if (ImGui::MenuItem("Destroy entity")) {
-                                ptr->DestroyEntity(hoveredEntity);
-                            }
-                            ImGui::EndMenu();
-                        }
-                        ImGui::EndPopup();
-                    }
-
-
-
-                    // If we click on blank space in this panel
-                    if (ImGui::BeginPopupContextWindow("##HierarchyMenuOptions", ImGuiPopupFlags_NoOpenOverItems | ImGuiPopupFlags_MouseButtonRight)) {
-                        if (ImGui::BeginMenu("New")) {
-                            if (ImGui::MenuItem("Create entity")) {
-                                Scene::CreateEntity("Item", ptr);
-                            }
-
-                            ImGui::EndMenu();
-                        }
-                        ImGui::EndPopup();
-                    }
-
+                for (const auto& entity : view) {
+                    DrawEntityNode(entity);
+                    EntityPopupMenu(entity);
                 }
-                else
-                    KATE_CORE_LOGGER_ERROR("Panel context has expired and no longer exists!");
 
+                if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
+                    m_ContextSelection = entt::null;
+
+                BlankSpacePopupMenu();
             }
-
+            else KATE_CORE_LOGGER_ERROR("Panel context has expired and no longer exists!");
             ImGui::End();
+        }
+    }
+
+    auto HierarchyPanel::DrawEntityNode(const entt::entity target) -> void {
+        if (auto ptr{ m_Context.lock() }) {
+            TagComponent& tag{ ptr->m_Registry.get<TagComponent>(target) };
+            bool thisEntityIsSelected{ target == m_ContextSelection};
+            ImGuiTreeNodeFlags flags{  (thisEntityIsSelected ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow };
+
+            bool expanded{ ImGui::TreeNodeEx((void*)target, flags, "%s", tag.GetTag().c_str()) };
+            if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+                m_ContextSelection = target;
+
+            if (expanded) {
+                // Recursively expand
+                ImGui::TreePop();
+            }
+        }
+
+    }
+
+    auto HierarchyPanel::EntityPopupMenu(const entt::entity &target) -> void {
+        if (auto ptr{ m_Context.lock() }) {
+            if (ImGui::BeginPopupContextItem(nullptr, ImGuiPopupFlags_MouseButtonRight)) {
+                if (ImGui::BeginMenu("Add component")) {
+                    if (ImGui::MenuItem("Tag")) {
+
+                    }
+                    if (ImGui::MenuItem("Transform")) {
+
+                    }
+                    if (ImGui::MenuItem("Sprite")) {
+
+                    }
+                    if (ImGui::MenuItem("Camera")) {
+
+                    }
+                    if (ImGui::MenuItem("Script")) {
+
+                    }
+                    ImGui::EndMenu();
+                }
+
+                if (ImGui::BeginMenu("Options")) {
+                    if (ImGui::MenuItem("Destroy entity"))
+                        ptr->m_Registry.destroy(target);
+                    ImGui::EndMenu();
+                }
+                ImGui::EndPopup();
+            }
+        }
+    }
+
+    auto HierarchyPanel::BlankSpacePopupMenu() -> void {
+        if (auto ptr{ m_Context.lock() }) {
+            // If we click on blank space in this panel
+            if (ImGui::BeginPopupContextWindow("##HierarchyMenuOptions", ImGuiPopupFlags_NoOpenOverItems | ImGuiPopupFlags_MouseButtonRight)) {
+                if (ImGui::BeginMenu("New")) {
+                    if (ImGui::MenuItem("Create entity")) {
+                        Scene::CreateEntity("Item", ptr);
+                    }
+
+                    ImGui::EndMenu();
+                }
+                ImGui::EndPopup();
+            }
         }
     }
 

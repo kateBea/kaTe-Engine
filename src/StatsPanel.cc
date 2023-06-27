@@ -6,6 +6,8 @@
 
 #include <imgui.h>
 
+#include <Core/TimeManager.hh>
+
 #include <Renderer/Renderer.hh>
 #include <Renderer/Renderer2D.hh>
 #include <Renderer/RenderCommand.hh>
@@ -23,6 +25,8 @@ namespace kaTe {
     auto StatsPanel::OnUpdate() -> void {
         if (m_Visible) {
             ImGui::Begin("Statistics");
+
+            ImGui::Text("Elapsed: %s", TimeManager::ToString(TimeManager::GetTime()).c_str());
             ImGui::Text("Draw calls count: %d", Renderer2D::QueryDrawCallsCount());
             ImGui::Text("Quad count: %d", Renderer2D::QueryQuadCount());
             ImGui::Text("Index count: %d", Renderer2D::QueryIndexCount());

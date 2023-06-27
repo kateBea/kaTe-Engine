@@ -50,11 +50,11 @@ namespace kaTe::Editor {
         // Rounding values
         style.FrameRounding = 1.0f;
         style.GrabRounding = 5.0f;
-        style.ChildRounding = 5.0f;
-        style.WindowRounding = 5.0f;
+        style.ChildRounding = 1.0f;
+        style.WindowRounding = 1.0f;
         style.PopupRounding = 5.0f;
         style.ScrollbarRounding = 5.0f;
-        style.TabRounding = 5.0f;
+        style.TabRounding = 1.0f;
     }
 
 

@@ -39,7 +39,7 @@ namespace kaTe {
 
         // When viewports are enabled, we tweak WindowRounding/WindowBg so platform windows can
         // look identical to regular ones.
-        ImGuiStyle& style = ImGui::GetStyle();
+        ImGuiStyle& style{ ImGui::GetStyle() };
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
             style.WindowRounding = 0.0f;
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
@@ -48,7 +48,7 @@ namespace kaTe {
         // Configure ImGui Style
         ImGui::StyleColorsDark();
         Editor::SetupCustomImGuiStyle();
-        io.Fonts->AddFontFromFileTTF("../assets/Fonts/Inter/Inter-VariableFont.ttf", 15);
+        io.Fonts->AddFontFromFileTTF("../assets/Fonts/Inter/Inter-VariableFont.ttf", 16);
 
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*

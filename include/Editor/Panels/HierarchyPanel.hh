@@ -37,6 +37,11 @@ namespace kaTe {
         friend class InspectorPanel;
 
     private:
+        // Helpers
+        auto DrawEntityNode(const entt::entity target) -> void;
+        auto EntityPopupMenu(const entt::entity &target) -> void;
+        auto BlankSpacePopupMenu() -> void;
+    private:
         bool m_Visible{};
         bool m_Hovered;
         bool m_Focused;
