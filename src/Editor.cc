@@ -5,7 +5,55 @@
 #include <Editor/Editor.hh>
 
 namespace kaTe::Editor {
-    auto SetupCustomImGuiStyle() -> void {
+    auto ThemeDarkModeAlt() -> void {
+        // Setup Dear ImGui style
+        ImGuiStyle& style = ImGui::GetStyle();
+
+        style.Colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
+
+        // Headers
+        style.Colors[ImGuiCol_Header] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+        style.Colors[ImGuiCol_HeaderHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+        style.Colors[ImGuiCol_HeaderActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
+        // Buttons
+        style.Colors[ImGuiCol_Button] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+        style.Colors[ImGuiCol_ButtonHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+        style.Colors[ImGuiCol_ButtonActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
+        // Frame BG
+        style.Colors[ImGuiCol_FrameBg] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+        style.Colors[ImGuiCol_FrameBgHovered] = ImVec4{ 0.3f, 0.305f, 0.31f, 1.0f };
+        style.Colors[ImGuiCol_FrameBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
+        // Tabs
+        style.Colors[ImGuiCol_Tab] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+        style.Colors[ImGuiCol_TabHovered] = ImVec4{ 0.38f, 0.3805f, 0.381f, 1.0f };
+        style.Colors[ImGuiCol_TabActive] = ImVec4{ 0.28f, 0.2805f, 0.281f, 1.0f };
+        style.Colors[ImGuiCol_TabUnfocused] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+        style.Colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 0.2f, 0.205f, 0.21f, 1.0f };
+
+        // Title
+        style.Colors[ImGuiCol_TitleBg] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+        style.Colors[ImGuiCol_TitleBgActive] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+        style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+
+        // borders
+        style.WindowBorderSize = 0.0f;
+        style.FrameBorderSize = 0.0f;
+        style.PopupBorderSize = 0.0f;
+
+        // Rounding values
+        style.FrameRounding = .5f;
+        style.GrabRounding = .5f;
+        style.ChildRounding = .5f;
+        style.WindowRounding = .5f;
+        style.PopupRounding = .5f;
+        style.ScrollbarRounding = .5f;
+        style.TabRounding = .5f;
+    }
+
+    auto ThemeDarkModeDefault() -> void {
         // Setup Dear ImGui style
         ImGuiStyle &style = ImGui::GetStyle();
 
@@ -48,13 +96,13 @@ namespace kaTe::Editor {
         style.PopupBorderSize = 0.0f;
 
         // Rounding values
-        style.FrameRounding = 1.0f;
-        style.GrabRounding = 5.0f;
-        style.ChildRounding = 1.0f;
-        style.WindowRounding = 1.0f;
-        style.PopupRounding = 5.0f;
-        style.ScrollbarRounding = 5.0f;
-        style.TabRounding = 1.0f;
+        style.FrameRounding = .5f;
+        style.GrabRounding = .5f;
+        style.ChildRounding = .5f;
+        style.WindowRounding = .5f;
+        style.PopupRounding = .5f;
+        style.ScrollbarRounding = .5f;
+        style.TabRounding = .5f;
     }
 
 
@@ -129,12 +177,18 @@ namespace kaTe::Editor {
 
         // Submit the DockSpace
         ImGuiIO& io = ImGui::GetIO();
+        ImGuiStyle& style = ImGui::GetStyle();
+
+        float minimumPanelsWidth{ style.WindowMinSize.x }; // minimum imgui windows width (temporary)
+        style.WindowMinSize.x = 450;
         if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable) {
-            ImGuiID dockspaceId = ImGui::GetID("kaTeDockEditor");
-            ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), dockSpaceConfigFlags);
+            ImGuiID dockSpaceId = ImGui::GetID("kaTeDockEditor");
+            ImGui::DockSpace(dockSpaceId, ImVec2(0.0f, 0.0f), dockSpaceConfigFlags);
         }
         else
             ShowDockingDisabledMessage();
+
+        style.WindowMinSize.x = minimumPanelsWidth;
 
         if (ImGui::BeginMenuBar()) {
             // File menubar. Need to extract to separated function
@@ -175,10 +229,23 @@ namespace kaTe::Editor {
                 }
 
                 if (ImGui::BeginMenu("Theme")) {
-                    if (ImGui::MenuItem("Classic")) { ImGui::StyleColorsClassic(); }
-                    if (ImGui::MenuItem("Minimalist")) { ImGui::StyleColorsDark(); SetupCustomImGuiStyle(); }
-                    if (ImGui::MenuItem("Focused")) { ImGui::StyleColorsDark(); }
-                    if (ImGui::MenuItem("Blindness")) { ImGui::StyleColorsLight(); }
+                    if (ImGui::MenuItem("Classic")) {
+                        ImGui::StyleColorsClassic();
+                    }
+                    if (ImGui::MenuItem("Dark Default")) {
+                        ImGui::StyleColorsDark();
+                        ThemeDarkModeDefault();
+                    }
+                    if (ImGui::MenuItem("Dark Alternative")) {
+                        ImGui::StyleColorsDark();
+                        ThemeDarkModeAlt();
+                    }
+                    if (ImGui::MenuItem("Focused")) {
+                        ImGui::StyleColorsDark();
+                    }
+                    if (ImGui::MenuItem("Blindness")) {
+                        ImGui::StyleColorsLight();
+                    }
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenu();

@@ -47,8 +47,11 @@ namespace kaTe {
 
         // Configure ImGui Style
         ImGui::StyleColorsDark();
-        Editor::SetupCustomImGuiStyle();
-        io.Fonts->AddFontFromFileTTF("../assets/Fonts/Inter/Inter-VariableFont.ttf", 16);
+        Editor::ThemeDarkModeDefault();
+
+        // Load fonts
+        io.Fonts->AddFontFromFileTTF("../assets/Fonts/Open_Sans/static/OpenSans-Bold.ttf", 17.5);
+        io.FontDefault = io.Fonts->AddFontFromFileTTF("../assets/Fonts/Open_Sans/OpenSans-VariableFont_wdth,wght.ttf", 17.5);
 
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*
@@ -56,10 +59,11 @@ namespace kaTe {
 
             // Setup Platform/Renderer backends
             ImGui_ImplGlfw_InitForOpenGL(window, true);
-            ImGui_ImplOpenGL3_Init("#version 410");
+            const std::string openglVersion{ fmt::format("#version {}{}0", KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR) };
+            ImGui_ImplOpenGL3_Init(openglVersion.c_str());
         }
         catch (const std::bad_any_cast& exception) {
-            KATE_APP_LOGGER_ERROR("Exception thrown std::any_cast. What: {}", exception.what());
+            KATE_APP_LOGGER_CRITICAL("Exception thrown std::any_cast. What: {}", exception.what());
         }
     }
 

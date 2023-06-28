@@ -21,7 +21,7 @@
 namespace kaTe {
     class WindowProperties {
     public:
-        explicit WindowProperties(std::string_view name = "kaTe Engine", Int32_T width = 1280, Int32_T height = 720)
+        explicit WindowProperties(std::string_view name = "kaTe Engine", Int32_T width = 1920, Int32_T height = 1080)
             :   m_Title{ name }, m_Width{ width }, m_Height{ height }
         {}
 

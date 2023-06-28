@@ -4,6 +4,7 @@
  * */
 
 // Third-Party Libraries
+#include <volk.h>
 #include <GLFW/glfw3.h>
 
 // Projects headers
@@ -201,5 +202,10 @@ namespace kaTe {
                 }
             );
         }
+    }
+
+    auto MainWindow::CreateWindowSurface(VkInstance instance, VkSurfaceKHR *surface) -> void {
+        if (glfwCreateWindowSurface(instance, m_Window, nullptr, surface) != VK_SUCCESS)
+            throw std::runtime_error("Failed to create Vk Surface");
     }
 }

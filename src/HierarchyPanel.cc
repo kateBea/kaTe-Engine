@@ -44,7 +44,8 @@ namespace kaTe {
     auto HierarchyPanel::DrawEntityNode(Entity& target) -> void {
         TagComponent& tag{ target.GetComponent<TagComponent>() };
         bool thisEntityIsSelected{ target == m_ContextSelection };
-        ImGuiTreeNodeFlags flags{  (thisEntityIsSelected ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow };
+        ImGuiTreeNodeFlags flags{  (thisEntityIsSelected ? ImGuiTreeNodeFlags_Selected : 0) |
+                                 ImGuiTreeNodeFlags_OpenOnArrow |  ImGuiTreeNodeFlags_SpanAvailWidth };
         ImGuiTreeNodeFlags childNodeFlags{ ImGuiTreeNodeFlags_DefaultOpen };
 
         bool expanded{ ImGui::TreeNodeEx((void*)(target.m_EntityHandle), flags, "%s", tag.GetTag().c_str()) };

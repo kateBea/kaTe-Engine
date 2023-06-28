@@ -2,7 +2,7 @@
 This is a simple engine written in modern C++. For now and quite some time 
 it will use OpenGL as its main rendering API, but the end goal is to integrate Vulkan.
 
-![kaTe Engine](assets/image/img6.png)
+![kaTe Engine](assets/image/img7.png)
 
 # Building
 
@@ -48,7 +48,8 @@ is included as a submodule and build along with the project.
 
 # Goals
 
-The main goal is really just offer support for 3D and 2D graphics rendering 
+The main goal is really just offer support for 3D and 2D graphics rendering. A the moment many configurations necessary for
+the engine are hardcoded in the translation units, the idea is to be able to load these configurations from ragular files.
 
 # Special thanks and mentions to
   - Yan Chernikov for his [YouTube videos](https://www.youtube.com/@TheCherno) and live streams

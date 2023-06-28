@@ -21,7 +21,9 @@ namespace kaTe::Editor {
         bool StatsPanelVisible{ true };
     };
 
-    auto SetupCustomImGuiStyle() -> void;
+    auto ThemeDarkModeDefault() -> void;
+    auto ThemeDarkModeAlt() -> void;
+
     auto ShowDockingDisabledMessage() -> void;
     auto HelpMarker(std::string_view description) -> void;
     auto OnDockSpaceUpdate(DockControlFlags& flags) -> void;

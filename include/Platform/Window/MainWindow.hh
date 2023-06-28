@@ -10,6 +10,7 @@
 #include <any>
 
 // Third-Party Libraries
+#include <volk.h>
 #include <GLFW/glfw3.h>
 
 // Project Headers
@@ -48,6 +49,10 @@ namespace kaTe {
         KT_NODISCARD auto IsVSyncEnabled() const -> bool override { return m_VSync; }
         auto EnableVSync() -> void override;
         auto DisableVSync() -> void override;
+
+        // Vulkan specifics
+        auto CreateWindowSurface(VkInstance instance, VkSurfaceKHR* surface) -> void;
+        KT_NODISCARD auto GetExtent() const -> VkExtent2D { return VkExtent2D{ static_cast<UInt32_T>(GetWidth()), static_cast<UInt32_T>(GetHeight()) }; }
 
         ~MainWindow() override = default;
 
