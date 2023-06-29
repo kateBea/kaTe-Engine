@@ -4,7 +4,7 @@
 
 #include <entt/entt.hpp>
 
-#include <Renderer/Renderer2D.hh>
+#include <Renderer/Renderer.hh>
 
 #include "Scene/Scene.hh"
 #include <Scene/Component.hh>
@@ -47,7 +47,7 @@ namespace kaTe {
         if (sceneHasMainCam) {
             // Render stuff if the scene has a camera
 
-            Renderer2D::BeginScene(mainCam);
+            Renderer::BeginScene(mainCam);
 
             auto view{ m_Registry.view<TagComponent, TransformComponent, SpriteRendererComponent>() };
 
@@ -58,10 +58,10 @@ namespace kaTe {
 
                 // TODO: fix rendering order for blending, objects that are nearer to the camera should be rendered first
                 // Right if an object is on top of another but it is rendered after before blending does not work
-                Renderer2D::DrawQuad(transform.GetTransform(), sprite.GetColor());
+                Renderer::SubmitQuad(transform.GetTransform(), sprite.GetColor());
             }
 
-            Renderer2D::EndScene();
+            Renderer::EndScene();
         }
     }
 

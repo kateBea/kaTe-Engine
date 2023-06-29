@@ -4,7 +4,6 @@
  * */
 
 // C++ Standard Library
-#include <new>
 #include <memory>
 #include <utility>
 
@@ -13,7 +12,6 @@
 
 // Project Headers
 #include <Tools/Common.hh>
-#include <Core/Assert.hh>
 
 #include <Renderer/Renderer.hh>
 #include <Renderer/RenderCommand.hh>
@@ -27,19 +25,19 @@ namespace kaTe {
         s_DrawData->CameraForScene = std::move(camera);
     }
 
-    auto Renderer::Submit(const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void {
+    auto Renderer::Submit(const std::shared_ptr<VertexBuffer>& vertexBuffer) -> void {
         RenderCommand::Draw(vertexBuffer);
     }
 
-    auto Renderer::Submit(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void {
-        RenderCommand::DrawIndexed(std::move(vertexBuffer), std::move(indexBuffer));
+    auto Renderer::Submit(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer) -> void {
+        RenderCommand::DrawIndexed(vertexBuffer, indexBuffer);
     }
 
-    auto Renderer::Submit(const std::shared_ptr<BaseShader>& shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, const glm::mat4 &transform) -> void {
+    auto Renderer::Submit(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer, const glm::mat4 &transform) -> void {
         // Currently submit draws our geometry directly, not buffered
         shader->SetMat4("u_ProjectionView", s_DrawData->OrthographicCameraForScene->GetProjectionView());
         shader->SetMat4("u_Transform", transform);
-        RenderCommand::DrawIndexed(shader, std::move(vertexBuffer), std::move(indexBuffer));
+        RenderCommand::DrawIndexed(shader, vertexBuffer, indexBuffer);
     }
 
     auto Renderer::EndScene() -> void {
@@ -53,9 +51,30 @@ namespace kaTe {
 
     auto Renderer::Init() -> void {
         s_DrawData = std::make_unique<RendererDrawData>();
+        s_QuadData = std::make_unique<Renderer2DDrawData>();
         s_RenderingStats    = std::make_unique<RenderingStats>();
-        KT_ASSERT(s_DrawData, "Renderer draw data pointer is NULL");
-        KT_ASSERT(s_RenderingStats, "Renderer stats pointer is NULL");
+
+        // Init Data for quad rendering
+        const std::vector<float> squareData {
+            // Positions            // Texture coordinates
+            -0.5f,  -0.5f, 0.0f,     0.0f, 0.0f,   // bottom left
+             0.5f,  -0.5f, 0.0f,     1.0f, 0.0f,   // bottom right
+             0.5f,   0.5f, 0.0f,     1.0f, 1.0f,   // top right
+            -0.5f,   0.5f, 0.0f,     0.0f, 1.0f,   // top left
+        };
+
+        s_QuadData->VertexBufferData = VertexBuffer::CreateBuffer(squareData);
+        s_QuadData->IndexBufferData = IndexBuffer::CreateBuffer({0, 1, 2, 2, 3, 0});
+
+        s_QuadData->ColorShader     = BaseShader::CreateShader("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/colorShader.glsl");
+        s_QuadData->TextureShader   = BaseShader::CreateShader("../assets/shaders/textureVert.glsl", "../assets/shaders/textureFrag.glsl");
+
+        s_QuadData->TextureShader->SetInt("u_TextSampler", 0);
+        s_QuadData->VertexBufferData->SetBufferLayout(BufferLayout{
+            { ShaderDataType::FLOAT3_TYPE, "a_Position" },
+            { ShaderDataType::FLOAT2_TYPE, "a_TextureCoordinates" }
+        });
+
     }
 
     auto Renderer::ShutDown() -> void {
@@ -68,27 +87,90 @@ namespace kaTe {
     }
 
     auto Renderer::SubmitQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, bool useOrthographicCamera) -> void {
-
+        SubmitQuad(glm::vec3(position, 0.0), size, color, angle, useOrthographicCamera);
     }
 
     auto Renderer::SubmitQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, bool useOrthographicCamera) -> void {
+        glm::mat4 cameraViewProj{};
 
+        if (!useOrthographicCamera)
+            // inverse transform matrix to get the camera View matrix
+            cameraViewProj = s_DrawData->CameraForScene->GetProjection() * glm::inverse(s_DrawData->CameraForScene->GetTransform());
+        else
+            cameraViewProj = s_DrawData->OrthographicCameraForScene->GetProjectionView();
+
+        // Data Setup
+        static constexpr glm::vec3 ZAxis{ 0.0f, 0.0f, 1.0f };
+        static constexpr glm::mat4 IdentityMatrix{ glm::mat4(1.0) };
+
+        glm::mat4 scale{ glm::scale(IdentityMatrix, glm::vec3(size, 1.0f)) };
+        glm::mat4 rotation{ glm::rotate(IdentityMatrix, (float)glm::radians(angle), ZAxis) };
+        glm::mat4 transform{ glm::translate(IdentityMatrix, position) * scale * rotation };
+
+        s_QuadData->ColorShader->SetVec4("u_Color", color);
+        s_QuadData->ColorShader->SetMat4("u_ProjectionView", cameraViewProj);
+
+        SubmitQuad(transform, color, useOrthographicCamera);
     }
 
-    auto Renderer::SubmitQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, const std::shared_ptr<Texture> &texture, bool useOrthoCamera) -> void {
-
+    auto Renderer::SubmitQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, double angle, const std::shared_ptr<Texture>& texture, bool useOrthographicCamera) -> void {
+        SubmitQuad(glm::vec3(position, 0.0), size, color, angle, texture, useOrthographicCamera);
     }
 
-    auto Renderer::SubmitQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, const std::shared_ptr<Texture> &texture, bool useOrthographicCamera) -> void {
+    auto Renderer::SubmitQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, double angle, const std::shared_ptr<Texture>& texture, bool useOrthographicCamera) -> void {
+        static constexpr glm::vec3 zAxis{ 0.0f, 0.0f, 1.0f };
+        static constexpr glm::mat4 identMat{ glm::mat4(1.0) };
 
+        glm::mat4 scale{ glm::scale(identMat, glm::vec3(size, 1.0f)) };
+        glm::mat4 rotation{ glm::rotate(identMat, (float)glm::radians(angle), zAxis) };
+        glm::mat4 transform{ glm::translate(identMat, position) * scale * rotation };
+
+        SubmitQuad(transform, color, texture, useOrthographicCamera);
     }
 
-    auto Renderer::SubmitQuad(const glm::mat4 &transform, const glm::vec4 &color, bool useOrthographicCamera) -> void {
+    auto Renderer::SubmitQuad(const glm::mat4& transform, const glm::vec4& color, bool useOrthographicCamera) -> void {
+        glm::mat4 cameraViewProj{};
 
+        if (!useOrthographicCamera)
+            // inverse transform matrix to get the camera View matrix
+            cameraViewProj = s_DrawData->CameraForScene->GetProjection() * s_DrawData->CameraForScene->GetTransform();
+        else
+            cameraViewProj = s_DrawData->OrthographicCameraForScene->GetProjectionView();
+
+        s_QuadData->ColorShader->SetVec4("u_Color", color);
+        s_QuadData->ColorShader->SetMat4("u_ProjectionView", cameraViewProj);
+        s_QuadData->ColorShader->SetMat4("u_Transform", transform);
+
+        // Render
+        RenderCommand::DrawIndexed(s_QuadData->ColorShader, s_QuadData->VertexBufferData, s_QuadData->IndexBufferData);
+
+        // Rendering Stats management
+        s_RenderingStats->IncrementQuadCount(1);
+        // We increment the number of draw calls because for now
+        // The RenderCommand directly flushes the draw call
+        s_RenderingStats->IncrementDrawCallCount(1);
     }
 
-    auto Renderer::SubmitQuad(const glm::mat4 &transform, const std::shared_ptr<Texture> &texture, bool useOrthographicCamera) -> void {
+    auto Renderer::SubmitQuad(const glm::mat4& transform, [[maybe_unused]] const glm::vec4& color, const std::shared_ptr<Texture>& texture, bool useOrthographicCamera) -> void {
+        glm::mat4 cameraViewProj{};
 
+        if (!useOrthographicCamera)
+            // inverse transform matrix to get the camera View matrix
+            cameraViewProj = s_QuadData->CameraForScene->GetProjection() * glm::inverse(s_QuadData->CameraForScene->GetTransform());
+        else
+            cameraViewProj = s_DrawData->OrthographicCameraForScene->GetProjectionView();
+
+        s_QuadData->TextureShader->SetMat4("u_ProjectionView", cameraViewProj);
+        s_QuadData->TextureShader->SetMat4("u_Transform", transform);
+        texture->Bind();
+
+        // Render
+        RenderCommand::DrawIndexed(s_QuadData->TextureShader, s_QuadData->VertexBufferData, s_QuadData->IndexBufferData);
+
+        // Rendering Stats management
+        s_RenderingStats->IncrementQuadCount(1);
+        // We increment the number of draw calls because for now
+        // The RenderCommand directly flushes the draw call
+        s_RenderingStats->IncrementDrawCallCount(1);
     }
-
 }

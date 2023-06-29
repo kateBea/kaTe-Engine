@@ -40,8 +40,8 @@ namespace kaTe {
         static auto EndScene() -> void;
 
         static auto Submit(const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void;
-        static auto Submit(std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer) -> void;
-        static auto Submit(const std::shared_ptr<BaseShader>& shader, std::shared_ptr<VertexBuffer> vertexBuffer, std::shared_ptr<IndexBuffer> indexBuffer, const glm::mat4 &transform = glm::mat4(1.0)) -> void;
+        static auto Submit(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void;
+        static auto Submit(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer, const glm::mat4 &transform = glm::mat4(1.0)) -> void;
 
         static auto Flush() -> void;
 
@@ -61,7 +61,7 @@ namespace kaTe {
         static auto SubmitQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, double angle, const std::shared_ptr<Texture> &texture, bool useOrthographicCamera = false) -> void;
 
         static auto SubmitQuad(const glm::mat4& transform, const glm::vec4& color, bool useOrthographicCamera = false) -> void;
-        static auto SubmitQuad(const glm::mat4& transform, const std::shared_ptr<Texture>& texture,  bool useOrthographicCamera = false) -> void;
+        static auto SubmitQuad(const glm::mat4 &transform, const glm::vec4 &color, const std::shared_ptr<Texture> &texture, bool useOrthographicCamera) -> void;
 
         KT_NODISCARD static auto QueryDrawCallsCount() -> UInt32_T { return s_SavedSceneStats->GetDrawCallsCount(); }
         KT_NODISCARD static auto QueryQuadCount() -> UInt32_T { return s_SavedSceneStats->GetQuadCount(); }
@@ -119,8 +119,18 @@ namespace kaTe {
             std::shared_ptr<OrthographicCamera> OrthographicCameraForScene{};
         };
 
+        struct Renderer2DDrawData {
+            std::shared_ptr<VertexBuffer> VertexBufferData{};
+            std::shared_ptr<IndexBuffer> IndexBufferData{};
+            std::shared_ptr<BaseShader> ColorShader{};
+            std::shared_ptr<BaseShader> TextureShader{};
+            std::shared_ptr<Camera> CameraForScene{};
+            std::shared_ptr<OrthographicCamera> OrthographicCameraForScene{};
+        };
+
     private:
         inline static std::unique_ptr<RendererDrawData> s_DrawData{};
+        inline static std::unique_ptr<Renderer2DDrawData> s_QuadData{};
 
         inline static std::unique_ptr<RenderingStats>   s_RenderingStats{};
         inline static std::unique_ptr<RenderingStats>   s_SavedSceneStats{};

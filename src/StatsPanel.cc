@@ -9,8 +9,6 @@
 #include <Core/TimeManager.hh>
 
 #include <Renderer/Renderer.hh>
-#include <Renderer/Renderer2D.hh>
-#include <Renderer/RenderCommand.hh>
 
 #include "Editor/Panels/StatsPanel.hh"
 
@@ -27,10 +25,10 @@ namespace kaTe {
             ImGui::Begin("Statistics");
 
             ImGui::Text("Elapsed: %s", TimeManager::ToString(TimeManager::GetTime()).c_str());
-            ImGui::Text("Draw calls count: %d", Renderer2D::QueryDrawCallsCount());
-            ImGui::Text("Quad count: %d", Renderer2D::QueryQuadCount());
-            ImGui::Text("Index count: %d", Renderer2D::QueryIndexCount());
-            ImGui::Text("Vertex count: %d", Renderer2D::QueryVertexCount());
+            ImGui::Text("Draw calls count: %d", Renderer::QueryDrawCallsCount());
+            ImGui::Text("Quad count: %d", Renderer::QueryQuadCount());
+            ImGui::Text("Index count: %d", Renderer::QueryIndexCount());
+            ImGui::Text("Vertex count: %d", Renderer::QueryVertexCount());
             ImGui::Text("Frame rate: %.1f", ImGui::GetIO().Framerate);
 
             ImGui::End();

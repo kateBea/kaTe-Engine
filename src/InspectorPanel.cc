@@ -151,15 +151,20 @@ namespace kaTe {
                 ImGui::OpenPopup("AddComponentButtonPopup");
 
             if (ImGui::BeginPopup("AddComponentButtonPopup")) {
-                if (ImGui::MenuItem("Sprite")) {
+                const bool menuItemSelected{ false };
+                const char* menuItemShortcut{ nullptr }; // no shortcuts for now
+
+                // NOTE: Menu item will remain disabled if the entity already has a specific component preventing from reapplying it
+
+                if (ImGui::MenuItem("Sprite", menuItemShortcut, menuItemSelected, !entity.HasComponent<SpriteRendererComponent>())) {
                     entity.AddComponent<SpriteRendererComponent>();
                     ImGui::CloseCurrentPopup();
                 }
-                if (ImGui::MenuItem("Camera")) {
+                if (ImGui::MenuItem("Camera", menuItemShortcut, menuItemSelected, !entity.HasComponent<CameraComponent>())) {
                     entity.AddComponent<CameraComponent>(std::make_shared<SceneCamera>());
                     ImGui::CloseCurrentPopup();
                 }
-                if (ImGui::MenuItem("Script")) {
+                if (ImGui::MenuItem("Script", menuItemShortcut, menuItemSelected, !entity.HasComponent<NativeScriptComponent>())) {
                     entity.AddComponent<NativeScriptComponent>();
                     ImGui::CloseCurrentPopup();
                 }

@@ -71,20 +71,25 @@ namespace kaTe {
             ImGuiPopupFlags popupItemFlags{ ImGuiPopupFlags_MouseButtonRight };
             if (ImGui::BeginPopupContextItem(nullptr, popupItemFlags)) {
                 if (ImGui::BeginMenu("Add component")) {
-                    if (ImGui::MenuItem("Sprite")) {
+                    const bool menuItemSelected{ false };
+                    const char* menuItemShortcut{ nullptr }; // no shortcuts for now
+
+                    // NOTE: Menu item will remain disabled if the entity already has a specific component preventing from reapplying it
+
+                    if (ImGui::MenuItem("Sprite", menuItemShortcut, menuItemSelected, !target.HasComponent<SpriteRendererComponent>())) {
                         target.AddComponent<SpriteRendererComponent>();
                         ImGui::CloseCurrentPopup();
                     }
-                    if (ImGui::MenuItem("Camera")) {
-                        target.AddComponent<CameraComponent>();
+                    if (ImGui::MenuItem("Camera", menuItemShortcut, menuItemSelected, !target.HasComponent<CameraComponent>())) {
+                        target.AddComponent<CameraComponent>(std::make_shared<SceneCamera>());
                         ImGui::CloseCurrentPopup();
                     }
-
-                    if (ImGui::MenuItem("Script")) {
+                    if (ImGui::MenuItem("Script", menuItemShortcut, menuItemSelected, !target.HasComponent<NativeScriptComponent>())) {
                         target.AddComponent<NativeScriptComponent>();
                         ImGui::CloseCurrentPopup();
                     }
-                    ImGui::EndMenu();
+
+                    ImGui::EndPopup();
                 }
 
                 if (ImGui::BeginMenu("Options")) {

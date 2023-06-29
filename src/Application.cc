@@ -1,4 +1,4 @@
-#include <functional>
+// C++ Standard Library
 #include <memory>
 #include <cmath>
 
@@ -12,7 +12,6 @@
 #include <Core/Layers/ImGuiLayer.hh>
 #include <Platform/InputManager.hh>
 #include <Platform/Window/MainWindow.hh>
-#include <Renderer/Renderer2D.hh>
 
 #include <Renderer/Renderer.hh>
 #include <Renderer/RenderCommand.hh>
@@ -34,7 +33,6 @@ namespace kaTe {
         PushOverlay(m_ImGuiLayer);
 
         Renderer::Init();
-        Renderer2D::Init();
         RenderCommand::Init();
         InputManager::Init();
 

@@ -1,5 +1,4 @@
 // C++ Standard Library
-// C++ Standard Library
 #include <filesystem>
 #include <stdexcept>
 #include <string>
