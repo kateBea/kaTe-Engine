@@ -41,6 +41,7 @@ namespace kaTe {
         auto Stop() -> void;
 
         auto GetMainWindow() -> Window&;
+        auto GetMainWindowPtr() -> std::shared_ptr<Window>;
 
 
     private:
@@ -77,7 +78,7 @@ namespace kaTe {
         bool m_MainWindowMinimized{ false };
         State m_State{ State::RUNNING };
 
-        std::unique_ptr<Window> m_MainWindow{};
+        std::shared_ptr<Window> m_MainWindow{};
         std::unique_ptr<LayerStack> m_LayerStack{};
         std::shared_ptr<ImGuiLayer> m_ImGuiLayer{};
 

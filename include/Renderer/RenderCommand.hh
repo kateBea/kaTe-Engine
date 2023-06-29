@@ -39,6 +39,9 @@ namespace kaTe {
 
         static auto UpdateViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void;
 
+        KT_NODISCARD static auto GetSwapChain() -> std::any;
+        KT_NODISCARD static auto GetCommandBuffers() -> std::any;
+
 	private:
         inline static RendererAPI* s_ActiveRendererAPI{ nullptr };
 	};

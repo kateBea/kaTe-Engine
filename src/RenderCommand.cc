@@ -82,4 +82,10 @@ namespace kaTe {
     auto RenderCommand::DisableWireframeMode() -> void {
         s_ActiveRendererAPI->DisableWireframeMode();
     }
+    auto RenderCommand::GetSwapChain() -> std::any {
+        return s_ActiveRendererAPI->GetSwapChain();
+    }
+    auto RenderCommand::GetCommandBuffers() -> std::any {
+        return s_ActiveRendererAPI->GetCommandBuffers();
+    }
 }

@@ -51,7 +51,7 @@ namespace kaTe {
 
     }
 
-    auto OpenGLContext::SwapBuffers() -> void {
+    auto OpenGLContext::DrawFrame() -> void {
         glfwSwapBuffers(m_Handle);
     }
 }

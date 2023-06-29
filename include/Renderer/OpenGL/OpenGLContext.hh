@@ -17,7 +17,7 @@ namespace kaTe {
 
         auto Init(std::any windowHandle) -> void override;
         auto ShutDown() -> void override;
-        auto SwapBuffers() -> void override;
+        auto DrawFrame() -> void override;
 
         ~OpenGLContext() override = default;
 

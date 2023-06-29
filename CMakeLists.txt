@@ -48,7 +48,7 @@ set(RENDERER_SOURCES
         src/BaseShader.cc
         src/FrameBuffer.cc
         src/OpenGLFrameBuffer.cc
-        src/Camera.cc)
+        src/Camera.cc src/VulkanContext.cc include/Renderer/Vulkan/VulkanRenderer.cc)
 
 set(IMGUI_SOURCES
         lib/imgui/imgui.cpp

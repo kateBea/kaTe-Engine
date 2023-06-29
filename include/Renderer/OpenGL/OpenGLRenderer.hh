@@ -27,8 +27,8 @@ namespace kaTe {
         auto Init() -> void override;
         auto Shutdown() -> void override;
 
-        virtual auto EnableWireframeMode() -> void override;
-        virtual auto DisableWireframeMode() -> void override;
+        auto EnableWireframeMode() -> void override;
+        auto DisableWireframeMode() -> void override;
 
         auto SetClearColor(const glm::vec4& color) -> void override;
         auto SetClearColor(float red, float green, float blue, float alpha) -> void override;
@@ -48,6 +48,9 @@ namespace kaTe {
         auto Draw(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void override;
 
         auto SetDefaultShader(const Path_T& vertShaderPath, const Path_T& pixelShaderPath) -> void;
+
+        KT_NODISCARD auto GetSwapChain() -> std::any override { KATE_CORE_LOGGER_WARN("Unnecessary call to GetSwapChain for OpenGLRenderer"); return (void*)nullptr; };
+        KT_NODISCARD auto GetCommandBuffers() -> std::any override { KATE_CORE_LOGGER_WARN("Unnecessary call to GetSwapChain for OpenGLRenderer"); return (void*)nullptr; }
 
     public:
         // Forbidden operations

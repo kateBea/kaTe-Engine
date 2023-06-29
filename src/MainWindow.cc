@@ -27,9 +27,9 @@ namespace kaTe {
     auto MainWindow::OnUpdate() -> void {
         glfwPollEvents();
 
-        // should probably not be here and most likely
         // not be done when the window is minimized, it CPU waste
-        m_Context->SwapBuffers();
+        KT_ASSERT(m_Context, "Graphics API context pointer is NULL for MainWindow::OnUpdate()");
+        m_Context->DrawFrame();
     }
 
     auto MainWindow::EnableVSync() -> void {

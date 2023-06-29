@@ -22,7 +22,7 @@ namespace kaTe {
     auto Application::Init() -> void {
         TimeManager::Init();
         KATE_CORE_LOGGER_DEBUG("Initializing kaTe Engine {}", TimeManager::ToString(TimeManager::GetTime()));
-        m_MainWindow = std::make_unique<MainWindow>();
+        m_MainWindow = std::make_shared<MainWindow>();
         m_LayerStack = std::make_unique<LayerStack>();
 
         KT_ASSERT(m_MainWindow != nullptr, "Window is NULL");
@@ -122,5 +122,8 @@ namespace kaTe {
 
     auto Application::BlockImGuiLayerEvents(bool value) -> void {
         m_ImGuiLayer->SetBlockEvents(value);
+    }
+    auto Application::GetMainWindowPtr() -> std::shared_ptr<Window> {
+        return m_MainWindow;
     }
 }

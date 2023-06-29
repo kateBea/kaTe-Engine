@@ -2,6 +2,7 @@
 #define KATE_ENGINE_RENDERER_API_HH
 
 #include <memory>
+#include <any>
 
 #include <glm/vec4.hpp>
 
@@ -50,6 +51,9 @@ namespace kaTe {
         virtual auto Draw(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void = 0;
 
 		virtual auto SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void = 0;
+
+        KT_NODISCARD virtual auto GetSwapChain() -> std::any = 0;
+        KT_NODISCARD virtual auto GetCommandBuffers() -> std::any = 0;
 
         virtual ~RendererAPI() = default;
     public:

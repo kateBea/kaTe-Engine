@@ -36,9 +36,6 @@ namespace kaTe {
     VulkanDevice::VulkanDevice(std::shared_ptr<MainWindow> window)
         :   m_Window{ std::move(window) }
     {
-        auto ret{ volkInitialize() };
-        KT_ASSERT(ret == VK_SUCCESS, "Failed to init Volk");
-
         CreateInstance();
         SetupDebugMessenger();
         CreateSurface();
@@ -82,8 +79,12 @@ namespace kaTe {
 
         if (vkCreateInstance(&createInfo, nullptr, &m_Instance) != VK_SUCCESS)
             throw std::runtime_error("failed to create instance!");
-        else
-            volkLoadInstance(m_Instance);
+
+        // Load global function pointers using the newly created VkInstance.
+        // For applications that use multiple VkDevices,
+        // we need to load device-related Vulkan entrypoints into
+        // a table via volkLoadDeviceTable(struct VolkDeviceTable*, VkDevice);
+        volkLoadInstance(m_Instance);
 
         HasGflwRequiredInstanceExtensions();
     }
