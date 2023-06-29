@@ -11,6 +11,7 @@ set(GLFW_CMAKE_DIR lib/glfw)
 set(ENTT_CMAKE_DIR lib/entt)
 set(FMT_CMAKE_DIR lib/fmt)
 set(VOLK_CMAKE_DIR lib/volk)
+set(ASSIMP_CMAKE_DIR lib/assimp)
 
 # Projects source files
 set(CORE_SOURCES
@@ -48,7 +49,7 @@ set(RENDERER_SOURCES
         src/BaseShader.cc
         src/FrameBuffer.cc
         src/OpenGLFrameBuffer.cc
-        src/Camera.cc src/VulkanContext.cc include/Renderer/Vulkan/VulkanRenderer.cc)
+        src/Camera.cc src/VulkanContext.cc include/Renderer/Vulkan/VulkanRenderer.cc src/Mesh.cc src/Model.cc src/Texture.cc)
 
 set(IMGUI_SOURCES
         lib/imgui/imgui.cpp
@@ -80,9 +81,10 @@ add_subdirectory(${GLFW_CMAKE_DIR})
 add_subdirectory(${FMT_CMAKE_DIR})
 add_subdirectory(${ENTT_CMAKE_DIR})
 add_subdirectory(${VOLK_CMAKE_DIR})
+add_subdirectory(${ASSIMP_CMAKE_DIR})
 
 # Libraries to link against target
-set(LIBRARIES glfw glew_s fmt EnTT::EnTT volk)
+set(LIBRARIES glfw glew_s fmt EnTT::EnTT volk assimp)
 
 # Compiler flags
 if (MSVC)
@@ -106,6 +108,7 @@ include_directories(lib/glm/)
 include_directories(lib/stb/)
 include_directories(lib/entt/single_include)
 include_directories(lib/volk)
+include_directories(lib/assimp/include)
 
 
 add_executable(kaTe_Engine src/EntryPoint.cc ${SOURCES})

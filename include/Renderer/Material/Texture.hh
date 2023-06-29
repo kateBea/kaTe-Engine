@@ -17,9 +17,6 @@ namespace kaTe {
         virtual auto GetId() -> UInt32_T = 0;
 
         virtual auto Bind(UInt32_T slot = 0) -> void = 0;
-
-    private:
-
     };
 }
 

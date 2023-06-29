@@ -51,7 +51,13 @@ namespace kaTe {
     }
 
     auto OpenGLRenderer::Draw(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer) -> void {
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        m_DefaultVertexPixelShaders.Bind();
+        m_VertexArray.UseVertexBuffer(vertexBuffer);
+        indexBuffer->BindBuffer();
 
+        glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
     }
 
     auto OpenGLRenderer::Draw(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer) -> void {
@@ -67,6 +73,7 @@ namespace kaTe {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         KATE_CORE_LOGGER_INFO("Render blending enabled");
+        m_DefaultVertexPixelShaders.Upload("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/colorShader.glsl");
     }
 
     auto OpenGLRenderer::Shutdown() -> void {

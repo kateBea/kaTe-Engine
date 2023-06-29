@@ -21,6 +21,7 @@
 #include "Renderer/Camera/OrthographicCameraController.hh"
 #include "Renderer/Material/BaseShader.hh"
 #include "Renderer/Material/Texture.hh"
+#include "Renderer/Model.hh"
 #include "Scene/Scene.hh"
 #include <Editor/Panels/Panel.hh>
 #include <Editor/Panels/PanelData.hh>
@@ -38,6 +39,7 @@ namespace kaTe {
         auto OnImGuiRender() -> void override;
     private:
         std::shared_ptr<SceneCamera> m_MainCamera{};
+        std::shared_ptr<SceneCamera> m_OtherCam{};
 
         Editor::DockControlFlags m_DockEditorData{};
 
@@ -52,6 +54,8 @@ namespace kaTe {
         std::shared_ptr<SettingsPanelData> m_SettingsPanelInfo{};
         std::shared_ptr<ScenePanelData> m_ScenePanelInfo{};
         std::shared_ptr<StatsPanelData> m_StatsPanelInfo{};
+
+        Model model{};
 
     };
 

@@ -6,6 +6,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Editor/EditorLayer.hh"
+#include "Renderer/Model.hh"
 #include <Core/Application.hh>
 
 #include <Platform/InputManager.hh>
@@ -61,6 +62,11 @@ namespace kaTe {
         m_ScenePanel = std::make_shared<ScenePanel>(m_ScenePanelInfo);
         m_StatsPanel = std::make_shared<StatsPanel>(m_StatsPanelInfo);
 
+        model.LoadFromFile("../assets/models/Pod42/source/POD/POD.obj");
+        m_OtherCam = std::make_shared<SceneCamera>(glm::ortho(-aspect, aspect, -1.0, 1.0));
+        m_OtherCam->SetPerspective(0.01, 1000.0f, 45);
+        m_OtherCam->SetPosition({0.0f, 0.0f, -5.0f });
+
         {
             // scripting test
             // TODO: does not compile
@@ -83,6 +89,8 @@ namespace kaTe {
 
         RenderCommand::Clear(bufferBits);
 
+
+        Renderer::EndScene();
         m_ScenePanelInfo->Viewport->OnUpdate();
         m_ScenePanelInfo->SceneFrameBuffer->Unbind();
     }

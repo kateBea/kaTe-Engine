@@ -53,6 +53,9 @@ namespace kaTe {
 
     auto Renderer::Init() -> void {
         s_DrawData = std::make_unique<RendererDrawData>();
+        s_RenderingStats    = std::make_unique<RenderingStats>();
+        KT_ASSERT(s_DrawData, "Renderer draw data pointer is NULL");
+        KT_ASSERT(s_RenderingStats, "Renderer stats pointer is NULL");
     }
 
     auto Renderer::ShutDown() -> void {
