@@ -22,6 +22,7 @@
 #include <Renderer/Camera/Camera.hh>
 #include <Renderer/Camera/OrthographicCamera.hh>
 #include <Renderer/Material/BaseShader.hh>
+#include <Renderer/RendererAPI.hh>
 
 
 namespace kaTe {
@@ -67,6 +68,11 @@ namespace kaTe {
         KT_NODISCARD static auto QueryQuadCount() -> UInt32_T { return s_SavedSceneStats->GetQuadCount(); }
         KT_NODISCARD static auto QueryIndexCount() -> UInt32_T { return s_SavedSceneStats->GetIndexCount(); }
         KT_NODISCARD static auto QueryVertexCount() -> UInt32_T { return s_SavedSceneStats->GetVertexCount(); }
+
+        KT_NODISCARD static auto GetSwapChain() -> std::any;
+        KT_NODISCARD static auto GetCommandBuffers() -> std::any;
+
+        static auto PickGraphicsAPI() -> void;
 
     public:
         // Forbidden operations
@@ -129,6 +135,8 @@ namespace kaTe {
         };
 
     private:
+        inline static RendererAPI* s_ActiveRendererAPI{ nullptr };
+
         inline static std::unique_ptr<RendererDrawData> s_DrawData{};
         inline static std::unique_ptr<Renderer2DDrawData> s_QuadData{};
 

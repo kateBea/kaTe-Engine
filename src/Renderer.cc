@@ -16,6 +16,9 @@
 #include <Renderer/Renderer.hh>
 #include <Renderer/RenderCommand.hh>
 
+#include <Renderer/OpenGL/OpenGLRenderer.hh>
+#include <Renderer/Vulkan/VulkanRenderer.hh>
+
 namespace kaTe {
     auto Renderer::BeginScene(std::shared_ptr<OrthographicCamera> camera) -> void {
         s_DrawData->OrthographicCameraForScene = std::move(camera);
@@ -75,13 +78,31 @@ namespace kaTe {
             { ShaderDataType::FLOAT2_TYPE, "a_TextureCoordinates" }
         });
 
+        PickGraphicsAPI();
+        RenderCommand::Init(s_ActiveRendererAPI);
+    }
+
+    auto Renderer::PickGraphicsAPI() -> void {
+        switch(GetActiveGraphicsAPI()) {
+            case GraphicsAPI::OPENGL_API:
+                s_ActiveRendererAPI = new OpenGLRenderer();
+                s_ActiveRendererAPI->Init();
+                break;
+            case GraphicsAPI::VULKAN_API:
+                s_ActiveRendererAPI = new VulkanRenderer();
+                s_ActiveRendererAPI->Init();
+                break;
+            default:
+                KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API");
+                break;
+        }
     }
 
     auto Renderer::ShutDown() -> void {
-
+        delete s_ActiveRendererAPI;
     }
 
-    [[maybe_unused]] auto Renderer::OnWindowResize(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void {
+    auto Renderer::OnWindowResize(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void {
         // Temporary. Should change when we have multiple frame buffers to render to
         RenderCommand::UpdateViewPort(x, y, width, height);
     }
@@ -172,5 +193,12 @@ namespace kaTe {
         // We increment the number of draw calls because for now
         // The RenderCommand directly flushes the draw call
         s_RenderingStats->IncrementDrawCallCount(1);
+    }
+
+    auto Renderer::GetSwapChain() -> std::any {
+        return s_ActiveRendererAPI->GetSwapChain();
+    }
+    auto Renderer::GetCommandBuffers() -> std::any {
+        return s_ActiveRendererAPI->GetCommandBuffers();
     }
 }

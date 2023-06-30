@@ -25,8 +25,8 @@ namespace kaTe {
     public:
         MeshData() = default;
 
-        MeshData(const MeshData& other) : m_Vertices{ other.m_Vertices }, m_Indices{ other.m_Indices }, m_Textures{ other.m_Textures } {}
-        MeshData(MeshData&& other) : m_Vertices{ std::move(other.m_Vertices) }, m_Indices{ std::move(other.m_Indices) }, m_Textures{ std::move(other.m_Textures) } {}
+        MeshData(const MeshData& other) = default;
+        MeshData(MeshData&& other)  noexcept : m_Vertices{ std::move(other.m_Vertices) }, m_Indices{ std::move(other.m_Indices) }, m_Textures{ std::move(other.m_Textures) } {}
 
         KT_NODISCARD auto GetVertices() -> std::shared_ptr<VertexBuffer>& { return m_Vertices; }
         KT_NODISCARD auto GetIndices() -> std::shared_ptr<IndexBuffer>& { return m_Indices; }
@@ -65,6 +65,9 @@ namespace kaTe {
         std::shared_ptr<VertexBuffer> m_Vertices{};
         std::shared_ptr<IndexBuffer> m_Indices{};
         std::vector<std::shared_ptr<Texture>> m_Textures{};
+
+        // should probably have a material or set of material alongside with the set of indices/vertices
+        // std::unordered_map<material_id, Material>
     };
 
     class Mesh {

@@ -33,7 +33,6 @@ namespace kaTe {
         PushOverlay(m_ImGuiLayer);
 
         Renderer::Init();
-        RenderCommand::Init();
         InputManager::Init();
 
         KATE_CORE_LOGGER_DEBUG("Finished kaTe Engine initialization {}", TimeManager::ToString(TimeManager::GetTime()));

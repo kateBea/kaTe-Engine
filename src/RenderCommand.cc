@@ -10,16 +10,8 @@
 #include <Renderer/OpenGL/OpenGLRenderer.hh>
 
 namespace kaTe {
-    auto RenderCommand::Init() -> void {
-        switch(Renderer::GetActiveGraphicsAPI()) {
-            case Renderer::GraphicsAPI::OPENGL_API:
-                s_ActiveRendererAPI = new OpenGLRenderer();
-                s_ActiveRendererAPI->Init();
-                break;
-            default:
-                KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API");
-                break;
-        }
+    auto RenderCommand::Init(RendererAPI* activeAPI) -> void {
+        s_ActiveRendererAPI = activeAPI;
     }
 
     auto RenderCommand::Clear(BufferBits bufferBits) -> void {
@@ -72,7 +64,7 @@ namespace kaTe {
         s_ActiveRendererAPI->SetViewPort(x, y, width, height);
     }
     auto RenderCommand::ShutDown() -> void {
-        delete s_ActiveRendererAPI;
+
     }
 
     auto RenderCommand::EnableWireframeMode() -> void {
@@ -82,10 +74,5 @@ namespace kaTe {
     auto RenderCommand::DisableWireframeMode() -> void {
         s_ActiveRendererAPI->DisableWireframeMode();
     }
-    auto RenderCommand::GetSwapChain() -> std::any {
-        return s_ActiveRendererAPI->GetSwapChain();
-    }
-    auto RenderCommand::GetCommandBuffers() -> std::any {
-        return s_ActiveRendererAPI->GetCommandBuffers();
-    }
+
 }

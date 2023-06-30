@@ -16,6 +16,8 @@
 #include <Core/Assert.hh>
 
 #include <Scene/SceneCamera.hh>
+#include <Renderer/Mesh.hh>
+#include <Renderer/Model.hh>
 
 namespace kaTe {
     class TagComponent {
@@ -195,6 +197,34 @@ namespace kaTe {
         std::function<void(std::shared_ptr<ScriptableEntity> scriptable)> m_OnCreateFunc{};
         std::function<void(std::shared_ptr<ScriptableEntity> scriptable)> m_OnUpdateFunc{};
         std::function<void(std::shared_ptr<ScriptableEntity> scriptable)> m_OnDestroyFunc{};
+    };
+
+    class RenderableModel {
+    public:
+        explicit RenderableModel() = default;
+
+        RenderableModel(const RenderableModel & other) = default;
+        RenderableModel(RenderableModel && other) = default;
+
+        auto operator=(const RenderableModel & other) -> RenderableModel & = default;
+        auto operator=(RenderableModel && other) -> RenderableModel & = default;
+
+    private:
+        std::shared_ptr<Model> m_Model{};
+    };
+
+    class RenderableMesh {
+    public:
+        explicit RenderableMesh() = default;
+
+        RenderableMesh(const RenderableMesh & other) = default;
+        RenderableMesh(RenderableMesh && other) = default;
+
+        auto operator=(const RenderableMesh & other) -> RenderableMesh & = default;
+        auto operator=(RenderableMesh && other) -> RenderableMesh & = default;
+
+    private:
+        std::shared_ptr<Mesh> m_Mesh{};
     };
 }
 #endif//KATE_ENGINE_COMPONENT_HH

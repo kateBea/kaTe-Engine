@@ -53,8 +53,8 @@ namespace kaTe {
     auto VulkanContext::DrawFrame() -> void {
         UInt32_T imageIndex{};
         try {
-            std::shared_ptr<VulkanSwapChain> swampChain{ std::any_cast<std::shared_ptr<VulkanSwapChain>>(RenderCommand::GetSwapChain()) };
-            std::vector<VkCommandBuffer> commandBuffers{ std::any_cast<std::vector<VkCommandBuffer>>(RenderCommand::GetCommandBuffers()) };
+            std::shared_ptr<VulkanSwapChain> swampChain{ std::any_cast<std::shared_ptr<VulkanSwapChain>>(Renderer::GetSwapChain()) };
+            std::vector<VkCommandBuffer> commandBuffers{ std::any_cast<std::vector<VkCommandBuffer>>(Renderer::GetCommandBuffers()) };
 
             VkResult result{ swampChain->AcquireNextImage(&imageIndex) };
 

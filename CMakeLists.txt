@@ -72,7 +72,7 @@ set(SOURCES
         ${RENDERER_SOURCES}
         ${EDITOR_SOURCES}
         ${SCENE_SOURCES}
-        src/Engine.cc src/stb_image.cc)
+        src/Engine.cc src/stb_image.cc src/Material.cc include/Renderer/Material/Material.hh src/StandardMaterial.cc include/Renderer/Material/StandardMaterial.hh)
 
 # External dependencies
 add_subdirectory(${GLEW_CMAKE_DIR})

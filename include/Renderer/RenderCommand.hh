@@ -19,7 +19,7 @@ namespace kaTe {
 	class RenderCommand {
 	public:
         using BufferBits = RendererAPI::BufferBits;
-        static auto Init() -> void;
+        static auto Init(RendererAPI* activeAPI) -> void;
         static auto ShutDown() -> void;
 
         static auto EnableWireframeMode() -> void;
@@ -38,9 +38,6 @@ namespace kaTe {
         static auto Draw(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer) -> void;
 
         static auto UpdateViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void;
-
-        KT_NODISCARD static auto GetSwapChain() -> std::any;
-        KT_NODISCARD static auto GetCommandBuffers() -> std::any;
 
 	private:
         inline static RendererAPI* s_ActiveRendererAPI{ nullptr };
