@@ -32,17 +32,16 @@ namespace kaTe {
     }
 
     auto VulkanShader::CreateShaderModule(const CharArray& srcCode, VkShaderModule* shaderModule) -> void {
-        VkShaderModuleCreateInfo createInfo{};
-
         VulkanRenderer& renderer{ *dynamic_cast<VulkanRenderer*>(Renderer::GetCurrentRenderer()) };
 
+        VkShaderModuleCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         createInfo.codeSize = srcCode.size();
 
         // It seems this casts is valid since the default std::vector allocator
         // ensures the data satisfies the worst case alignment requirements.
         createInfo.pCode = reinterpret_cast<const UInt32_T*>(srcCode.data());
-        if (vkCreateShaderModule(renderer.m_Device->GetDevice(), &createInfo, nullptr, shaderModule) != VK_SUCCESS)
+        if (vkCreateShaderModule(renderer.m_Device, &createInfo, nullptr, shaderModule) != VK_SUCCESS)
             throw std::runtime_error("Failed to create shader module");
     }
 

@@ -19,7 +19,6 @@ namespace kaTe {
     VulkanVertexBuffer::VulkanVertexBuffer(const std::vector<float> &data, const BufferLayout& layout) {
         VulkanRenderer& renderer{ *dynamic_cast<VulkanRenderer*>(Renderer::GetCurrentRenderer()) };
 
-        m_Device = renderer.m_Device;
         m_Layout = layout;
         SetBindingDescriptions();
         SetAttributeDescriptions();
@@ -88,6 +87,7 @@ namespace kaTe {
     }
 
     auto VulkanVertexBuffer::SetVertexData(const std::vector<float>& vertices) -> void {
+        VulkanRenderer& renderer{ *dynamic_cast<VulkanRenderer*>(Renderer::GetCurrentRenderer()) };
         KT_ASSERT(vertices.size() >= 3, "Vertex buffer requires at least three vertices");
         m_VertexCount = vertices.size();
 
@@ -101,40 +101,44 @@ namespace kaTe {
         );
 
         void* data{};
-        if (vkMapMemory(m_Device->GetDevice(), m_VertexBufferMemory, 0, bufferSize, 0, &data) != VK_SUCCESS)
+        if (vkMapMemory(renderer.m_Device, m_VertexBufferMemory, 0, bufferSize, 0, &data) != VK_SUCCESS)
             throw std::runtime_error("Failed to map memory");
 
         std::memcpy(data, static_cast<const void*>(vertices.data()), static_cast<std::size_t>(bufferSize));
-        vkUnmapMemory(m_Device->GetDevice(), m_VertexBufferMemory);
+        vkUnmapMemory(renderer.m_Device, m_VertexBufferMemory);
     }
 
     auto VulkanVertexBuffer::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) -> void {
+        VulkanRenderer& renderer{ *dynamic_cast<VulkanRenderer*>(Renderer::GetCurrentRenderer()) };
+
         VkBufferCreateInfo bufferInfo{};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         bufferInfo.size = size;
         bufferInfo.usage = usage;
         bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        if (vkCreateBuffer(m_Device->GetDevice(), &bufferInfo, nullptr, &buffer) != VK_SUCCESS)
+        if (vkCreateBuffer(renderer.m_Device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS)
             throw std::runtime_error("failed to create vertex buffer!");
 
         VkMemoryRequirements memRequirements{};
-        vkGetBufferMemoryRequirements(m_Device->GetDevice(), buffer, &memRequirements);
+        vkGetBufferMemoryRequirements(renderer.m_Device, buffer, &memRequirements);
 
         VkMemoryAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
         allocInfo.allocationSize = memRequirements.size;
-        allocInfo.memoryTypeIndex = m_Device->FindMemoryType(memRequirements.memoryTypeBits, properties);
+        allocInfo.memoryTypeIndex = renderer.FindMemoryType(memRequirements.memoryTypeBits, properties);
 
-        if (vkAllocateMemory(m_Device->GetDevice(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
+        if (vkAllocateMemory(renderer.m_Device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
             throw std::runtime_error("failed to allocate vertex buffer memory!");
 
 
-        vkBindBufferMemory(m_Device->GetDevice(), buffer, bufferMemory, 0);
+        vkBindBufferMemory(renderer.m_Device, buffer, bufferMemory, 0);
     }
 
     VulkanVertexBuffer::~VulkanVertexBuffer() {
-        vkDestroyBuffer(m_Device->GetDevice(), m_VertexBuffer, nullptr);
-        vkFreeMemory(m_Device->GetDevice(), m_VertexBufferMemory, nullptr);
+        VulkanRenderer& renderer{ *dynamic_cast<VulkanRenderer*>(Renderer::GetCurrentRenderer()) };
+
+        vkDestroyBuffer(renderer.m_Device, m_VertexBuffer, nullptr);
+        vkFreeMemory(renderer.m_Device, m_VertexBufferMemory, nullptr);
     }
 }

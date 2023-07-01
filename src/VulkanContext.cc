@@ -18,7 +18,6 @@
 #include "Renderer/Vulkan/VulkanRenderer.hh"
 #include <Renderer/RenderCommand.hh>
 #include <Renderer/Vulkan/VulkanContext.hh>
-#include <Renderer/Vulkan/VulkanSwapChain.hh>
 
 namespace kaTe {
 

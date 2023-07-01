@@ -27,9 +27,6 @@ set(PLATFORM_SOURCES
         )
 
 set(RENDERER_SOURCES
-        src/VulkanDevice.cc
-        src/VulkanPipeline.cc
-        src/VulkanSwapChain.cc
         src/VulkanVertexBuffer.cc
         src/OpenGLVertexArray.cc
         src/OpenGLVertexBuffer.cc

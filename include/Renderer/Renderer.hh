@@ -88,7 +88,7 @@ namespace kaTe {
         // For the time being, we only have one main window, therefore, this attribute is going
         // to be static. In case we want to try different API at runtime, we may
         // have more than one Renderer API specific active
-        inline static GraphicsAPI s_ActiveAPI{ GraphicsAPI::OPENGL_API };
+        inline static GraphicsAPI s_ActiveAPI{ GraphicsAPI::VULKAN_API };
     private:
         // For 2D rendering
         struct RenderingStats {

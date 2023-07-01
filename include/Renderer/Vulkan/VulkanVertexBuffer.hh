@@ -14,7 +14,6 @@
 
 #include <Tools/Common.hh>
 
-#include <Renderer/Vulkan/VulkanDevice.hh>
 #include <Renderer/Buffers/VertexBuffer.hh>
 
 namespace kaTe {
@@ -70,7 +69,6 @@ namespace kaTe {
         std::vector<VkVertexInputBindingDescription> m_BindingDesc{};
         std::vector<VkVertexInputAttributeDescription>  m_AttributeDesc{};
         BufferLayout                    m_Layout{};
-        std::shared_ptr<VulkanDevice>   m_Device{};
         VkBuffer                        m_VertexBuffer{};
         VkDeviceMemory                  m_VertexBufferMemory{};
         ULongLong_T                     m_VertexCount{};

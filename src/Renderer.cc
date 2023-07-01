@@ -69,7 +69,7 @@ namespace kaTe {
             -0.5f,   0.5f, 0.0f,     0.0f, 1.0f,   // top left
         };
 
-#if true // TODO: for now it only works for OpenGL
+#if false // TODO: for now it only works for OpenGL
         s_QuadData->VertexBufferData = VertexBuffer::CreateBuffer(squareData);
         s_QuadData->IndexBufferData = IndexBuffer::CreateBuffer({0, 1, 2, 2, 3, 0});
 
