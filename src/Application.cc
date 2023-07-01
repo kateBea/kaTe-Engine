@@ -49,6 +49,8 @@ namespace kaTe {
         if (evDis.Forward<WindowResizedEvent>(KT_BIND_EVENT_FUNC(Application::OnResizeEvent)))
             KATE_CORE_LOGGER_TRACE("HANDLED {}", event.DisplayData());
 
+        Renderer::OnEvent(event);
+
         for (auto it{ m_LayerStack->rbegin() }; it != m_LayerStack->rend(); ++it) {
             (*it)->OnEvent(event);
             if (event.IsHandled())

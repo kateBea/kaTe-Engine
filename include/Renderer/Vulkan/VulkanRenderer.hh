@@ -16,6 +16,9 @@
 
 #include <Renderer/RendererAPI.hh>
 
+#include <Core/Events/Event.hh>
+#include <Core/Events/AppEvents.hh>
+
 #include <Renderer/Material/BaseShader.hh>
 #include <Renderer/Buffers/IndexBuffer.hh>
 #include <Renderer/Buffers/VertexBuffer.hh>
@@ -54,6 +57,8 @@ namespace kaTe {
         KT_NODISCARD auto GetSwapChain() -> std::any override { return m_SwapChain; }
         KT_NODISCARD auto GetCommandBuffers() -> std::any override { return m_CommandBuffers; }
 
+        auto OnEvent(Event& event) -> void override;
+
         ~VulkanRenderer() override = default;
     public:
         // Forbidden operations
@@ -79,6 +84,8 @@ namespace kaTe {
         // Probably need OnDestroy functions to control the order of Vulkan objects release
         // TODO: these should not be pointers
         std::shared_ptr<MainWindow>         m_Window{};
+
+        auto OnWindowResize(WindowResizedEvent& event) -> bool;
 
     private:
         // VALIDATION LAYERS. Enabled on Debug builds

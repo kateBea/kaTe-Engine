@@ -52,6 +52,7 @@ namespace kaTe {
         KT_NODISCARD auto GetSwapChain() -> std::any override { KATE_CORE_LOGGER_WARN("Unnecessary call to GetSwapChain for OpenGLRenderer"); return (void*)nullptr; };
         KT_NODISCARD auto GetCommandBuffers() -> std::any override { KATE_CORE_LOGGER_WARN("Unnecessary call to GetSwapChain for OpenGLRenderer"); return (void*)nullptr; }
 
+        auto OnEvent(Event& event) -> void override;
     public:
         // Forbidden operations
         OpenGLRenderer(const OpenGLRenderer&) = delete;

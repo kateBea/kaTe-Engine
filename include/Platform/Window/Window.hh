@@ -31,6 +31,7 @@ namespace kaTe {
 
         auto SetWidth(Int32_T width) -> void { m_Width = width; }
         auto SetHeight(Int32_T height) -> void { m_Height = height; }
+        auto SetTitle(std::string_view name) -> void { m_Title = name; }
 
     private:
         std::string m_Title{};

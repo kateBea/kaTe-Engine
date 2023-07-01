@@ -91,4 +91,8 @@ namespace kaTe {
     auto OpenGLRenderer::DisableWireframeMode() -> void {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
+
+    auto OpenGLRenderer::OnEvent(Event& event) -> void {
+
+    }
 }

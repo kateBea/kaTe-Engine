@@ -51,9 +51,12 @@ namespace kaTe {
         switch(Renderer::GetActiveGraphicsAPI()) {
             case Renderer::GraphicsAPI::OPENGL_API:
                 m_CurrentGraphicsAPIIsOpenGL = true;
+                m_Properties.SetTitle(fmt::format("kaTe Engine (OpenGL Version {}.{}.0)", KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR));
                 break;
             default:
                 m_CurrentGraphicsAPIIsOpenGL = false;
+                // TODO: query vulkan version
+                m_Properties.SetTitle(fmt::format("kaTe Engine (Vulkan Version 1.3)"));
                 break;
         }
 

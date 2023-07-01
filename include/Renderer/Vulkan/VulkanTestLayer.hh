@@ -24,7 +24,7 @@ namespace kaTe {
         }
 
         auto OnDetach() -> void override {
-
+            m_VertexBuffer->OnRelease();
         }
 
         auto OnUpdate() -> void override {

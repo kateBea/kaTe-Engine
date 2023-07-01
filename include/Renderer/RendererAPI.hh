@@ -8,6 +8,7 @@
 
 #include <Tools/Common.hh>
 
+#include "Core/Events/Event.hh"
 #include <Renderer/Buffers/IndexBuffer.hh>
 #include <Renderer/Buffers/VertexBuffer.hh>
 #include <Renderer/Material/BaseShader.hh>
@@ -54,6 +55,8 @@ namespace kaTe {
 
         KT_NODISCARD virtual auto GetSwapChain() -> std::any = 0;
         KT_NODISCARD virtual auto GetCommandBuffers() -> std::any = 0;
+
+        virtual auto OnEvent(Event& event) -> void = 0;
 
         virtual ~RendererAPI() = default;
     public:

@@ -74,6 +74,8 @@ namespace kaTe {
          * Releases resources from this Vertex buffer
          * */
         ~OpenGLVertexBuffer() override { glDeleteBuffers(1, &m_Id); }
+
+        auto OnRelease() -> void override {}
     public:
         // Forbidden operations
         OpenGLVertexBuffer(const OpenGLVertexBuffer & other) = delete;

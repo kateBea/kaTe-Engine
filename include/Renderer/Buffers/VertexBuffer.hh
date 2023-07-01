@@ -217,6 +217,8 @@ namespace kaTe {
 
         KT_NODISCARD static auto CreateBuffer(const std::vector<float>& data) -> std::shared_ptr<VertexBuffer>;
 
+        virtual auto OnRelease() -> void = 0;
+
     protected:
         UInt32_T m_Id{};
         UInt64_T m_Size{};

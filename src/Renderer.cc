@@ -204,4 +204,8 @@ namespace kaTe {
     auto Renderer::GetCommandBuffers() -> std::any {
         return s_ActiveRendererAPI->GetCommandBuffers();
     }
+
+    auto Renderer::OnEvent(Event& event) -> void {
+        s_ActiveRendererAPI->OnEvent(event);
+    }
 }

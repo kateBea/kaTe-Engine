@@ -36,7 +36,9 @@ namespace kaTe {
         static auto GetDefaultBindingDescriptions() -> std::vector<VkVertexInputBindingDescription>&;
         static auto GetDefaultAttributeDescriptions() -> std::vector<VkVertexInputAttributeDescription>&;
 
-        ~VulkanVertexBuffer() override;
+        auto OnRelease() -> void override;
+
+        ~VulkanVertexBuffer() override = default;
     public:
         auto SetBindingDescriptions() -> void;
         auto SetAttributeDescriptions() -> void;

@@ -48,6 +48,8 @@ namespace kaTe {
 
         static auto ShutDown() -> void;
 
+        static auto OnEvent(Event &event) -> void;
+
         static auto OnWindowResize(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void;
 
         static auto GetActiveGraphicsAPI() -> GraphicsAPI { return s_ActiveAPI;  }

@@ -16,6 +16,9 @@
 #include "Core/Application.hh"
 #include "Renderer/RendererAPI.hh"
 
+#include <Core/Events/Event.hh>
+#include <Core/Events/AppEvents.hh>
+
 #include <Platform/Window/MainWindow.hh>
 #include "Renderer/Buffers/IndexBuffer.hh"
 #include "Renderer/Buffers/VertexBuffer.hh"
@@ -46,15 +49,9 @@ namespace kaTe {
 
         m_WindowExtent = m_Window->GetExtent();
 
-        CreateSwapChain();
-        CreateImageViews();
-        CreateRenderPass();
-        CreateDepthResources();
-        CreateFrameBuffers();
-        CreateSyncObjects();
-
+        InitSwapChain();
         CreatePipelineLayout();
-        RecreateSwapChain();
+        CreatePipeline();
         CreateCommandBuffers();
     }
 
@@ -118,6 +115,7 @@ namespace kaTe {
             RecreateSwapChain();
             return;
         }
+
         else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
             throw std::runtime_error("failed to acquire swap chain image!");
         }
@@ -148,6 +146,17 @@ namespace kaTe {
 
     auto VulkanRenderer::SetDefaultShader(const Path_T& vertShaderPath, const Path_T& pixelShaderPath) -> void {
 
+    }
+
+    auto VulkanRenderer::OnEvent(Event& event) -> void {
+        EventDispatcher dispatcher{ event };
+        dispatcher.Forward<WindowResizedEvent>(KT_BIND_EVENT_FUNC(VulkanRenderer::OnWindowResize));
+        RecreateSwapChain();
+    }
+
+    auto VulkanRenderer::OnWindowResize(WindowResizedEvent& event) -> bool {
+        m_WindowExtent = { static_cast<uint32_t>(event.GetWidth()), static_cast<uint32_t>(event.GetHeight()) };
+        return false;
     }
 
     auto VulkanRenderer::CreatePipelineLayout() -> void {
@@ -232,7 +241,6 @@ namespace kaTe {
             extent = m_Window->GetExtent();
             glfwWaitEvents();
         }
-
 
         DestroySwapChain();
         InitSwapChain();
@@ -1004,6 +1012,11 @@ namespace kaTe {
     }
 
     auto VulkanRenderer::CreateSyncObjects() -> void {
+        m_ImageAvailableSemaphores = {};
+        m_RenderFinishedSemaphores = {};
+        m_InFlightFences = {};
+        m_ImagesInFlight = {};
+
         m_ImageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
         m_RenderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
         m_InFlightFences.resize(MAX_FRAMES_IN_FLIGHT);

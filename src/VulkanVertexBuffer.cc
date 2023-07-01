@@ -135,7 +135,7 @@ namespace kaTe {
         vkBindBufferMemory(renderer.m_Device, buffer, bufferMemory, 0);
     }
 
-    VulkanVertexBuffer::~VulkanVertexBuffer() {
+    auto VulkanVertexBuffer::OnRelease() -> void {
         VulkanRenderer& renderer{ *dynamic_cast<VulkanRenderer*>(Renderer::GetCurrentRenderer()) };
 
         vkDestroyBuffer(renderer.m_Device, m_VertexBuffer, nullptr);
