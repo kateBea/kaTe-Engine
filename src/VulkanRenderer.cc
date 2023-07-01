@@ -29,7 +29,7 @@
 #include "Renderer/Vulkan/VulkanRenderer.hh"
 
 namespace kaTe {
-    static auto DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks *pAllocator) -> void {
+    static auto DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator) -> void {
         auto func{ (PFN_vkDestroyDebugUtilsMessengerEXT) vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT") };
 
         if (func != nullptr)
@@ -1233,7 +1233,6 @@ namespace kaTe {
         configInfo.DynamicStateInfo.pDynamicStates = configInfo.DynamicStateEnables.data();
         configInfo.DynamicStateInfo.dynamicStateCount = configInfo.DynamicStateEnables.size();
         configInfo.DynamicStateInfo.flags = 0;
-
 
         return configInfo;
     }

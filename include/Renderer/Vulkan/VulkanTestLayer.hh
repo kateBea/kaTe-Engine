@@ -8,6 +8,7 @@
 #include "Core/Layers/Layer.hh"
 #include "Renderer/Buffers/VertexBuffer.hh"
 #include <Renderer/Renderer.hh>
+#include <Renderer/RenderCommand.hh>
 
 namespace kaTe {
 
@@ -28,6 +29,7 @@ namespace kaTe {
         }
 
         auto OnUpdate() -> void override {
+            RenderCommand::SetClearColor(0.5f, 0.2f, 0.3f, 1.0f);
             Renderer::Submit(m_VertexBuffer);
         }
 
