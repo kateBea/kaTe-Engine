@@ -16,6 +16,8 @@
 #include <Core/Events/KeyEvents.hh>
 #include <Core/Events/MouseEvents.hh>
 
+#include "Renderer/Renderer.hh"
+#include "Renderer/Vulkan/VulkanContext.hh"
 #include <Platform/Window/MainWindow.hh>
 #include <Renderer/OpenGL/OpenGLContext.hh>
 #include <Renderer/RenderContext.hh>
@@ -45,12 +47,27 @@ namespace kaTe {
     auto MainWindow::Init() -> void {
         KATE_CORE_LOGGER_INFO("Main Window initialization");
         InitGLFW();
+
+        switch(Renderer::GetActiveGraphicsAPI()) {
+            case Renderer::GraphicsAPI::OPENGL_API:
+                m_CurrentGraphicsAPIIsOpenGL = true;
+                break;
+            default:
+                m_CurrentGraphicsAPIIsOpenGL = false;
+                break;
+        }
+
         KATE_CORE_LOGGER_INFO("Creating Window GLFW. Name '{}'. Dimensions [{}, {}]",
                               m_Properties.GetName(), m_Properties.GetWidth(), m_Properties.GetHeight());
 
-        // Hints
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        if (!m_CurrentGraphicsAPIIsOpenGL) {
+            // Because GLFW was originally designed to create an OpenGL context,
+            // we need to tell it to not create an OpenGL context with a subsequent call
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        }
 
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        
         m_Window = glfwCreateWindow(m_Properties.GetWidth(), m_Properties.GetHeight(), m_Properties.GetName().c_str(), nullptr, nullptr);
         m_WindowCreateSuccess = m_Window != nullptr;
         KT_ASSERT(m_WindowCreateSuccess, "Failed to create the Window GLFW");
@@ -60,7 +77,10 @@ namespace kaTe {
         m_Context->Init(GetNativeWindow());
 
         SpawnOnCenter();
-        EnableVSync();
+
+        if (m_CurrentGraphicsAPIIsOpenGL)
+            EnableVSync();
+
         SetCallbacks();
     }
 
@@ -187,8 +207,15 @@ namespace kaTe {
 
 
     auto MainWindow::GetActiveAPIContext() -> RenderContext* {
-        KATE_CORE_LOGGER_WARN("Default Context is for OpenGL");
-        return new OpenGLContext();
+        switch(Renderer::GetActiveGraphicsAPI()) {
+            case Renderer::GraphicsAPI::OPENGL_API:
+                return new OpenGLContext();
+            case Renderer::GraphicsAPI::VULKAN_API:
+                return new VulkanContext();
+            default:
+                KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API");
+                return nullptr;
+        }
     }
 
     auto MainWindow::InitGLFW() -> void {

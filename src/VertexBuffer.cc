@@ -5,6 +5,7 @@
 #include <Core/Logger.hh>
 
 #include "Renderer/Buffers/VertexBuffer.hh"
+#include "Renderer/Vulkan/VulkanVertexBuffer.hh"
 #include <Renderer/OpenGL/OpenGLVertexBuffer.hh>
 
 #include <Renderer/Renderer.hh>
@@ -14,6 +15,8 @@ namespace kaTe {
         switch(Renderer::GetActiveGraphicsAPI()) {
             case Renderer::GraphicsAPI::OPENGL_API:
                 return std::make_shared<OpenGLVertexBuffer>(data);
+            case Renderer::GraphicsAPI::VULKAN_API:
+                return std::make_shared<VulkanVertexBuffer>(data);
             default:
                 KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API");
                 return nullptr;

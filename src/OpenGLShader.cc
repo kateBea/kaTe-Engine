@@ -46,7 +46,7 @@ namespace kaTe {
         auto vertexShaderData{ GetFileData(vShaderPath) };
         auto fragmentShaderData{ GetFileData(fShaderPath) };
 
-        build(vertexShaderData.c_str() , fragmentShaderData.c_str());
+        Build(vertexShaderData.c_str(), fragmentShaderData.c_str());
     }
 
     auto OpenGLShader::GetFileData(const std::filesystem::path &path) -> std::string {
@@ -58,7 +58,7 @@ namespace kaTe {
         return std::string { std::istreambuf_iterator<std::string::value_type>(file), std::istreambuf_iterator<std::string::value_type>() };
     }
 
-    auto OpenGLShader::compile(const char* content, GLenum shaderType) -> UInt32_T {
+    auto OpenGLShader::Compile(const char* content, GLenum shaderType) -> UInt32_T {
         UInt32_T shaderId{};
         shaderId = glCreateShader(shaderType);
         glShaderSource(shaderId, 1, &content, nullptr);
@@ -67,31 +67,29 @@ namespace kaTe {
         return shaderId;
     }
 
-    auto OpenGLShader::build(const char* vShader, const char* fShader) const -> void {
-        UInt32_T vertexShaderID{ compile(vShader, GL_VERTEX_SHADER) };
-        showShaderStatus(vertexShaderID, ShaderType::VERTEX_SHADER_TYPE, GL_COMPILE_STATUS);
+    auto OpenGLShader::Build(const char* vShader, const char* fShader) const -> void {
+        UInt32_T vertexShaderID{ Compile(vShader, GL_VERTEX_SHADER) };
+        ShowShaderStatus(vertexShaderID, ShaderType::VERTEX_SHADER_TYPE, GL_COMPILE_STATUS);
 
-        UInt32_T pixelShaderID{ compile(fShader, GL_FRAGMENT_SHADER) };
-        showShaderStatus(pixelShaderID, ShaderType::FRAGMENT_SHADER_TYPE, GL_COMPILE_STATUS);
+        UInt32_T pixelShaderID{ Compile(fShader, GL_FRAGMENT_SHADER) };
+        ShowShaderStatus(pixelShaderID, ShaderType::FRAGMENT_SHADER_TYPE, GL_COMPILE_STATUS);
 
         // Create and link program against compiled Shader binaries
-        glAttachShader(getProgram(), vertexShaderID);
-        glAttachShader(getProgram(), pixelShaderID);
-        glLinkProgram(getProgram());
+        glAttachShader(GetProgram(), vertexShaderID);
+        glAttachShader(GetProgram(), pixelShaderID);
+        glLinkProgram(GetProgram());
 
-        showProgramStatus(GL_LINK_STATUS);
+        ShowProgramStatus(GL_LINK_STATUS);
 
-        // cleanup
-        KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME_GREEN, "Performing binaries cleanup...\n");
-        glDetachShader(getProgram(), vertexShaderID);
-        glDetachShader(getProgram(), pixelShaderID);
+        glDetachShader(GetProgram(), vertexShaderID);
+        glDetachShader(GetProgram(), pixelShaderID);
         glDeleteShader(vertexShaderID);
         glDeleteShader(pixelShaderID);
     }
 
     auto OpenGLShader::SetUniformBool(std::string_view name, bool value) -> void {
         Bind();
-        auto ret{ glGetUniformLocation(getProgram(), name.data()) };
+        auto ret{ glGetUniformLocation(GetProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
         else
@@ -100,7 +98,7 @@ namespace kaTe {
 
     auto OpenGLShader::SetUniformInt(std::string_view name, Int32_T value) -> void {
         Bind();
-        auto ret{ glGetUniformLocation(getProgram(), name.data()) };
+        auto ret{ glGetUniformLocation(GetProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
         else
@@ -109,14 +107,14 @@ namespace kaTe {
 
     auto OpenGLShader::SetUniformFloat(std::string_view name, float value) -> void {
         Bind();
-        auto ret{ glGetUniformLocation(getProgram(), name.data()) };
+        auto ret{ glGetUniformLocation(GetProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
         else
             glUniform1f(ret, value);
     }
 
-    auto OpenGLShader::showShaderStatus(UInt32_T objectId, ShaderType type, GLenum status) const -> void {
+    auto OpenGLShader::ShowShaderStatus(UInt32_T objectId, ShaderType type, GLenum status) -> void {
         Int32_T success{};
 
         glGetShaderiv(objectId, status, &success);
@@ -128,16 +126,16 @@ namespace kaTe {
                     std::string outStr(length, '\0');
 
                     glGetShaderInfoLog(objectId, length, &length, outStr.data());
-                    KATE_CORE_LOGGER_ERROR("Error on {} shader compilation", getShaderTypeStr(type));
+                    KATE_CORE_LOGGER_ERROR("Error on {} shader compilation", GetShaderTypeStr(type));
                     KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_RED, "\n{}", outStr);
                 }
                 else
-                    KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME_GREEN, "Shader compilation successful. Type: {}\n", getShaderTypeStr(type));
+                    KT_COLOR_PRINT_FORMATTED(KT_FMT_COLOR_LIME_GREEN, "Shader compilation successful. Type: {}\n", GetShaderTypeStr(type));
                 break;
         }
     }
 
-    auto OpenGLShader::showProgramStatus(GLenum status) const -> void {
+    auto OpenGLShader::ShowProgramStatus(GLenum status) const -> void {
         std::string outStr(1024, '\0');
         Int32_T success{};
 
@@ -158,7 +156,7 @@ namespace kaTe {
 
     auto OpenGLShader::SetUniformMat4(std::string_view name, const glm::mat4& value) -> void {
         Bind();
-        auto ret{ glGetUniformLocation(getProgram(), name.data()) };
+        auto ret{ glGetUniformLocation(GetProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
         else
@@ -179,7 +177,7 @@ namespace kaTe {
 
     auto OpenGLShader::SetUniformVec3(std::string_view name, const glm::vec3 &value) -> void {
         Bind();
-        auto ret{ glGetUniformLocation(getProgram(), name.data()) };
+        auto ret{ glGetUniformLocation(GetProgram(), name.data()) };
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
         else {
@@ -190,7 +188,7 @@ namespace kaTe {
 
     auto OpenGLShader::SetUniformVec4(std::string_view name, const glm::vec4& value) -> void {
         Bind();
-        auto ret{ glGetUniformLocation(getProgram(), name.data()) };
+        auto ret{ glGetUniformLocation(GetProgram(), name.data()) };
 
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
@@ -201,7 +199,7 @@ namespace kaTe {
     }
 
     OpenGLShader::OpenGLShader(OpenGLShader &&other) noexcept
-        :   m_Id{ other.getProgram() }
+        :   m_Id{other.GetProgram() }
     {
         // Assign 0 so that it can be safely passed to glDeleteProgram()
         // when the destructor is called. We avoid deleting a valid program this way
@@ -209,14 +207,14 @@ namespace kaTe {
     }
 
     auto OpenGLShader::operator=(OpenGLShader &&other) noexcept -> OpenGLShader & {
-        m_Id = other.getProgram();
+        m_Id = other.GetProgram();
         other.m_Id = 0;
         return *this;
     }
 
     auto OpenGLShader::SetUniformVec2(std::string_view name, const glm::vec2 &vec) -> void {
         Bind();
-        auto ret{ glGetUniformLocation(getProgram(), name.data()) };
+        auto ret{ glGetUniformLocation(GetProgram(), name.data()) };
 
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);
@@ -228,7 +226,7 @@ namespace kaTe {
 
     auto OpenGLShader::SetUniformMat3(std::string_view name, const glm::mat3& value) -> void {
         Bind();
-        auto ret{ glGetUniformLocation(getProgram(), name.data()) };
+        auto ret{ glGetUniformLocation(GetProgram(), name.data()) };
 
         if (ret == -1)
             KATE_CORE_LOGGER_ERROR("Error: [{}] is not a valid uniform name for this program shader", name);

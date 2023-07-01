@@ -18,17 +18,26 @@
 namespace kaTe {
 
     struct PipelineConfigInfo {
-        VkViewport                              viewport{};
-        VkRect2D                                scissor{};
+        VkPipelineViewportStateCreateInfo       ViewportInfo{};
         VkPipelineInputAssemblyStateCreateInfo  inputAssemblyInfo{};
         VkPipelineRasterizationStateCreateInfo  rasterizationInfo{};
         VkPipelineMultisampleStateCreateInfo    multisampleInfo{};
         VkPipelineColorBlendAttachmentState     colorBlendAttachment{};
         VkPipelineColorBlendStateCreateInfo     colorBlendInfo{};
         VkPipelineDepthStencilStateCreateInfo   depthStencilInfo{};
-        VkPipelineLayout                        pipelineLayout{ nullptr };
-        VkRenderPass                            renderPass{ nullptr };
-        UInt32_T                                subpass{ 0 };
+        VkPipelineLayout                        pipelineLayout{};
+        std::vector<VkDynamicState>             DynamicStateEnables{};
+        VkPipelineDynamicStateCreateInfo        DynamicStateInfo{};
+        VkRenderPass                            renderPass{};
+        UInt32_T                                subpass{};
+
+        explicit PipelineConfigInfo() = default;
+
+        PipelineConfigInfo(PipelineConfigInfo&& other) = default;
+        auto operator=(PipelineConfigInfo&& other) -> PipelineConfigInfo& = default;
+
+        PipelineConfigInfo(const PipelineConfigInfo&) = delete;
+        auto operator=(const PipelineConfigInfo&) -> PipelineConfigInfo& = delete;
     };
 
     class VulkanPipeline {
@@ -37,11 +46,13 @@ namespace kaTe {
         using Cont_T = std::vector<char>;
 
         VulkanPipeline(std::shared_ptr<VulkanDevice> dev, const Path_T& vPath, const Path_T& fPath, const PipelineConfigInfo& config);
-        KT_NODISCARD static auto DefaultPipelineConfigInfo(UInt32_T width, UInt32_T height) -> PipelineConfigInfo;
+        KT_NODISCARD static auto GetDefaultPipelineConfigInfo() -> PipelineConfigInfo;
 
         auto Bind(VkCommandBuffer commandBuffer) -> void;
 
-        ~VulkanPipeline();
+        auto OnDestroy() -> void;
+
+        ~VulkanPipeline() = default;
     public:
         // Forbidden operations
         VulkanPipeline(const VulkanPipeline&) = delete;
@@ -54,7 +65,7 @@ namespace kaTe {
         auto CreateShaderModule(const Cont_T& srcCode, VkShaderModule* shaderModule) -> void;
         auto CreateGraphicsPipeline(const Path_T &vPath, const Path_T &fPath, const PipelineConfigInfo& config) -> void;
 
-        std::shared_ptr<VulkanDevice>   m_Device;
+        std::shared_ptr<VulkanDevice>   m_Device{};
         VkPipeline                      m_GraphicsPipeline{};
         VkShaderModule                  m_VertShaderModule{};
         VkShaderModule                  m_FragShaderModule{};

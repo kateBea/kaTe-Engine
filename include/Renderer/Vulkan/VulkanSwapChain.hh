@@ -18,8 +18,9 @@ namespace kaTe {
         // Submit at most 2 commands at once to the device command queues
         static constexpr Int32_T MAX_FRAMES_IN_FLIGHT{ 2 };
 
+        explicit VulkanSwapChain() = default;
+
         VulkanSwapChain(std::shared_ptr<VulkanDevice> device, VkExtent2D windowExtent);
-        ~VulkanSwapChain();
 
         KT_NODISCARD auto GetFrameBuffer(std::size_t index) -> VkFramebuffer { return m_SwapChainFrameBuffers[index]; }
         KT_NODISCARD auto GetRenderPass() -> VkRenderPass { return m_RenderPass; }
@@ -34,7 +35,11 @@ namespace kaTe {
 
         KT_NODISCARD auto FindDepthFormat() -> VkFormat;
         KT_NODISCARD auto AcquireNextImage(UInt32_T* imageIndex) -> VkResult;
-        KT_NODISCARD auto SubmitCommandBuffers(const VkCommandBuffer *buffers, UInt32_T* imageIndex) -> VkResult;
+        KT_NODISCARD auto SubmitCommandBuffers(const VkCommandBuffer *buffers, const UInt32_T *imageIndex) -> VkResult;
+
+        auto OnDestroy() -> void;
+
+        ~VulkanSwapChain() = default;
     public:
         // Forbidden operations
         VulkanSwapChain(const VulkanSwapChain &) = delete;
@@ -47,12 +52,12 @@ namespace kaTe {
         auto CreateRenderPass() -> void;
         auto CreateFrameBuffers() -> void;
         auto CreateSyncObjects() -> void;
+        auto OnCreate() -> void;
 
-        // Helper functions
-        KT_NODISCARD auto ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats) -> VkSurfaceFormatKHR;
-        KT_NODISCARD auto ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) -> VkPresentModeKHR;
+        KT_NODISCARD static auto ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats) -> VkSurfaceFormatKHR;
+        KT_NODISCARD static auto ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) -> VkPresentModeKHR;
         KT_NODISCARD auto ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) -> VkExtent2D;
-
+    private:
         VkFormat                        m_SwapChainImageFormat{};
         VkExtent2D                      m_SwapChainExtent{};
 
@@ -74,9 +79,9 @@ namespace kaTe {
         std::vector<VkSemaphore>        m_RenderFinishedSemaphores{};
         std::vector<VkFence>            m_InFlightFences{};
         std::vector<VkFence>            m_ImagesInFlight{};
-        std::size_t                     m_CurrentFrame{ 0 };
+        std::size_t                     m_CurrentFrame{};
     };
 
-}
+}  // kaTe
 
 #endif

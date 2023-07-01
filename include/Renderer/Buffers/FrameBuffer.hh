@@ -15,8 +15,16 @@ namespace kaTe {
         Int32_T height{};
         UInt32_T samples{};
 
-        // If it's true, we render to the screen and not to a specific Viewport
-        bool swapChainTarget{};
+        /**
+         * NOTES:
+         * Vulkan does not have the concept of a "default framebuffer", hence it
+         * requires an infrastructure that will own the buffers we will render
+         * to before we visualize them on the screen.
+         * */
+
+        // If it's true, we render to the default frame buffer which is going to
+        // be the whole window and not to a specific Viewport
+        bool UseDefaultFrameBufferTarget{};
     };
 
     class FrameBuffer {

@@ -20,26 +20,28 @@
 namespace kaTe {
     class VulkanVertexBuffer : public VertexBuffer {
     public:
-        explicit VulkanVertexBuffer(std::shared_ptr<VulkanDevice> device, const std::vector<float>& data);
+        explicit VulkanVertexBuffer(const std::vector<float> &data, const BufferLayout &layout = s_Layout);
 
-        // TODO: temporary, VertexBuffer base should take any type of param that is necessary for binding the buffer
         auto Bind(VkCommandBuffer commandBuffer) const -> void;
-        auto Draw(VkCommandBuffer commandBuffer) const -> void;
 
         auto Bind() const -> void override {}
         auto Unbind() const -> void override {}
 
         auto SetBufferLayout(const BufferLayout& layout) -> void override { m_Layout = layout; }
         KT_NODISCARD auto GetBufferLayout() const -> const BufferLayout& override { return GetDefaultBufferLayout(); }
+        KT_NODISCARD auto GetVertexCount() const -> ULongLong_T { return m_VertexCount; }
 
-        auto SetBindingDescriptions() -> std::vector<VkVertexInputBindingDescription>&;
-        auto SetAttributeDescriptions() -> std::vector<VkVertexInputAttributeDescription>&;
+        auto GetBindingDescriptions() -> std::vector<VkVertexInputBindingDescription>& { return m_BindingDesc; }
+        auto GetAttributeDescriptions() -> std::vector<VkVertexInputAttributeDescription>& { return m_AttributeDesc; }
 
         static auto GetDefaultBindingDescriptions() -> std::vector<VkVertexInputBindingDescription>&;
         static auto GetDefaultAttributeDescriptions() -> std::vector<VkVertexInputAttributeDescription>&;
 
         ~VulkanVertexBuffer() override;
     public:
+        auto SetBindingDescriptions() -> void;
+        auto SetAttributeDescriptions() -> void;
+
         VulkanVertexBuffer(const VulkanVertexBuffer&) = delete;
         auto operator=(const VulkanVertexBuffer&) -> VulkanVertexBuffer& = delete;
 
@@ -47,6 +49,7 @@ namespace kaTe {
         auto operator=(VulkanVertexBuffer&&) -> VulkanVertexBuffer& = delete;
     private:
         auto SetVertexData(const std::vector<float>& vertices) -> void;
+        auto CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) -> void;
     private:
         inline static std::vector<VkVertexInputBindingDescription>    s_BindingDesc{};
         inline static std::vector<VkVertexInputAttributeDescription>  s_AttributeDesc{};

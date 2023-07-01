@@ -16,7 +16,9 @@
 #include <functional>
 #include <cstdint>
 #include <filesystem>
+#include <fstream>
 #include <utility>
+#include <vector>
 
 // Third-Party Libraries
 #include <GL/glew.h>
@@ -253,6 +255,8 @@ namespace kaTe {
     using Long_T = unsigned long;
     using LongLong_T = long long;
 
+    using CharArray = std::vector<char>;
+
     /**
      * Transforms wide char strings to byte char strings. On Windows
      * std::filesystem::string returns a string of wide char types (wchar_t),
@@ -283,7 +287,7 @@ namespace kaTe {
     }
 
     template<typename GLMMatrixType>
-    auto PrintMatrix(const GLMMatrixType& mat) -> void {
+    inline auto PrintMatrix(const GLMMatrixType& mat) -> void {
         UInt32_T rowIdx{};
         UInt32_T colIdx{};
 
@@ -293,6 +297,15 @@ namespace kaTe {
 
             KT_PRINT_FORMATTED("\n");
         }
+    }
+
+    inline auto GetFileData(const Path_T& path) -> CharArray {
+        std::ifstream file{ path, std::ios::binary };
+
+        if (!file.is_open())
+            throw std::runtime_error("Failed to open SPR-V file");
+
+        return CharArray{ std::istreambuf_iterator<CharArray::value_type>(file), std::istreambuf_iterator<CharArray::value_type>() };
     }
 }
 

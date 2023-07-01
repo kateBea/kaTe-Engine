@@ -19,9 +19,10 @@
 
 #include <Core/Application.hh>
 
+#include "Renderer/Renderer.hh"
 #include <Core/Layers/ImGuiLayer.hh>
-#include <Platform/InputManager.hh>
 #include <Editor/Editor.hh>
+#include <Platform/InputManager.hh>
 
 namespace kaTe {
     ImGuiLayer::ImGuiLayer() noexcept
@@ -57,10 +58,21 @@ namespace kaTe {
             // We expect the native window for Linux Window to be a GLFWwindow*
             GLFWwindow* window{ std::any_cast<GLFWwindow*>(Application::Get().GetMainWindow().GetNativeWindow()) };
 
-            // Setup Platform/Renderer backends
-            ImGui_ImplGlfw_InitForOpenGL(window, true);
-            const std::string openglVersion{ fmt::format("#version {}{}0", KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR) };
-            ImGui_ImplOpenGL3_Init(openglVersion.c_str());
+            switch(Renderer::GetActiveGraphicsAPI()) {
+                case Renderer::GraphicsAPI::OPENGL_API:
+                    m_UseOpenGL = true;
+                    break;
+                default:
+                    m_UseOpenGL = false;
+                    break;
+            }
+
+            if (m_UseOpenGL) {
+                // Setup Platform/Renderer backends
+                ImGui_ImplGlfw_InitForOpenGL(window, true);
+                const std::string openglVersion{ fmt::format("#version {}{}0", KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR) };
+                ImGui_ImplOpenGL3_Init(openglVersion.c_str());
+            }
         }
         catch (const std::bad_any_cast& exception) {
             KATE_APP_LOGGER_CRITICAL("Exception thrown std::any_cast. What: {}", exception.what());

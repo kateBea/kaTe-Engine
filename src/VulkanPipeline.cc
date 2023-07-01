@@ -65,24 +65,14 @@ namespace kaTe {
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 
-        if (!m_Device->DeviceSupportsDynamicVertexBuffers()) {
-            auto bindingDesc{ VulkanVertexBuffer::GetDefaultBindingDescriptions() };
-            auto attributeDesc{ VulkanVertexBuffer::GetDefaultAttributeDescriptions() };
+        auto bindingDesc{ VulkanVertexBuffer::GetDefaultBindingDescriptions() };
+        auto attributeDesc{ VulkanVertexBuffer::GetDefaultAttributeDescriptions() };
 
-            vertexInputInfo.vertexAttributeDescriptionCount = bindingDesc.size();
-            vertexInputInfo.vertexBindingDescriptionCount = attributeDesc.size();
-            vertexInputInfo.pVertexAttributeDescriptions = attributeDesc.data();
-            vertexInputInfo.pVertexBindingDescriptions = bindingDesc.data();
-        }
+        vertexInputInfo.vertexBindingDescriptionCount = bindingDesc.size();
+        vertexInputInfo.vertexAttributeDescriptionCount = attributeDesc.size();
 
-        VkPipelineViewportStateCreateInfo viewportInfo{};
-        viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-        viewportInfo.viewportCount = 1;
-        viewportInfo.pViewports = &config.viewport;
-        viewportInfo.scissorCount = 1;
-        viewportInfo.pScissors = &config.scissor;
-        viewportInfo.pNext = nullptr;       // Optional since we are already using brace-init lis
-        viewportInfo.flags = 0;             // Optional since we are already using brace-init lis
+        vertexInputInfo.pVertexAttributeDescriptions = attributeDesc.data();
+        vertexInputInfo.pVertexBindingDescriptions = bindingDesc.data();
 
         VkGraphicsPipelineCreateInfo pipelineInfo{};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -90,19 +80,17 @@ namespace kaTe {
         pipelineInfo.pStages =  shaderStages.data();
         pipelineInfo.pVertexInputState = &vertexInputInfo;
         pipelineInfo.pInputAssemblyState = &config.inputAssemblyInfo;
-        pipelineInfo.pViewportState = &viewportInfo;
+        pipelineInfo.pViewportState = &config.ViewportInfo;
         pipelineInfo.pRasterizationState = &config.rasterizationInfo;
         pipelineInfo.pMultisampleState = &config.multisampleInfo;
         pipelineInfo.pColorBlendState = &config.colorBlendInfo;
         pipelineInfo.pDepthStencilState = &config.depthStencilInfo;
-        pipelineInfo.pDynamicState = nullptr;
-
         pipelineInfo.layout = config.pipelineLayout;
         pipelineInfo.renderPass = config.renderPass;
         pipelineInfo.subpass = config.subpass;
-
         pipelineInfo.basePipelineIndex = -1;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+        pipelineInfo.pDynamicState = &config.DynamicStateInfo;
 
         if (vkCreateGraphicsPipelines(m_Device->GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS)
             throw std::runtime_error("Failed to create Graphics pipeline");
@@ -121,66 +109,62 @@ namespace kaTe {
     }
 
 
-    auto VulkanPipeline::DefaultPipelineConfigInfo(UInt32_T width, UInt32_T height) -> PipelineConfigInfo {
+    auto VulkanPipeline::GetDefaultPipelineConfigInfo() -> PipelineConfigInfo {
         PipelineConfigInfo configInfo{};
 
         configInfo.inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-
         // Every three vertices are group together into a separate triangle
         configInfo.inputAssemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-
         configInfo.inputAssemblyInfo.primitiveRestartEnable = VK_FALSE;
 
-        configInfo.viewport.x = 0.0f;
-        configInfo.viewport.y = 0.0f;
-        configInfo.viewport.width = static_cast<float>(width);
-        configInfo.viewport.height = static_cast<float>(height);
-        configInfo.viewport.minDepth = 0.0f;
-        configInfo.viewport.maxDepth = 1.0f;
+        configInfo.ViewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+        configInfo.ViewportInfo.viewportCount = 1;
+        configInfo.ViewportInfo.pViewports = nullptr;
+        configInfo.ViewportInfo.scissorCount = 1;
+        configInfo.ViewportInfo.pScissors = nullptr;
 
-        configInfo.scissor.offset = { 0, 0 };
-        configInfo.scissor.extent = { width, height };
 
+        constexpr float GPU_STANDARD_LINE_WIDTH{ 1.0f };
         configInfo.rasterizationInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
         configInfo.rasterizationInfo.depthClampEnable = VK_FALSE;
-        configInfo.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
+        configInfo.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE; // requires extension
         configInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
-        configInfo.rasterizationInfo.lineWidth = 1.0f;
-        configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
+        configInfo.rasterizationInfo.lineWidth = configInfo.rasterizationInfo.polygonMode == VK_POLYGON_MODE_LINE ? GPU_STANDARD_LINE_WIDTH : 0.0f; // The maximum line width that is supported depends on the hardware, and any line thicker than 1.0f requires you to enable the wideLines GPU feature.
+        configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT;
         configInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_CLOCKWISE;
         configInfo.rasterizationInfo.depthBiasEnable = VK_FALSE;
-        configInfo.rasterizationInfo.depthBiasConstantFactor = 0.0f;  // Optional
-        configInfo.rasterizationInfo.depthBiasClamp = 0.0f;           // Optional
-        configInfo.rasterizationInfo.depthBiasSlopeFactor = 0.0f;     // Optional
+        configInfo.rasterizationInfo.depthBiasConstantFactor = 0.0f;
+        configInfo.rasterizationInfo.depthBiasClamp = 0.0f;
+        configInfo.rasterizationInfo.depthBiasSlopeFactor = 0.0f;
+
 
         configInfo.multisampleInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
         configInfo.multisampleInfo.sampleShadingEnable = VK_FALSE;
         configInfo.multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
-        configInfo.multisampleInfo.minSampleShading = 1.0f;           // Optional
-        configInfo.multisampleInfo.pSampleMask = nullptr;             // Optional
-        configInfo.multisampleInfo.alphaToCoverageEnable = VK_FALSE;  // Optional
-        configInfo.multisampleInfo.alphaToOneEnable = VK_FALSE;       // Optional
+        configInfo.multisampleInfo.minSampleShading = 1.0f;             // Optional
+        configInfo.multisampleInfo.pSampleMask = nullptr;               // Optional
+        configInfo.multisampleInfo.alphaToCoverageEnable = VK_FALSE;    // Optional
+        configInfo.multisampleInfo.alphaToOneEnable = VK_FALSE;         // Optional
 
-        configInfo.colorBlendAttachment.colorWriteMask =
-                VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT |
-                VK_COLOR_COMPONENT_A_BIT;
-        configInfo.colorBlendAttachment.blendEnable = VK_FALSE;
-        configInfo.colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE;   // Optional
-        configInfo.colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO;  // Optional
-        configInfo.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;              // Optional
-        configInfo.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;   // Optional
-        configInfo.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;  // Optional
-        configInfo.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;              // Optional
+        // Blending enabled by default
+        configInfo.colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        configInfo.colorBlendAttachment.blendEnable = VK_TRUE;
+        configInfo.colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+        configInfo.colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        configInfo.colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+        configInfo.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+        configInfo.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+        configInfo.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
 
         configInfo.colorBlendInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
         configInfo.colorBlendInfo.logicOpEnable = VK_FALSE;
-        configInfo.colorBlendInfo.logicOp = VK_LOGIC_OP_COPY;  // Optional
+        configInfo.colorBlendInfo.logicOp = VK_LOGIC_OP_COPY;
         configInfo.colorBlendInfo.attachmentCount = 1;
         configInfo.colorBlendInfo.pAttachments = &configInfo.colorBlendAttachment;
-        configInfo.colorBlendInfo.blendConstants[0] = 0.0f;  // Optional
-        configInfo.colorBlendInfo.blendConstants[1] = 0.0f;  // Optional
-        configInfo.colorBlendInfo.blendConstants[2] = 0.0f;  // Optional
-        configInfo.colorBlendInfo.blendConstants[3] = 0.0f;  // Optional
+        configInfo.colorBlendInfo.blendConstants[0] = 0.0f;
+        configInfo.colorBlendInfo.blendConstants[1] = 0.0f;
+        configInfo.colorBlendInfo.blendConstants[2] = 0.0f;
+        configInfo.colorBlendInfo.blendConstants[3] = 0.0f;
 
         configInfo.depthStencilInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
         configInfo.depthStencilInfo.depthTestEnable = VK_TRUE;
@@ -193,13 +177,14 @@ namespace kaTe {
         configInfo.depthStencilInfo.front = {};  // Optional
         configInfo.depthStencilInfo.back = {};   // Optional
 
-        return configInfo;
-    }
+        configInfo.DynamicStateEnables = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR, VK_DYNAMIC_STATE_LINE_WIDTH };
+        configInfo.DynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+        configInfo.DynamicStateInfo.pDynamicStates = configInfo.DynamicStateEnables.data();
+        configInfo.DynamicStateInfo.dynamicStateCount = configInfo.DynamicStateEnables.size();
+        configInfo.DynamicStateInfo.flags = 0;
 
-    VulkanPipeline::~VulkanPipeline() {
-        vkDestroyShaderModule(m_Device->GetDevice(), m_VertShaderModule, nullptr);
-        vkDestroyShaderModule(m_Device->GetDevice(), m_FragShaderModule, nullptr);
-        vkDestroyPipeline(m_Device->GetDevice(), m_GraphicsPipeline, nullptr);
+
+        return configInfo;
     }
 
     auto VulkanPipeline::Bind(VkCommandBuffer commandBuffer) -> void {
@@ -208,4 +193,12 @@ namespace kaTe {
 
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_GraphicsPipeline);
     }
+
+    auto VulkanPipeline::OnDestroy() -> void {
+        vkDestroyShaderModule(m_Device->GetDevice(), m_VertShaderModule, nullptr);
+        vkDestroyShaderModule(m_Device->GetDevice(), m_FragShaderModule, nullptr);
+        vkDestroyPipeline(m_Device->GetDevice(), m_GraphicsPipeline, nullptr);
+    }
+
+
 }

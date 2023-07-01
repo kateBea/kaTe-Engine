@@ -21,7 +21,7 @@ namespace kaTe {
         using ValuePtr_T = Value_T*;
 
     public:
-        Singleton() {
+        explicit Singleton() {
             KT_ASSERT(!s_Instance, "Singleton instance already exists!");
             s_Instance = static_cast<ValuePtr_T>(this);
         }
@@ -52,6 +52,6 @@ namespace kaTe {
         inline static ValuePtr_T s_Instance;
     };
 
-}   // END NAMESPACE kT
+}   // END NAMESPACE kaTe
 
 #endif // KATE_ENGINE_SINGLETON_HH

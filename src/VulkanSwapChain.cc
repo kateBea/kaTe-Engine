@@ -17,6 +17,10 @@ namespace kaTe {
     VulkanSwapChain::VulkanSwapChain(std::shared_ptr<VulkanDevice> deviceRef, VkExtent2D extent)
         :   m_Device{ std::move(deviceRef) }, m_WindowExtent{ extent }
     {
+        OnCreate();
+    }
+
+    auto VulkanSwapChain::OnCreate() -> void {
         CreateSwapChain();
         CreateImageViews();
         CreateRenderPass();
@@ -26,25 +30,12 @@ namespace kaTe {
     }
 
     auto VulkanSwapChain::AcquireNextImage(uint32_t* imageIndex) -> VkResult {
-        vkWaitForFences(
-                m_Device->GetDevice(),
-                1,
-                &m_InFlightFences[m_CurrentFrame],
-                VK_TRUE,
-                std::numeric_limits<uint64_t>::max());
-
-        VkResult result = vkAcquireNextImageKHR(
-                m_Device->GetDevice(),
-                m_SwapChain,
-                std::numeric_limits<uint64_t>::max(),
-                m_ImageAvailableSemaphores[m_CurrentFrame],  // must be a not signaled semaphore
-                VK_NULL_HANDLE,
-                imageIndex);
-
+        vkWaitForFences(m_Device->GetDevice(), 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, std::numeric_limits<UInt64_T>::max());
+        VkResult result{ vkAcquireNextImageKHR( m_Device->GetDevice(), m_SwapChain, std::numeric_limits<UInt32_T>::max(), m_ImageAvailableSemaphores[m_CurrentFrame],  /* must be a not signaled semaphore*/ VK_NULL_HANDLE, imageIndex) };
         return result;
     }
 
-    auto VulkanSwapChain::SubmitCommandBuffers(const VkCommandBuffer *buffers, uint32_t* imageIndex) -> VkResult {
+    auto VulkanSwapChain::SubmitCommandBuffers(const VkCommandBuffer* buffers, const UInt32_T* imageIndex) -> VkResult {
         if (m_ImagesInFlight[*imageIndex] != VK_NULL_HANDLE)
             vkWaitForFences(m_Device->GetDevice(), 1, &m_ImagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
 
@@ -54,59 +45,62 @@ namespace kaTe {
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
         std::array<VkSemaphore, 1> waitSemaphores{ m_ImageAvailableSemaphores[m_CurrentFrame] };
-        VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-        submitInfo.waitSemaphoreCount = 1;
+        std::array<VkPipelineStageFlags, 1> waitStages{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+        submitInfo.waitSemaphoreCount = waitSemaphores.size();
         submitInfo.pWaitSemaphores = waitSemaphores.data();
-        submitInfo.pWaitDstStageMask = waitStages;
+        submitInfo.pWaitDstStageMask = waitStages.data();
 
         submitInfo.commandBufferCount = 1;
         submitInfo.pCommandBuffers = buffers;
 
-        VkSemaphore signalSemaphores[]{ m_RenderFinishedSemaphores[m_CurrentFrame] };
-        submitInfo.signalSemaphoreCount = 1;
-        submitInfo.pSignalSemaphores = signalSemaphores;
+        std::array<VkSemaphore, 1> signalSemaphores{ m_RenderFinishedSemaphores[m_CurrentFrame] };
+        submitInfo.signalSemaphoreCount = signalSemaphores.size();
+        submitInfo.pSignalSemaphores = signalSemaphores.data();
 
         vkResetFences(m_Device->GetDevice(), 1, &m_InFlightFences[m_CurrentFrame]);
         if (vkQueueSubmit(m_Device->GetGraphicsQueue(), 1, &submitInfo, m_InFlightFences[m_CurrentFrame]) != VK_SUCCESS)
             throw std::runtime_error("failed to submit draw command buffer!");
 
 
-        VkPresentInfoKHR presentInfo = {};
+        VkPresentInfoKHR presentInfo{};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
-        presentInfo.waitSemaphoreCount = 1;
-        presentInfo.pWaitSemaphores = signalSemaphores;
+        presentInfo.waitSemaphoreCount = signalSemaphores.size();
+        presentInfo.pWaitSemaphores = signalSemaphores.data();
 
-        VkSwapchainKHR swapChains[] = {m_SwapChain};
-        presentInfo.swapchainCount = 1;
-        presentInfo.pSwapchains = swapChains;
-
+        std::array<VkSwapchainKHR, 1> swapChains{ m_SwapChain };
+        presentInfo.swapchainCount = swapChains.size();
+        presentInfo.pSwapchains = swapChains.data();
         presentInfo.pImageIndices = imageIndex;
 
-        auto result = vkQueuePresentKHR(m_Device->GetPresentQueue(), &presentInfo);
-
+        auto result{ vkQueuePresentKHR(m_Device->GetPresentQueue(), &presentInfo) };
         m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
         return result;
     }
 
     auto VulkanSwapChain::CreateSwapChain() -> void {
-        SwapChainSupportDetails swapChainSupport = m_Device->GetSwapChainSupport();
+        SwapChainSupportDetails swapChainSupport{ m_Device->GetSwapChainSupport() };
 
-        VkSurfaceFormatKHR surfaceFormat{ ChooseSwapSurfaceFormat(swapChainSupport.formats) };
-        VkPresentModeKHR presentMode{ ChooseSwapPresentMode(swapChainSupport.presentModes) };
-        VkExtent2D extent{ ChooseSwapExtent(swapChainSupport.capabilities) };
+        VkSurfaceFormatKHR surfaceFormat{ ChooseSwapSurfaceFormat(swapChainSupport.Formats) };
+        VkPresentModeKHR presentMode{ ChooseSwapPresentMode(swapChainSupport.PresentModes) };
+        VkExtent2D extent{ ChooseSwapExtent(swapChainSupport.Capabilities) };
 
-        std::uint32_t imageCount{ swapChainSupport.capabilities.minImageCount + 1 };
+        // We may sometimes have to wait on the driver to complete internal operations
+        // before we can acquire another image to render to. Therefore, it is recommended
+        // to request at least one more image than the minimum
+        const UInt32_T EXTRA_IMAGE_REQUEST{ 1 };
 
-        if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount)
-            imageCount = swapChainSupport.capabilities.maxImageCount;
+        UInt32_T imageCount{ swapChainSupport.Capabilities.minImageCount + EXTRA_IMAGE_REQUEST };
+
+        if (swapChainSupport.Capabilities.maxImageCount > 0 && imageCount > swapChainSupport.Capabilities.maxImageCount)
+            imageCount = swapChainSupport.Capabilities.maxImageCount;
 
 
-        VkSwapchainCreateInfoKHR createInfo = {};
+        VkSwapchainCreateInfoKHR createInfo{};
+
         createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
         createInfo.surface = m_Device->GetSurface();
-
         createInfo.minImageCount = imageCount;
         createInfo.imageFormat = surfaceFormat.format;
         createInfo.imageColorSpace = surfaceFormat.colorSpace;
@@ -114,21 +108,19 @@ namespace kaTe {
         createInfo.imageArrayLayers = 1;
         createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-        QueueFamilyIndices indices = m_Device->FindPhysicalQueueFamilies();
-        std::uint32_t queueFamilyIndices[]{indices.graphicsFamily, indices.presentFamily};
+        QueueFamilyIndices indices{ m_Device->FindPhysicalQueueFamilies() };
+        std::array<UInt32_T, 2> queueFamilyIndices{ indices.GraphicsFamily, indices.PresentFamily};
 
-        if (indices.graphicsFamily != indices.presentFamily) {
+        if (indices.GraphicsFamily != indices.PresentFamily) {
             createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-            createInfo.queueFamilyIndexCount = 2;
-            createInfo.pQueueFamilyIndices = queueFamilyIndices;
+            createInfo.queueFamilyIndexCount = queueFamilyIndices.size();
+            createInfo.pQueueFamilyIndices = queueFamilyIndices.data();
         }
         else {
             createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-            createInfo.queueFamilyIndexCount = 0;      // Optional
-            createInfo.pQueueFamilyIndices = nullptr;  // Optional
         }
 
-        createInfo.preTransform = swapChainSupport.capabilities.currentTransform;
+        createInfo.preTransform = swapChainSupport.Capabilities.currentTransform;
         createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 
         createInfo.presentMode = presentMode;
@@ -136,7 +128,9 @@ namespace kaTe {
 
         createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-        if (vkCreateSwapchainKHR(m_Device->GetDevice(), &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS)
+        auto result{ vkCreateSwapchainKHR(m_Device->GetDevice(), &createInfo, nullptr, &m_SwapChain) };
+
+        if (result != VK_SUCCESS)
             throw std::runtime_error("failed to create swap chain!");
 
         // We only specified a minimum number of images in the swap chain, so the implementation is
@@ -153,22 +147,29 @@ namespace kaTe {
 
     auto VulkanSwapChain::CreateImageViews() -> void {
         m_SwapChainImageViews.resize(m_SwapChainImages.size());
-        for (size_t i = 0; i < m_SwapChainImages.size(); i++) {
+        for (std::size_t i{}; i < m_SwapChainImages.size(); i++) {
             VkImageViewCreateInfo viewInfo{};
+
             viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
             viewInfo.image = m_SwapChainImages[i];
-            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-            viewInfo.format = m_SwapChainImageFormat;
+
+            viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+
             viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
             viewInfo.subresourceRange.baseMipLevel = 0;
             viewInfo.subresourceRange.levelCount = 1;
             viewInfo.subresourceRange.baseArrayLayer = 0;
             viewInfo.subresourceRange.layerCount = 1;
 
-            if (vkCreateImageView(m_Device->GetDevice(), &viewInfo, nullptr, &m_SwapChainImageViews[i]) !=
-                VK_SUCCESS) {
+            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            viewInfo.format = m_SwapChainImageFormat;
+
+            if (vkCreateImageView(m_Device->GetDevice(), &viewInfo, nullptr, &m_SwapChainImageViews[i]) != VK_SUCCESS)
                 throw std::runtime_error("failed to create texture image view!");
-            }
+
         }
     }
 
@@ -187,7 +188,7 @@ namespace kaTe {
         depthAttachmentRef.attachment = 1;
         depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-        VkAttachmentDescription colorAttachment = {};
+        VkAttachmentDescription colorAttachment{};
         colorAttachment.format = GetSwapChainImageFormat();
         colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
         colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -197,49 +198,46 @@ namespace kaTe {
         colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
         colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-        VkAttachmentReference colorAttachmentRef = {};
+        VkAttachmentReference colorAttachmentRef{};
         colorAttachmentRef.attachment = 0;
         colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-        VkSubpassDescription subpass = {};
+        VkSubpassDescription subpass{};
         subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
         subpass.colorAttachmentCount = 1;
         subpass.pColorAttachments = &colorAttachmentRef;
         subpass.pDepthStencilAttachment = &depthAttachmentRef;
 
-        VkSubpassDependency dependency = {};
+        VkSubpassDependency dependency{};
         dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-        dependency.srcAccessMask = 0;
-        dependency.srcStageMask =
-                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-        dependency.dstSubpass = 0;
-        dependency.dstStageMask =
-                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-        dependency.dstAccessMask =
-                VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+        dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+        dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
-        std::array<VkAttachmentDescription, 2> attachments = {colorAttachment, depthAttachment};
-        VkRenderPassCreateInfo renderPassInfo = {};
+        std::array<VkAttachmentDescription, 2> attachments{ colorAttachment, depthAttachment };
+
+        VkRenderPassCreateInfo renderPassInfo{};
         renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-        renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+        renderPassInfo.attachmentCount = static_cast<UInt32_T>(attachments.size());
         renderPassInfo.pAttachments = attachments.data();
         renderPassInfo.subpassCount = 1;
         renderPassInfo.pSubpasses = &subpass;
         renderPassInfo.dependencyCount = 1;
         renderPassInfo.pDependencies = &dependency;
 
-        if (vkCreateRenderPass(m_Device->GetDevice(), &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
+        if (vkCreateRenderPass(m_Device->GetDevice(), &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS)
             throw std::runtime_error("failed to create render pass!");
-        }
+
     }
 
     auto VulkanSwapChain::CreateFrameBuffers() -> void {
         m_SwapChainFrameBuffers.resize(GetImageCount());
-        for (size_t i = 0; i < GetImageCount(); i++) {
-            std::array<VkImageView, 2> attachments = {m_SwapChainImageViews[i], m_DepthImageViews[i]};
+        for (std::size_t i{}; i < GetImageCount(); i++) {
+            std::array<VkImageView, 2> attachments{ m_SwapChainImageViews[i], m_DepthImageViews[i] };
 
-            VkExtent2D swapChainExtent = GetSwapChainExtent();
-            VkFramebufferCreateInfo framebufferInfo = {};
+            VkExtent2D swapChainExtent{ GetSwapChainExtent() };
+
+            VkFramebufferCreateInfo framebufferInfo{};
             framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
             framebufferInfo.renderPass = m_RenderPass;
             framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
@@ -248,13 +246,9 @@ namespace kaTe {
             framebufferInfo.height = swapChainExtent.height;
             framebufferInfo.layers = 1;
 
-            if (vkCreateFramebuffer(
-                    m_Device->GetDevice(),
-                    &framebufferInfo,
-                    nullptr,
-                    &m_SwapChainFrameBuffers[i]) != VK_SUCCESS) {
+            if (vkCreateFramebuffer(m_Device->GetDevice(), &framebufferInfo, nullptr, &m_SwapChainFrameBuffers[i]) != VK_SUCCESS)
                 throw std::runtime_error("failed to create framebuffer!");
-            }
+
         }
     }
 
@@ -312,27 +306,26 @@ namespace kaTe {
         m_InFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
         m_ImagesInFlight.resize(GetImageCount(), VK_NULL_HANDLE);
 
-        VkSemaphoreCreateInfo semaphoreInfo = {};
+        VkSemaphoreCreateInfo semaphoreInfo{};
         semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-        VkFenceCreateInfo fenceInfo = {};
+        VkFenceCreateInfo fenceInfo{};
         fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
         fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-            if (vkCreateSemaphore(m_Device->GetDevice(), &semaphoreInfo, nullptr, &m_ImageAvailableSemaphores[i]) !=
-                VK_SUCCESS ||
-                    vkCreateSemaphore(m_Device->GetDevice(), &semaphoreInfo, nullptr, &m_RenderFinishedSemaphores[i]) !=
-                    VK_SUCCESS ||
-                vkCreateFence(m_Device->GetDevice(), &fenceInfo, nullptr, &m_InFlightFences[i]) != VK_SUCCESS) {
+        for (std::size_t i{}; i < MAX_FRAMES_IN_FLIGHT; i++) {
+            if (vkCreateSemaphore(m_Device->GetDevice(), &semaphoreInfo, nullptr, &m_ImageAvailableSemaphores[i]) != VK_SUCCESS ||
+                vkCreateSemaphore(m_Device->GetDevice(), &semaphoreInfo, nullptr, &m_RenderFinishedSemaphores[i]) != VK_SUCCESS ||
+                vkCreateFence(m_Device->GetDevice(), &fenceInfo, nullptr, &m_InFlightFences[i]) != VK_SUCCESS)
+            {
                 throw std::runtime_error("failed to create synchronization objects for a frame!");
             }
         }
     }
 
     auto VulkanSwapChain::ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats) -> VkSurfaceFormatKHR {
-        for (const auto &availableFormat: availableFormats) {
-            if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB &&
+        for (const auto& availableFormat: availableFormats) {
+            if (availableFormat.format == VK_FORMAT_B8G8R8A8_UNORM &&
                 availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
                 return availableFormat;
             }
@@ -344,12 +337,10 @@ namespace kaTe {
     auto VulkanSwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) -> VkPresentModeKHR {
         for (const auto &availablePresentMode: availablePresentModes) {
             if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
-                KT_PRINT_FORMATTED("Present mode: Mailbox\n");
                 return availablePresentMode;
             }
         }
 
-        KT_PRINT_FORMATTED("Present mode: V-Sync\n");
         return VK_PRESENT_MODE_FIFO_KHR;
     }
 
@@ -358,13 +349,9 @@ namespace kaTe {
             return capabilities.currentExtent;
         }
         else {
-            VkExtent2D actualExtent = m_WindowExtent;
-            actualExtent.width = std::max(
-                    capabilities.minImageExtent.width,
-                    std::min(capabilities.maxImageExtent.width, actualExtent.width));
-            actualExtent.height = std::max(
-                    capabilities.minImageExtent.height,
-                    std::min(capabilities.maxImageExtent.height, actualExtent.height));
+            VkExtent2D actualExtent{ m_WindowExtent };
+            actualExtent.width = std::max(capabilities.minImageExtent.width, std::min(capabilities.maxImageExtent.width, actualExtent.width));
+            actualExtent.height = std::max(capabilities.minImageExtent.height, std::min(capabilities.maxImageExtent.height, actualExtent.height));
 
             return actualExtent;
         }
@@ -377,16 +364,12 @@ namespace kaTe {
                 VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
     }
 
-    VulkanSwapChain::~VulkanSwapChain() {
-        for (auto imageView: m_SwapChainImageViews) {
+    auto VulkanSwapChain::OnDestroy() -> void {
+        for (auto imageView: m_SwapChainImageViews)
             vkDestroyImageView(m_Device->GetDevice(), imageView, nullptr);
-        }
-        m_SwapChainImageViews.clear();
 
-        if (m_SwapChain != nullptr) {
-            vkDestroySwapchainKHR(m_Device->GetDevice(), m_SwapChain, nullptr);
-            m_SwapChain = nullptr;
-        }
+        m_SwapChainImageViews.clear();
+        vkDestroySwapchainKHR(m_Device->GetDevice(), m_SwapChain, nullptr);
 
         for (std::size_t i{}; i < m_DepthImages.size(); i++) {
             vkDestroyImageView(m_Device->GetDevice(), m_DepthImageViews[i], nullptr);
@@ -394,18 +377,16 @@ namespace kaTe {
             vkFreeMemory(m_Device->GetDevice(), m_DepthImageMemories[i], nullptr);
         }
 
-        for (auto framebuffer: m_SwapChainFrameBuffers) {
+        for (auto framebuffer: m_SwapChainFrameBuffers)
             vkDestroyFramebuffer(m_Device->GetDevice(), framebuffer, nullptr);
-        }
 
         vkDestroyRenderPass(m_Device->GetDevice(), m_RenderPass, nullptr);
 
         // cleanup synchronization objects
-        for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+        for (std::size_t i{}; i < MAX_FRAMES_IN_FLIGHT; i++) {
             vkDestroySemaphore(m_Device->GetDevice(), m_RenderFinishedSemaphores[i], nullptr);
             vkDestroySemaphore(m_Device->GetDevice(), m_ImageAvailableSemaphores[i], nullptr);
             vkDestroyFence(m_Device->GetDevice(), m_InFlightFences[i], nullptr);
         }
     }
-
 }

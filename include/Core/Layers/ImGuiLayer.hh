@@ -40,6 +40,7 @@ namespace kaTe {
     private:
         // Do not propagate events to this layer
         bool m_BlockEvents{ false };
+        bool m_UseOpenGL{ true };
     };
 
 }   // END NAMESPACE kaTe

@@ -14,6 +14,7 @@
 
 namespace kaTe {
     class VulkanContext : public RenderContext {
+    public:
         explicit VulkanContext() = default;
 
         auto Init(std::any windowHandle) -> void override;

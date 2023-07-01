@@ -53,6 +53,9 @@ namespace kaTe {
     }
 
     auto Renderer::Init() -> void {
+        PickGraphicsAPI();
+        RenderCommand::Init(s_ActiveRendererAPI);
+
         s_DrawData = std::make_unique<RendererDrawData>();
         s_QuadData = std::make_unique<Renderer2DDrawData>();
         s_RenderingStats    = std::make_unique<RenderingStats>();
@@ -66,6 +69,7 @@ namespace kaTe {
             -0.5f,   0.5f, 0.0f,     0.0f, 1.0f,   // top left
         };
 
+#if true // TODO: for now it only works for OpenGL
         s_QuadData->VertexBufferData = VertexBuffer::CreateBuffer(squareData);
         s_QuadData->IndexBufferData = IndexBuffer::CreateBuffer({0, 1, 2, 2, 3, 0});
 
@@ -76,10 +80,9 @@ namespace kaTe {
         s_QuadData->VertexBufferData->SetBufferLayout(BufferLayout{
             { ShaderDataType::FLOAT3_TYPE, "a_Position" },
             { ShaderDataType::FLOAT2_TYPE, "a_TextureCoordinates" }
-        });
 
-        PickGraphicsAPI();
-        RenderCommand::Init(s_ActiveRendererAPI);
+        });
+#endif
     }
 
     auto Renderer::PickGraphicsAPI() -> void {

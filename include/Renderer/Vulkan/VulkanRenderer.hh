@@ -57,7 +57,8 @@ namespace kaTe {
         KT_NODISCARD auto GetSwapChain() -> std::any override { return m_SwapChain; }
         KT_NODISCARD auto GetCommandBuffers() -> std::any override { return m_CommandBuffers; }
 
-        public:
+        ~VulkanRenderer() override = default;
+    public:
         // Forbidden operations
         VulkanRenderer(const VulkanRenderer&) = delete;
         auto operator=(const VulkanRenderer&) -> VulkanRenderer& = delete;
@@ -65,17 +66,29 @@ namespace kaTe {
         VulkanRenderer(VulkanRenderer&&) = delete;
         auto operator=(VulkanRenderer&&) -> VulkanRenderer& = delete;
     private:
+        friend class VulkanContext;
+        friend class VulkanVertexBuffer;
+    private:
         auto CreatePipelineLayout() -> void;
         auto CreatePipeline() -> void;
         auto CreateCommandBuffers() -> void;
 
+        auto RecreateSwapChain() -> void;
+        auto RecordCommandBuffers(UInt32_T imageIndex, const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void;
+
+    private:
+        friend class VulkanShader;
+    private:
         // Probably need OnDestroy functions to control the order of Vulkan objects release
+        // TODO: these should not be pointers
+        std::shared_ptr<MainWindow>         m_Window{};
         std::shared_ptr<VulkanDevice>       m_Device{};
         std::shared_ptr<VulkanSwapChain>    m_SwapChain{};
         std::shared_ptr<VulkanPipeline>     m_Pipeline{};
-        std::shared_ptr<VulkanVertexBuffer> m_VertexBuffer{};
 
-        VkPipelineLayout   m_PipelineLayout{};
+        glm::vec4 m_ClearColor{};
+
+        VkPipelineLayout                    m_PipelineLayout{};
         std::vector<VkCommandBuffer>        m_CommandBuffers{};
     };
 }

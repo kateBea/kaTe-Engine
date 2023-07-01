@@ -12,7 +12,7 @@
 namespace kaTe {
     class Engine {
     public:
-        auto run() -> kaTe::Int32_T;
+        auto Run() -> kaTe::Int32_T;
     };
 }
 

@@ -12,6 +12,7 @@
 #include <Tools/Common.hh>
 
 namespace kaTe {
+    // TODO: add shader library and implemetattion for the specializations of this base class to accept only one shader stage to compile
     class BaseShader {
     public:
         BaseShader() = default;

@@ -48,7 +48,7 @@ namespace kaTe {
          * @param vertexSourceDir directory to the Vertex Shader source file
          * @param fragmentSourceDir directory to the pixel Shader source file
          * */
-        OpenGLShader(const std::filesystem::path& vertexSourceDir, const std::filesystem::path& fragmentSourceDir);
+        OpenGLShader(const Path_T& vertexSourceDir, const std::filesystem::path& fragmentSourceDir);
 
         /**
          * Loads the shaders specified from paths
@@ -69,8 +69,7 @@ namespace kaTe {
          * Get Shader program ID
          * @return Shader program ID
          * */
-        [[nodiscard]]
-        auto getProgram() const -> UInt32_T { return m_Id; }
+        KT_NODISCARD auto GetProgram() const -> UInt32_T { return m_Id; }
 
     public:
         auto SetBool(std::string_view name, bool value) -> void override { SetUniformBool(name, value); }
@@ -82,7 +81,7 @@ namespace kaTe {
         auto SetMat3(std::string_view name, const glm::mat3& value) -> void override { SetUniformMat3(name, value); }
         auto SetMat4(std::string_view name, const glm::mat4& value) -> void override { SetUniformMat4(name, value); }
 
-        ~OpenGLShader() override { glDeleteProgram(getProgram()); }
+        ~OpenGLShader() override { glDeleteProgram(GetProgram()); }
     private:
         /**
          * Sets the given boolean value to the uniform identified by "name",
@@ -180,7 +179,7 @@ namespace kaTe {
          * This is a helper function for showing compilation status on Shader::compile()
          * @param type type of shader
          * */
-        static constexpr auto getShaderTypeStr(ShaderType type) -> std::string_view {
+        static constexpr auto GetShaderTypeStr(ShaderType type) -> std::string_view {
             switch (type) {
                 case ShaderType::VERTEX_SHADER_TYPE: return "VERTEX_SHADER_TYPE";
                 case ShaderType::FRAGMENT_SHADER_TYPE:  return "FRAGMENT_SHADER_TYPE";
@@ -194,14 +193,14 @@ namespace kaTe {
          * @param shaderType type of shader to be compiled
          * @return identifier of the compiled shader, 0 if there was an error
          * */
-        static auto compile(const char* content, GLenum shaderType) -> UInt32_T;
+        static auto Compile(const char* content, GLenum shaderType) -> UInt32_T;
 
         /**
          * Compiles and links the given shaders to this program shader.
          * @param vShader file contents of the vertex shader
          * @param fShader file contents of the fragment shader
          * */
-        auto build(const char* vShader, const char* fShader) const -> void;
+        auto Build(const char* vShader, const char* fShader) const -> void;
 
         /**
          * Helper function to retrieve Shader status
@@ -209,7 +208,7 @@ namespace kaTe {
          * @param str error message indicating the type of shader
          * @param status
          * */
-        auto showShaderStatus(UInt32_T objectId, ShaderType type, GLenum status) const -> void;
+        static auto ShowShaderStatus(UInt32_T objectId, ShaderType type, GLenum status) -> void;
 
         /**
          * Helper function to retrieve program status
@@ -217,7 +216,7 @@ namespace kaTe {
          * @param str error message indicating the type of shader
          * @param status
          * */
-        auto showProgramStatus(GLenum status) const -> void;
+        auto ShowProgramStatus(GLenum status) const -> void;
 
         auto GetFileData(const std::filesystem::path &path) -> std::string;
     private:

@@ -67,6 +67,7 @@ namespace kaTe {
         GLFWwindow*         m_Window{};
         EventCallbackFunc_T m_Callback{};
         bool                m_VSync{};
+        bool m_CurrentGraphicsAPIIsOpenGL{ true };
     };
 
 }   // END NAMESPACE kT

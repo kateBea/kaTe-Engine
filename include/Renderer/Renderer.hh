@@ -72,6 +72,8 @@ namespace kaTe {
         KT_NODISCARD static auto GetSwapChain() -> std::any;
         KT_NODISCARD static auto GetCommandBuffers() -> std::any;
 
+        KT_NODISCARD static auto GetCurrentRenderer() -> RendererAPI* { return s_ActiveRendererAPI; }
+
         static auto PickGraphicsAPI() -> void;
 
     public:

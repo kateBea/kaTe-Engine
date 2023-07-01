@@ -17,20 +17,20 @@
 namespace kaTe {
 
     struct SwapChainSupportDetails {
-        VkSurfaceCapabilitiesKHR        capabilities{};
-        std::vector<VkSurfaceFormatKHR> formats{};
-        std::vector<VkPresentModeKHR>   presentModes{};
+        VkSurfaceCapabilitiesKHR        Capabilities{};
+        std::vector<VkSurfaceFormatKHR> Formats{};
+        std::vector<VkPresentModeKHR>   PresentModes{};
     };
 
     struct QueueFamilyIndices {
-        UInt32_T    graphicsFamily{};
-        UInt32_T    presentFamily{};
-        bool        graphicsFamilyHasValue{ false };
-        bool        presentFamilyHasValue{ false };
+        UInt32_T    GraphicsFamily{};
+        UInt32_T    PresentFamily{};
 
-        KT_NODISCARD auto IsComplete() const -> bool {
-            return graphicsFamilyHasValue && presentFamilyHasValue;
-        }
+        // TODO: use std::optional
+        bool GraphicsFamilyHasValue{ false };
+        bool PresentFamilyHasValue{ false };
+
+        KT_NODISCARD auto IsComplete() const -> bool { return GraphicsFamilyHasValue && PresentFamilyHasValue; }
     };
 
     class VulkanDevice {
@@ -48,22 +48,21 @@ namespace kaTe {
         KT_NODISCARD auto FindSupportedFormat(const std::vector<VkFormat> &candidates, VkImageTiling tiling, VkFormatFeatureFlags features) -> VkFormat;
 
         KT_NODISCARD auto BeginSingleTimeCommands() -> VkCommandBuffer;
-        
-        auto CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory) -> void;
+
         auto EndSingleTimeCommands(VkCommandBuffer commandBuffer) -> void;
         auto CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) -> void;
         auto CopyBufferToImage(VkBuffer buffer, VkImage image, UInt32_T width, UInt32_T height, UInt32_T layerCount) -> void;
         auto CreateImageWithInfo(const VkImageCreateInfo &imageInfo, VkMemoryPropertyFlags properties, VkImage &image, VkDeviceMemory& imageMemory) -> void;
 
-        KT_NODISCARD auto DeviceSupportsDynamicVertexBuffers() const -> bool { return m_DeviceSupportsDynamicVertexBuffer; }
+        auto OnDestroy() -> void;
 
-        ~VulkanDevice();
+        ~VulkanDevice() = default;
     private:
         // VALIDATION LAYERS. Enabled on Debug builds
-#if defined(NDEBUG) || defined(_DEBUG)
-        static constexpr bool m_EnableValidationLayers{ true };
-#else
+#if defined(NDEBUG)
         static constexpr bool m_EnableValidationLayers{ false };
+#else
+        static constexpr bool m_EnableValidationLayers{ true };
 #endif
     public:
         // Forbidden operations
@@ -95,8 +94,8 @@ namespace kaTe {
     private:
         VkInstance                      m_Instance{};
         VkDebugUtilsMessengerEXT        m_DebugMessenger{};
-        VkPhysicalDevice                m_PhysicalDevice{ VK_NULL_HANDLE };
-        std::shared_ptr<MainWindow>     m_Window;
+        VkPhysicalDevice                m_PhysicalDevice{};
+        std::shared_ptr<MainWindow>     m_Window{};
         VkCommandPool                   m_CommandPool{};
 
         VkPhysicalDeviceProperties      m_Properties{};
@@ -106,14 +105,12 @@ namespace kaTe {
         VkQueue                         m_GraphicsQueue{};
         VkQueue                         m_PresentQueue{};
 
-        bool m_DeviceSupportsDynamicVertexBuffer{};
-
         const std::vector<const char *> m_ValidationLayers{ "VK_LAYER_KHRONOS_validation" };
         const std::vector<const char *> m_DeviceRequiredExtensions{
-            VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-            VK_EXT_VERTEX_INPUT_DYNAMIC_STATE_EXTENSION_NAME,
-            // VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME // not supported by the device this project was tested on but is required by VK_EXT_VERTEX_INPUT_DYNAMIC_STATE_EXTENSION_NAME
-            // TODO: Implement static vertex buffer when the necessary extensions are not supported
+                VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+                // VK_EXT_VERTEX_INPUT_DYNAMIC_STATE_EXTENSION_NAME,
+                // VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME // not supported by the device this project was tested on but is required by VK_EXT_VERTEX_INPUT_DYNAMIC_STATE_EXTENSION_NAME
+                // TODO: Implement static vertex buffer when the necessary extensions are not supported
         };
     };
 

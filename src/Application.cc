@@ -17,6 +17,7 @@
 #include <Renderer/RenderCommand.hh>
 
 
+// TODO: rename all constants to use upper cases
 namespace kaTe {
     auto Application::Init() -> void {
         TimeManager::Init();
@@ -24,10 +25,9 @@ namespace kaTe {
         m_MainWindow = std::make_shared<MainWindow>();
         m_LayerStack = std::make_unique<LayerStack>();
 
-        KT_ASSERT(m_MainWindow != nullptr, "Window is NULL");
         m_MainWindow->Init();
         m_MainWindow->SetEventCallback(KT_BIND_EVENT_FUNC(Application::OnEvent));
-        KT_ASSERT(m_LayerStack != nullptr, "Layer Stack is NULL");
+
         m_LayerStack->Init();
         m_ImGuiLayer = std::make_shared<ImGuiLayer>();
         PushOverlay(m_ImGuiLayer);
@@ -111,8 +111,10 @@ namespace kaTe {
         for (auto& layer : *m_LayerStack)
             layer->OnImGuiRender();
         m_ImGuiLayer->EndFrame();
+
         m_MainWindow->OnUpdate();
     }
+
     auto Application::Stop() -> void {
         m_State = State::STOPPED;
     }
