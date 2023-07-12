@@ -255,6 +255,8 @@ namespace kaTe {
     using Long_T = unsigned long;
     using LongLong_T = long long;
 
+    using Size_T = std::size_t;
+
     using CharArray = std::vector<char>;
 
     /**

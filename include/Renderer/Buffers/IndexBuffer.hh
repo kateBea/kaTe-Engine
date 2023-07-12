@@ -22,8 +22,8 @@ namespace kaTe {
          KT_NODISCARD virtual auto GetCount() const -> UInt32_T { return m_Count; }
 
          // Temporary for OpenGL IndexBuffer
-         virtual auto BindBuffer() const -> void {}
-         virtual auto UnbindBuffer() const -> void {}
+         virtual auto Bind() const -> void {}
+         virtual auto Unbind() const -> void {}
 
          static auto CreateBuffer(const std::vector<UInt32_T>& data) -> std::shared_ptr<IndexBuffer>;
      protected:

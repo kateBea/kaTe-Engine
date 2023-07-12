@@ -8,6 +8,7 @@
 #include <any>
 
 namespace kaTe {
+    // TODO: make the context classes fully static
     class RenderContext {
     public:
         explicit RenderContext() = default;

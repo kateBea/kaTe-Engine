@@ -78,8 +78,10 @@ namespace kaTe {
         auto RecreateSwapChain() -> void;
         auto RecordCommandBuffers(UInt32_T imageIndex, const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void;
 
-    private:
+    public:
+        // TODO: temporal
         friend class VulkanShader;
+        friend class ImGuiLayer;
     private:
         // Probably need OnDestroy functions to control the order of Vulkan objects release
         // TODO: these should not be pointers

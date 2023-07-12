@@ -27,13 +27,13 @@ namespace kaTe {
 
         m_MainWindow->Init();
         m_MainWindow->SetEventCallback(KT_BIND_EVENT_FUNC(Application::OnEvent));
-
-        m_LayerStack->Init();
-        //m_ImGuiLayer = std::make_shared<ImGuiLayer>();
-        //PushOverlay(m_ImGuiLayer);
+        InputManager::Init();
 
         Renderer::Init();
-        InputManager::Init();
+
+        m_LayerStack->Init();
+        m_ImGuiLayer = std::make_shared<ImGuiLayer>();
+        PushOverlay(m_ImGuiLayer);
 
         KATE_CORE_LOGGER_DEBUG("Finished kaTe Engine initialization {}", TimeManager::ToString(TimeManager::GetTime()));
     }
@@ -109,13 +109,11 @@ namespace kaTe {
                 layer->OnUpdate();
         }
 
-#if 0
         m_ImGuiLayer->BeginFrame();
         for (auto& layer : *m_LayerStack)
             layer->OnImGuiRender();
         m_ImGuiLayer->EndFrame();
 
-#endif
         m_MainWindow->OnUpdate();
     }
 

@@ -22,8 +22,8 @@ namespace kaTe {
 
         try {
             application.Init();
-            //application.PushLayer(std::make_shared<EditorLayer>());
-            application.PushLayer(std::make_shared<VulkanTestLayer>());
+            application.PushLayer(std::make_shared<EditorLayer>());
+            // application.PushLayer(std::make_shared<VulkanTestLayer>());
 
             while (application.IsRunning()) {
                 application.UpdateState();

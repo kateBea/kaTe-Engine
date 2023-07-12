@@ -11,6 +11,9 @@
 #include <utility>
 #include <memory>
 
+#include <GL/glew.h>
+#include <volk.h>
+
 #include <Core/Assert.hh>
 #include <Tools/Common.hh>
 
@@ -143,6 +146,36 @@ namespace kaTe {
                 case ShaderDataType::INT3_TYPE:
                 case ShaderDataType::INT4_TYPE:
                 case ShaderDataType::BOOL_TYPE: return GL_BOOL;
+
+                case ShaderDataType::NONE:
+                case ShaderDataType::COUNT: [[fallthrough]];
+                default: KT_ASSERT(false, "Invalid shader data type");
+            }
+        }
+
+        /**
+         * vec4: VK_FORMAT_R32G32B32A32_SFLOAT
+         *
+         * ivec2: VK_FORMAT_R32G32_SINT, a 2-component vector of 32-bit signed integers
+         * uvec4: VK_FORMAT_R32G32B32A32_UINT, a 4-component vector of 32-bit unsigned integers
+         * double: VK_FORMAT_R64_SFLOAT, a double-precision (64-bit) float
+         *
+         * */
+        static auto GetVulkanTypeFromShaderDataType(ShaderDataType type) -> VkFormat {
+            switch(type) {
+                case ShaderDataType::FLOAT_TYPE: return VK_FORMAT_R32_SFLOAT;
+                case ShaderDataType::FLOAT2_TYPE: return VK_FORMAT_R32G32_SFLOAT;
+                case ShaderDataType::FLOAT3_TYPE: return VK_FORMAT_R32G32B32_SFLOAT;
+                case ShaderDataType::FLOAT4_TYPE: return VK_FORMAT_R32G32B32A32_SFLOAT;
+
+                case ShaderDataType::MAT3_TYPE: return VK_FORMAT_UNDEFINED; //temporary
+                case ShaderDataType::MAT4_TYPE: return VK_FORMAT_UNDEFINED; //temporary
+
+                case ShaderDataType::INT_TYPE:  return VK_FORMAT_R32_SINT;
+                case ShaderDataType::INT2_TYPE: return VK_FORMAT_R32G32_SINT;
+                case ShaderDataType::INT3_TYPE: return VK_FORMAT_R32G32B32_SINT;
+                case ShaderDataType::INT4_TYPE: return VK_FORMAT_R32G32B32A32_SINT;
+                case ShaderDataType::BOOL_TYPE: return VK_FORMAT_R32_SINT;
 
                 case ShaderDataType::NONE:
                 case ShaderDataType::COUNT: [[fallthrough]];

@@ -46,9 +46,6 @@ namespace kaTe {
     }
 
     auto VulkanShader::Upload(const Path_T& vShaderPath, const Path_T& fShaderPath) -> void {
-        // CHECK VULKAN PIPELINE. the shader modules are part of the pipeline, and if we want to recreate the shader modules
-        // we may want to recreate the shader modules
-
         auto vData{ GetFileData(vShaderPath) };
         auto fData{ GetFileData(fShaderPath) };
 
@@ -57,6 +54,24 @@ namespace kaTe {
 
         CreateShaderModule(vData, &m_VertShaderModule);
         CreateShaderModule(fData, &m_FragShaderModule);
+
+        std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages{};
+
+        shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
+        shaderStages[0].module = m_VertShaderModule;
+        shaderStages[0].pName = "main";
+        shaderStages[0].flags = 0;
+        shaderStages[0].pNext = nullptr;
+        shaderStages[0].pSpecializationInfo = nullptr;
+
+        shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+        shaderStages[1].module = m_FragShaderModule;
+        shaderStages[1].pName = "main";
+        shaderStages[1].flags = 0;
+        shaderStages[1].pNext = nullptr;
+        shaderStages[1].pSpecializationInfo = nullptr;
     }
 
     auto VulkanShader::Bind() -> void {

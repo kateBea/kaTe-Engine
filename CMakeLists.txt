@@ -64,7 +64,8 @@ set(IMGUI_SOURCES
         lib/imgui/imgui_draw.cpp
         lib/imgui/imgui_tables.cpp
         lib/imgui/imgui_demo.cpp
-        lib/imgui/backends/imgui_impl_opengl3.cpp)
+        lib/imgui/backends/imgui_impl_opengl3.cpp
+        lib/imgui/backends/imgui_impl_vulkan.cpp)
 
 set(EDITOR_SOURCES
         src/Editor.cc src/HierarchyPanel.cc src/InspectorPanel.cc src/SettingsPanel.cc src/ScenePanel.cc src/StatsPanel.cc)

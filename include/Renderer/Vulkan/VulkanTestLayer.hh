@@ -10,6 +10,8 @@
 #include <Renderer/Renderer.hh>
 #include <Renderer/RenderCommand.hh>
 
+#include <Platform/InputManager.hh>
+
 namespace kaTe {
 
     class VulkanTestLayer : public Layer {
@@ -29,7 +31,12 @@ namespace kaTe {
         }
 
         auto OnUpdate() -> void override {
-            RenderCommand::SetClearColor(0.5f, 0.2f, 0.3f, 1.0f);
+            RendererAPI::BufferBits bufferBits{};
+            bufferBits[RendererAPI::BufferBit::COLOR_BUFFER_BIT] = true;
+
+            RenderCommand::SetClearColor(m_ClearColor);
+            //RenderCommand::Clear(bufferBits);
+
             Renderer::Submit(m_VertexBuffer);
         }
 
@@ -42,6 +49,8 @@ namespace kaTe {
         }
     private:
         std::shared_ptr<VertexBuffer> m_VertexBuffer{};
+
+        glm::vec4 m_ClearColor{ 0.5f, 0.2f, 0.3f, 1.0f };
 
     };
 

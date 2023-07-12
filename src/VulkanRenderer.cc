@@ -92,7 +92,75 @@ namespace kaTe {
     }
 
     auto VulkanRenderer::Clear(const RendererAPI::BufferBits &bufferBits) -> void {
+        using BufferBit = RendererAPI::BufferBit;
 
+        if (bufferBits[BufferBit::COLOR_BUFFER_BIT]) {
+            UInt32_T imageIndex{};
+            VkCommandBufferBeginInfo beginInfo{};
+
+            auto result{ AcquireNextImage(&imageIndex) };
+            if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+                RecreateSwapChain();
+                return;
+            }
+            else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+                throw std::runtime_error("failed to acquire swap chain image!");
+            }
+
+            beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+            if (vkBeginCommandBuffer(m_CommandBuffers[imageIndex], &beginInfo) != VK_SUCCESS)
+                throw std::runtime_error("Failed to begin recording command buffer");
+
+            VkRenderPassBeginInfo renderPassInfo{};
+
+            renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            renderPassInfo.renderPass = GetRenderPass();
+            renderPassInfo.framebuffer = GetFrameBuffer(imageIndex);
+
+            renderPassInfo.renderArea.offset = { 0, 0 };
+            renderPassInfo.renderArea.extent = GetSwapChainExtent();
+
+            std::array<VkClearValue, 2> clearValues{};
+
+            clearValues[0].color = { {m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, m_ClearColor.a} };
+            clearValues[1].depthStencil = { 1.0f, 0 };
+
+            renderPassInfo.clearValueCount = static_cast<UInt32_T>(clearValues.size());
+            renderPassInfo.pClearValues = clearValues.data();
+
+            vkCmdBeginRenderPass(m_CommandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+            VkViewport viewport{};
+            viewport.x = 0.0f;
+            viewport.y = 0.0f;
+            viewport.width = static_cast<float>(GetSwapChainExtent().width);
+            viewport.height = static_cast<float>(GetSwapChainExtent().height);
+            viewport.minDepth = 0.0f;
+            viewport.maxDepth = 1.0f;
+
+            VkRect2D scissor{ .offset{ 0, 0 }, .extent{ GetSwapChainExtent() } };
+            vkCmdSetViewport(m_CommandBuffers[imageIndex], 0, 1, &viewport);
+            vkCmdSetScissor(m_CommandBuffers[imageIndex], 0, 1, &scissor);
+
+            Bind(m_CommandBuffers[imageIndex]);
+
+            vkCmdEndRenderPass((m_CommandBuffers[imageIndex]));
+
+            if (vkEndCommandBuffer(m_CommandBuffers[imageIndex]) != VK_SUCCESS)
+                throw std::runtime_error("Failed to record command buffer");
+
+
+            result = SubmitCommandBuffers(&m_CommandBuffers[imageIndex], &imageIndex);
+
+            if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
+                RecreateSwapChain();
+                return;
+            }
+            else if (result != VK_SUCCESS) {
+                throw std::runtime_error("failed to present swap chain image!");
+            }
+        }
     }
 
     auto VulkanRenderer::SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void {
@@ -115,7 +183,6 @@ namespace kaTe {
             RecreateSwapChain();
             return;
         }
-
         else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
             throw std::runtime_error("failed to acquire swap chain image!");
         }
@@ -259,6 +326,7 @@ namespace kaTe {
         auto vertices{ std::dynamic_pointer_cast<VulkanVertexBuffer>(vertexBuffer) };
 
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
 
         if (vkBeginCommandBuffer(m_CommandBuffers[imageIndex], &beginInfo) != VK_SUCCESS)
             throw std::runtime_error("Failed to begin recording command buffer");
@@ -964,8 +1032,8 @@ namespace kaTe {
     }
 
     auto VulkanRenderer::CreateDepthResources() -> void {
-        VkFormat depthFormat = FindDepthFormat();
-        VkExtent2D swapChainExtent = GetSwapChainExtent();
+        VkFormat depthFormat{ FindDepthFormat() };
+        VkExtent2D swapChainExtent{ GetSwapChainExtent() };
 
         m_DepthImages.resize(GetImageCount());
         m_DepthImageMemories.resize(GetImageCount());
@@ -988,11 +1056,7 @@ namespace kaTe {
             imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
             imageInfo.flags = 0;
 
-            CreateImageWithInfo(
-                    imageInfo,
-                    VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-                    m_DepthImages[i],
-                    m_DepthImageMemories[i]);
+            CreateImageWithInfo(imageInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_DepthImages[i], m_DepthImageMemories[i]);
 
             VkImageViewCreateInfo viewInfo{};
             viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -1061,7 +1125,7 @@ namespace kaTe {
     }
 
     auto VulkanRenderer::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) -> VkExtent2D {
-        if (capabilities.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
+        if (capabilities.currentExtent.width != std::numeric_limits<UInt32_T>::max()) {
             return capabilities.currentExtent;
         }
         else {
@@ -1080,7 +1144,7 @@ namespace kaTe {
                 VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
     }
 
-    auto VulkanRenderer::CreateGraphicsPipeline(const Path_T &vPath, const Path_T &fPath, const PipelineConfigInfo& config) -> void {
+    auto VulkanRenderer::CreateGraphicsPipeline(const Path_T& vPath, const Path_T& fPath, const PipelineConfigInfo& config) -> void {
         KT_ASSERT(config.pipelineLayout != VK_NULL_HANDLE, "Cannot create graphics pipeline. No Pipeline Layout in PipelineConfigInfo");
         KT_ASSERT(config.renderPass != VK_NULL_HANDLE, "Cannot create graphics pipeline. No Render Pass Layout in PipelineConfigInfo");
 

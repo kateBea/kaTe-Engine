@@ -13,6 +13,16 @@
 
 namespace kaTe {
     // TODO: add shader library and implemetattion for the specializations of this base class to accept only one shader stage to compile
+
+    enum ShaderStage {
+        NONE,
+
+        VERTEX_STAGE,
+        PIXEL_STAGE,
+
+        COUNT,
+    };
+
     class BaseShader {
     public:
         BaseShader() = default;

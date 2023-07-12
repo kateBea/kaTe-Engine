@@ -69,7 +69,6 @@ namespace kaTe {
             -0.5f,   0.5f, 0.0f,     0.0f, 1.0f,   // top left
         };
 
-#if false // TODO: for now it only works for OpenGL
         s_QuadData->VertexBufferData = VertexBuffer::CreateBuffer(squareData);
         s_QuadData->IndexBufferData = IndexBuffer::CreateBuffer({0, 1, 2, 2, 3, 0});
 
@@ -82,7 +81,6 @@ namespace kaTe {
             { ShaderDataType::FLOAT2_TYPE, "a_TextureCoordinates" }
 
         });
-#endif
     }
 
     auto Renderer::PickGraphicsAPI() -> void {

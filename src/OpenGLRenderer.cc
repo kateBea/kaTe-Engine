@@ -41,7 +41,7 @@ namespace kaTe {
         glEnable(GL_BLEND);
         std::dynamic_pointer_cast<OpenGLShader>(shader)->Bind();
         m_VertexArray.UseVertexBuffer(vertexBuffer);
-        indexBuffer->BindBuffer();
+        indexBuffer->Bind();
 
         glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
     }
@@ -55,7 +55,7 @@ namespace kaTe {
         glEnable(GL_BLEND);
         m_DefaultVertexPixelShaders.Bind();
         m_VertexArray.UseVertexBuffer(vertexBuffer);
-        indexBuffer->BindBuffer();
+        indexBuffer->Bind();
 
         glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
     }
