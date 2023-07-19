@@ -8,7 +8,6 @@
 #include <memory>
 
 // Force radians always
-#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
 #include <Tools/Common.hh>
@@ -33,9 +32,6 @@ namespace kaTe {
         OrthographicCameraController(UInt32_T width, UInt32_T height, bool enableRotation = false, std::shared_ptr<OrthographicCamera> target = nullptr);
 
         auto OnUpdate() -> void;
-        /**
-         * When we want this class to handle a specific type of event
-         * */
         auto OnEvent(Event& event) -> void;
 
         auto SetProjection(double left, double right, double bottom, double top) -> void;

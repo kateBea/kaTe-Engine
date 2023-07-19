@@ -12,10 +12,8 @@ namespace kaTe {
     public:
         Texture() = default;
         virtual ~Texture() = default;
-        virtual auto GetWidth() -> UInt32_T = 0;
-        virtual auto GetHeight() -> UInt32_T = 0;
-        virtual auto GetId() -> UInt32_T = 0;
 
+        // Move to opengl textures
         virtual auto Bind(UInt32_T slot = 0) -> void = 0;
     };
 }

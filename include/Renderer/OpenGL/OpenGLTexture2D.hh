@@ -37,18 +37,18 @@ namespace kaTe {
          * Returns the identifier of this Texture
          * @return id of this object
          * */
-        KT_NODISCARD auto GetId() -> UInt32_T override { return m_Id; }
+        KT_NODISCARD auto GetId() const -> UInt32_T override { return m_Id; }
 
         KT_NODISCARD auto GetChannels() const -> UInt32_T { return m_Channels; }
-        KT_NODISCARD auto GetWidth() -> UInt32_T override { return m_Width; }
-        KT_NODISCARD auto GetHeight() -> UInt32_T override { return m_Height; }
+        KT_NODISCARD auto GetWidth() const -> UInt32_T override { return m_Width; }
+        KT_NODISCARD auto GetHeight() const -> UInt32_T override { return m_Height; }
 
         KT_NODISCARD auto GetTextureFileData() const -> stbi_uc* { return m_TextureFileData; }
 
         auto Bind(UInt32_T slot) -> void override;
 
         ~OpenGLTexture2D() override;
-    private:
+    public:
         // Forbidden operations
         OpenGLTexture2D(const OpenGLTexture2D& other) = delete;
         auto operator=(const OpenGLTexture2D& other) -> OpenGLTexture2D& = delete;

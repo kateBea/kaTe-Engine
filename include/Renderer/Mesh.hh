@@ -26,7 +26,9 @@ namespace kaTe {
         MeshData() = default;
 
         MeshData(const MeshData& other) = default;
-        MeshData(MeshData&& other)  noexcept : m_Vertices{ std::move(other.m_Vertices) }, m_Indices{ std::move(other.m_Indices) }, m_Textures{ std::move(other.m_Textures) } {}
+        MeshData(MeshData&& other)  noexcept
+            :   m_Vertices{ std::move(other.m_Vertices) }, m_Indices{ std::move(other.m_Indices) }, m_Textures{ std::move(other.m_Textures) }
+        {}
 
         KT_NODISCARD auto GetVertices() -> std::shared_ptr<VertexBuffer>& { return m_Vertices; }
         KT_NODISCARD auto GetIndices() -> std::shared_ptr<IndexBuffer>& { return m_Indices; }
@@ -84,7 +86,7 @@ namespace kaTe {
          * @param indices contains the indices for indexed drawing
          * @param textures contains the texture data for this mesh, see kT::Texture for more
          * */
-        explicit Mesh(const MeshData & data);
+        explicit Mesh(MeshData data);
 
         /**
          * Constructs and initializes this mesh with the contents of the other

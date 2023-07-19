@@ -90,7 +90,7 @@ namespace kaTe {
                 s_ActiveRendererAPI->Init();
                 break;
             case GraphicsAPI::VULKAN_API:
-                s_ActiveRendererAPI = new VulkanRenderer();
+                s_ActiveRendererAPI = nullptr;
                 s_ActiveRendererAPI->Init();
                 break;
             default:

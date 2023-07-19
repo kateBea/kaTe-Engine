@@ -38,7 +38,6 @@ namespace kaTe {
         friend class InspectorPanel;
         friend class ScenePanel;
 
-
         entt::registry m_Registry{};
 
         UInt32_T m_ViewportWidth{};

@@ -62,6 +62,7 @@ namespace kaTe {
 
         KT_NODISCARD virtual auto GetWidth() const -> Int32_T = 0;
         KT_NODISCARD virtual auto GetHeight() const -> Int32_T = 0;
+        KT_NODISCARD virtual auto GetExtent() const -> std::pair<Int32_T, Int32_T> = 0;
 
         KT_NODISCARD virtual auto GetNativeWindow() -> std::any = 0;
 

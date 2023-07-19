@@ -38,9 +38,9 @@ namespace kaTe {
         static auto GetDeltaTime(TimeUnit unit = TimeUnit::SECONDS) -> double {
             switch (unit) {
                 case TimeUnit::SECONDS:         return s_TimeStep;
-                case TimeUnit::MILLISECONDS:    return s_TimeStep / SEC_TO_MILLI;
-                case TimeUnit::MICROSECONDS:    return s_TimeStep / SEC_TO_MICRO;
-                case TimeUnit::NANOSECONDS:     return s_TimeStep / SEC_TO_NANO;
+                case TimeUnit::MILLISECONDS:    return s_TimeStep * SEC_TO_MILLI;
+                case TimeUnit::MICROSECONDS:    return s_TimeStep * SEC_TO_MICRO;
+                case TimeUnit::NANOSECONDS:     return s_TimeStep * SEC_TO_NANO;
 
                 case TimeUnit::NONE:
                 case TimeUnit::COUNT:   [[fallthrough]];
@@ -77,7 +77,7 @@ namespace kaTe {
         static constexpr UInt32_T SEC_TO_MICRO{ 1000'000 };
         static constexpr UInt32_T SEC_TO_NANO{ 1000'000'000 };
     private:
-        static auto TransformToSeconds(double time, TimeUnit unit) -> double {
+        [[maybe_unused]] static auto TransformTowSeconds(double time, TimeUnit unit) -> double {
             switch (unit) {
                 case TimeUnit::MILLISECONDS:    return time / SEC_TO_MILLI;
                 case TimeUnit::MICROSECONDS:    return time / SEC_TO_MICRO;

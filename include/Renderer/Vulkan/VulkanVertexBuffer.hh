@@ -8,12 +8,12 @@
 #include <memory>
 #include <vector>
 
+// Force radians always
 #include <glm/glm.hpp>
 
 #include <volk.h>
 
 #include <Tools/Common.hh>
-
 #include <Renderer/Buffers/VertexBuffer.hh>
 
 namespace kaTe {
@@ -50,14 +50,18 @@ namespace kaTe {
         auto operator=(VulkanVertexBuffer&&) -> VulkanVertexBuffer& = delete;
     private:
         auto SetVertexData(const std::vector<float>& vertices) -> void;
-        auto CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) -> void;
+        static auto CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) -> void;
+        static auto CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) -> void;
     private:
         inline static std::vector<VkVertexInputBindingDescription>    s_BindingDesc{};
         inline static std::vector<VkVertexInputAttributeDescription>  s_AttributeDesc{};
 
+        // Note: for now this will always be the same layout as the model
         static inline BufferLayout s_Layout{
                 { ShaderDataType::FLOAT3_TYPE, "a_Position" },
-                { ShaderDataType::FLOAT4_TYPE, "a_Color" }
+                //{ ShaderDataType::FLOAT3_TYPE, "a_Normal" },
+                { ShaderDataType::FLOAT3_TYPE, "a_Color" },
+                { ShaderDataType::FLOAT2_TYPE, "a_TextureCoordinates" }
         };
 
         static auto GetDefaultBufferLayout() -> const BufferLayout& {
@@ -70,12 +74,16 @@ namespace kaTe {
 
         std::vector<VkVertexInputBindingDescription> m_BindingDesc{};
         std::vector<VkVertexInputAttributeDescription>  m_AttributeDesc{};
+
         BufferLayout                    m_Layout{};
+
         VkBuffer                        m_VertexBuffer{};
         VkDeviceMemory                  m_VertexBufferMemory{};
         ULongLong_T                     m_VertexCount{};
+
+        std::vector<float> m_RetainedData{}; // temporary, if we want to retain the buffer data in ram and not remove it
     };
 }
 
 
-#endif // KATE_ENGINE_VULKAN_VERTEX_BUFFER_HH
+#endif //KATE_ENGINE_VULKAN_VERTEX_BUFFER_HH

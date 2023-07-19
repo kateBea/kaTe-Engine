@@ -1,121 +1,70 @@
 //
-// Created by kate on 6/30/23.
+// Created by kate on 7/3/23.
 //
-// C++ Standard Library
-#include <string_view>
 
-// Third-Party Libraries
-#include <volk.h>
-#include <glm/glm.hpp>
+#include <filesystem>
+#include <fstream>
 
-// Project Headers
-#include "Renderer/Vulkan/VulkanRenderer.hh"
-#include <Core/Assert.hh>
-#include <Core/Logger.hh>
-#include <Renderer/Renderer.hh>
-#include <Renderer/Vulkan/VulkanShader.hh>
 #include <Tools/Common.hh>
 
+#include <Core/Logger.hh>
+
+#include <Renderer/Vulkan/VulkanContext.hh>
+#include <Renderer/Vulkan/VulkanShader.hh>
+
 namespace kaTe {
-
-    VulkanShader::VulkanShader(VulkanShader &&other) noexcept {
-
+    VulkanShader::VulkanShader(const ShaderStage stage) {
+        m_Data.Stage = stage;
     }
 
-    VulkanShader &VulkanShader::operator=(VulkanShader &&other) noexcept {
+    auto VulkanShader::Upload(const Path_T& src) -> void {
+        const auto srcData{ GetFileData(src) };
+        m_Data.SrcPath = std::string(srcData.begin(), srcData.end());
+        KATE_CORE_LOGGER_DEBUG("Loaded vertex shader data. Size {}", srcData.size());
+        VkShaderModule shaderModule{};
+        CreateShaderModule(m_Data.SrcPath, shaderModule);
 
-        return *this;
+        m_Data.StageCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+        m_Data.StageCreateInfo.stage = GetVulkanStageFromShaderStage(m_Data.Stage);
+        m_Data.StageCreateInfo.module = shaderModule;
+        m_Data.StageCreateInfo.pName = m_Data.EntryPoint.c_str();
+        m_Data.StageCreateInfo.flags = 0;
+        m_Data.StageCreateInfo.pNext = nullptr;
+        m_Data.StageCreateInfo.pSpecializationInfo = nullptr;
     }
 
-    VulkanShader::VulkanShader(const Path_T& vertexSourceDir, const Path_T& fragmentSourceDir) {
-        Upload(vertexSourceDir, fragmentSourceDir);
-    }
-
-    auto VulkanShader::CreateShaderModule(const CharArray& srcCode, VkShaderModule* shaderModule) -> void {
-        VulkanRenderer& renderer{ *dynamic_cast<VulkanRenderer*>(Renderer::GetCurrentRenderer()) };
-
+    auto VulkanShader::CreateShaderModule(const std::string &srcCode, VkShaderModule& shaderModule) -> void {
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         createInfo.codeSize = srcCode.size();
-
         // It seems this casts is valid since the default std::vector allocator
-        // ensures the data satisfies the worst case alignment requirements.
+        // ensures the data satisfies the worst case alignment
         createInfo.pCode = reinterpret_cast<const UInt32_T*>(srcCode.data());
-        if (vkCreateShaderModule(renderer.m_Device, &createInfo, nullptr, shaderModule) != VK_SUCCESS)
+
+        if (vkCreateShaderModule(VulkanContext::GetPrimaryLogicalDevice(), &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
             throw std::runtime_error("Failed to create shader module");
     }
 
-    auto VulkanShader::Upload(const Path_T& vShaderPath, const Path_T& fShaderPath) -> void {
-        auto vData{ GetFileData(vShaderPath) };
-        auto fData{ GetFileData(fShaderPath) };
+    // TODO: move to Common.hh
+    auto VulkanShader::GetFileData(const std::filesystem::path& path) -> std::vector<char> {
+        std::ifstream file{ path, std::ios::binary };
 
-        KATE_CORE_LOGGER_DEBUG("Loaded vertex shader data. Size {}", vData.size());
-        KATE_CORE_LOGGER_DEBUG("Loaded fragment shader data. Size {}", fData.size());
+        if (!file.is_open())
+            throw std::runtime_error("Failed to open SPR-V file");
 
-        CreateShaderModule(vData, &m_VertShaderModule);
-        CreateShaderModule(fData, &m_FragShaderModule);
-
-        std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages{};
-
-        shaderStages[0].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        shaderStages[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
-        shaderStages[0].module = m_VertShaderModule;
-        shaderStages[0].pName = "main";
-        shaderStages[0].flags = 0;
-        shaderStages[0].pNext = nullptr;
-        shaderStages[0].pSpecializationInfo = nullptr;
-
-        shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-        shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-        shaderStages[1].module = m_FragShaderModule;
-        shaderStages[1].pName = "main";
-        shaderStages[1].flags = 0;
-        shaderStages[1].pNext = nullptr;
-        shaderStages[1].pSpecializationInfo = nullptr;
+        return { std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
     }
 
-    auto VulkanShader::Bind() -> void {
+    auto VulkanShader::GetVulkanStageFromShaderStage(ShaderStage stage) -> VkShaderStageFlagBits {
+        switch (stage) {
+            case ShaderStage::VERTEX_STAGE: return VK_SHADER_STAGE_VERTEX_BIT;
+            case ShaderStage::FRAGMENT_STAGE: return VK_SHADER_STAGE_FRAGMENT_BIT;
+        }
 
+        return VK_SHADER_STAGE_FLAG_BITS_MAX_ENUM;
     }
 
-    auto VulkanShader::Unbind() -> void {
-
+    auto VulkanShader::OnRelease() const -> void {
+        vkDestroyShaderModule(VulkanContext::GetPrimaryLogicalDevice(), m_Data.StageCreateInfo.module, nullptr);
     }
-
-    auto VulkanShader::SetBool(std::string_view name, bool value) -> void {
-
-    }
-
-    auto VulkanShader::SetInt(std::string_view name, Int32_T value) -> void {
-
-    }
-
-    auto VulkanShader::SetFloat(std::string_view name, float value) -> void {
-
-    }
-
-    auto VulkanShader::SetVec2(std::string_view name, const glm::vec2 &value) -> void {
-
-    }
-
-    auto VulkanShader::SetVec3(std::string_view name, const glm::vec3 &value) -> void {
-
-    }
-
-    auto VulkanShader::SetVec4(std::string_view name, const glm::vec4 &value) -> void {
-
-    }
-
-    auto VulkanShader::SetMat3(std::string_view name, const glm::mat3 &value) -> void {
-
-    }
-
-    auto VulkanShader::SetMat4(std::string_view name, const glm::mat4 &value) -> void {
-
-    }
-
-    VulkanShader::~VulkanShader() {
-
-    }
-
 }

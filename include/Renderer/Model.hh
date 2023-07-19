@@ -3,8 +3,8 @@
 * Created by kate on 6/29/23.
 * */
 
-#ifndef KATE_ENGINE_MODEL_HH
-#define KATE_ENGINE_MODEL_HH
+#ifndef VULKATE_MODEL_HH
+#define VULKATE_MODEL_HH
 
 // C++ Standard Library
 #include <filesystem>
@@ -21,6 +21,8 @@
 
 // Project Libraries
 #include <Tools/Common.hh>
+
+#include <Renderer/Material/Texture.hh>
 #include <Renderer/Material/Texture2D.hh>
 #include <Renderer/Mesh.hh>
 
@@ -111,12 +113,26 @@ namespace kaTe {
          * */
         static auto LoadTextures(aiMaterial *mat, aiTextureType type, Texture2D::Type tType, const aiScene *scene, const Path_T& modelDirectory) -> std::vector<std::shared_ptr<Texture>>;
 
+        static inline BufferLayout s_Layout{
+                { ShaderDataType::FLOAT3_TYPE, "a_Position" },
+                //{ ShaderDataType::FLOAT3_TYPE, "a_Normal" },
+                { ShaderDataType::FLOAT3_TYPE, "a_Color" },
+                { ShaderDataType::FLOAT2_TYPE, "a_TextureCoordinates" }
+        };
 
+        static auto GetDefaultBufferLayout() -> const BufferLayout& {
+            return s_Layout;
+        }
+
+        static auto SetDefaultBufferLayout(const BufferLayout& layout) -> void {
+            s_Layout = layout;
+        }
         std::vector<Mesh>   m_Meshes{};
         Path_T              m_ModelDirectory{};
         std::string         m_ModelName{};
+        bool m_HasModel{};
     };
 
 }
 
-#endif // KATE_ENGINE_MODEL_HH
+#endif // VULKATE_MODEL_HH

@@ -11,9 +11,12 @@
 
 // Project Headers
 #include <Tools/Common.hh>
+
 #include <Renderer/Mesh.hh>
 #include <Renderer/Model.hh>
-#include <Renderer/Material/Texture2D.hh>
+#include <Renderer/Buffers/VertexBuffer.hh>
+#include <Renderer/Buffers/IndexBuffer.hh>
+#include <Renderer/Material/Texture.hh>
 
 namespace kaTe {
     Model::Model(const Path_T &path, bool wantLoadTextures)
@@ -96,6 +99,7 @@ namespace kaTe {
                 indices.emplace_back(face.mIndices[index]);
         }
 
+#if 1
         // process material
         if(mesh->mMaterialIndex >= 0) {
             auto material { scene->mMaterials[mesh->mMaterialIndex] };
@@ -115,14 +119,15 @@ namespace kaTe {
                     textures.push_back(std::move(item));
             }
         }
+#endif
 
         MeshData meshData{};
 
         // Setup mesh data structure from previously retrieved data
         meshData.SetVertices(VertexBuffer::CreateBuffer(vertices));
         meshData.SetIndices(IndexBuffer::CreateBuffer(indices));
-        meshData.SetTextures(std::move(textures));
 
+        meshData.SetTextures(std::move(textures));
         return Mesh{ meshData };
     }
 

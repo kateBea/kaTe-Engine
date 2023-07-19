@@ -35,6 +35,7 @@ namespace kaTe {
     }
 
     auto MainWindow::EnableVSync() -> void {
+        // specific to openGL
         glfwSwapInterval(1);
         m_VSync = true;
     }
@@ -51,12 +52,12 @@ namespace kaTe {
         switch(Renderer::GetActiveGraphicsAPI()) {
             case Renderer::GraphicsAPI::OPENGL_API:
                 m_CurrentGraphicsAPIIsOpenGL = true;
-                m_Properties.SetTitle(fmt::format("kaTe Engine (OpenGL Version {}.{}.0)", KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR));
+                m_Properties.SetTitle(fmt::format("Radiance (OpenGL Version {}.{}.0)", KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR));
                 break;
             default:
                 m_CurrentGraphicsAPIIsOpenGL = false;
                 // TODO: query vulkan version
-                m_Properties.SetTitle(fmt::format("kaTe Engine (Vulkan Version 1.3)"));
+                m_Properties.SetTitle(fmt::format("Radiance (Vulkan Version 1.3)"));
                 break;
         }
 
@@ -214,7 +215,7 @@ namespace kaTe {
             case Renderer::GraphicsAPI::OPENGL_API:
                 return new OpenGLContext();
             case Renderer::GraphicsAPI::VULKAN_API:
-                return new VulkanContext();
+                return nullptr;
             default:
                 KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API");
                 return nullptr;

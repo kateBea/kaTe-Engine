@@ -110,7 +110,7 @@ namespace kaTe {
             if (ImGui::BeginPopupContextWindow("##HierarchyMenuOptions", popupWindowFlags)) {
                 if (ImGui::BeginMenu("New")) {
                     if (ImGui::MenuItem("Create entity")) {
-                        Scene::CreateEntity("Item", ptr);
+                        auto newEntity{ Scene::CreateEntity("Item", ptr) };
                     }
 
                     ImGui::EndMenu();

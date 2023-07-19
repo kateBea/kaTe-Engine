@@ -63,9 +63,11 @@ namespace kaTe {
                case Renderer::GraphicsAPI::OPENGL_API:
                    m_UseOpenGL = true;
                    break;
-               default:
-                   m_UseOpenGL = false;
+               case Renderer::GraphicsAPI::VULKAN_API:
+                   m_UseVulkan = true;
                    break;
+               default:
+                   KATE_APP_LOGGER_WARN("Unknown Graphics API for ImGui Layer init");
            }
 
            if (m_UseOpenGL) {
@@ -74,6 +76,10 @@ namespace kaTe {
                const std::string openglVersion{ fmt::format("#version {}{}0", KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR) };
                ImGui_ImplOpenGL3_Init(openglVersion.c_str());
            }
+
+           if (m_UseVulkan) {
+
+           }
        }
        catch (const std::bad_any_cast& exception) {
            KATE_APP_LOGGER_CRITICAL("Exception thrown std::any_cast. What: {}", exception.what());
@@ -81,9 +87,15 @@ namespace kaTe {
    }
 
    auto ImGuiLayer::OnDetach() -> void {
-       ImGui_ImplOpenGL3_Shutdown();
-       ImGui_ImplGlfw_Shutdown();
-       ImGui::DestroyContext();
+       if (m_UseOpenGL) {
+           ImGui_ImplOpenGL3_Shutdown();
+           ImGui_ImplGlfw_Shutdown();
+           ImGui::DestroyContext();
+       }
+
+       if (m_UseVulkan) {
+
+       }
    }
 
    auto ImGuiLayer::OnUpdate() -> void {

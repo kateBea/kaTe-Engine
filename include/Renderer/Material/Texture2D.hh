@@ -21,6 +21,11 @@ namespace kaTe {
             COUNT,
         };
 
+        KT_NODISCARD virtual auto GetChannels() const -> UInt32_T = 0;
+        KT_NODISCARD virtual auto GetWidth() const -> UInt32_T = 0;
+        KT_NODISCARD virtual auto GetHeight() const -> UInt32_T = 0;
+        KT_NODISCARD virtual auto GetId() const -> UInt32_T = 0;
+
         static auto CreateTexture(const Path_T& path) -> std::shared_ptr<Texture>;
         static auto CreateTextureRawPtr(const Path_T &path) -> Texture*;
 

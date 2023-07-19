@@ -1,81 +1,90 @@
 //
-// Created by kate on 6/30/23.
+// Created by kate on 7/3/23.
 //
 
-#ifndef KATE_ENGINE_VULKAN_SHADER_HH
-#define KATE_ENGINE_VULKAN_SHADER_HH
+#ifndef VULKATE_VULKAN_SHADER_HH
+#define VULKATE_VULKAN_SHADER_HH
 
-#include <string_view>
-
-#include <glm/glm.hpp>
+#include <filesystem>
 
 #include <volk.h>
 
 #include <Tools/Common.hh>
 #include <Renderer/Material/BaseShader.hh>
+#include <Renderer/Vulkan/VulkanPipeline.hh>
 
 namespace kaTe {
     class VulkanShader : public BaseShader {
     public:
-        /**
-         * Default initialization for Shader. DOES NOT Create a valid shader program
-         * */
-        explicit VulkanShader() = default;
+        explicit VulkanShader(ShaderStage stage);
 
-        /**
-         * Move constructor
-         * */
-        VulkanShader(VulkanShader && other) noexcept;
+        auto Upload(const Path_T& src) -> void;
 
-        /**
-         * Move assignment
-         * @return *this
-         * */
-        VulkanShader& operator=(VulkanShader&& other) noexcept;
+        auto Bind() -> void override {}
+        auto Unbind() -> void override {}
 
-        /**
-         * Construct Shader program from path to Vertex Shader source file directory
-         * and pixel Shader source file directory
-         * @param vertexSourceDir directory to the Vertex Shader source file
-         * @param fragmentSourceDir directory to the pixel Shader source file
-         * */
-        VulkanShader(const Path_T& vertexSourceDir, const std::filesystem::path& fragmentSourceDir);
+        auto SetBool(std::string_view name, bool value) -> void override {}
+        auto SetInt(std::string_view name, Int32_T value) -> void override {}
+        auto SetFloat(std::string_view name, float value) -> void override {}
+        auto SetVec2(std::string_view name, const glm::vec2& vec) -> void override {}
+        auto SetVec3(std::string_view name, const glm::vec3& vec) -> void override {}
+        auto SetVec4(std::string_view name, const glm::vec4& vec) -> void override {}
+        auto SetMat3(std::string_view name, const glm::mat3& mat) -> void override {}
+        auto SetMat4(std::string_view name, const glm::mat4& mat) -> void override {}
 
-        /**
-         * Loads the shaders specified from paths
-         * @param vShaderPath path to vertex shader path
-         * @param fShaderPath path to pixel/fragment shader path
-         * @throws std::runtime_error exception if any of the shader files could not be opened
-         * */
-        auto Upload(const Path_T& vShaderPath, const Path_T& fShaderPath) -> void;
-
-        /**
-         * Use this Shader program
-         * */
-        auto Bind() -> void override;
-
-        auto Unbind() -> void override;
-
-    public:
-        auto SetBool(std::string_view name, bool value) -> void override;
-        auto SetInt(std::string_view name, Int32_T value) -> void override;
-        auto SetFloat(std::string_view name, float value) -> void override;
-        auto SetVec2(std::string_view name, const glm::vec2& value) -> void override;
-        auto SetVec3(std::string_view name, const glm::vec3& value) -> void override;
-        auto SetVec4(std::string_view name, const glm::vec4& value) -> void override;
-        auto SetMat3(std::string_view name, const glm::mat3& value) -> void override;
-        auto SetMat4(std::string_view name, const glm::mat4& value) -> void override;
-
-        ~VulkanShader() override;
+        auto OnRelease() const -> void;
 
     private:
-        static auto CreateShaderModule(const CharArray& srcCode, VkShaderModule* shaderModule) -> void;
+        static auto GetFileData(const Path_T& path) -> std::vector<char>;
+
+        static auto CreateShaderModule(const std::string &srcCode, VkShaderModule& shaderModule) -> void;
+        static auto GetVulkanStageFromShaderStage(ShaderStage stage) -> VkShaderStageFlagBits;
+
     private:
-        // TODO: fit into and array, there can be more modifiable stages same for OpenGLShader
-        VkShaderModule m_VertShaderModule{};
-        VkShaderModule m_FragShaderModule{};
+        struct ShaderInfo {
+            ShaderStage                     Stage{};
+            std::string                     EntryPoint{ "main" };
+            std::string                     SrcPath{};
+            VkPipelineShaderStageCreateInfo StageCreateInfo{};
+
+            VkPipelineLayout                PipelineLayout{};
+            std::shared_ptr<VulkanPipeline> Pipeline{};
+
+            std::vector<VkDescriptorSetLayout> DescriptorSetLayouts{};
+            std::vector<VkDescriptorSetLayout> DescriptorSets{};
+
+            std::vector<VkBuffer> m_UniformBuffers;
+            std::vector<VkDeviceMemory> m_UniformBuffersMemory;
+            std::vector<void*> m_UniformBuffersMapped;
+        };
+
+        ShaderInfo m_Data{};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     };
 }
 
 
-#endif//KATE_ENGINE_VULKAN_SHADER_HH
+#endif //VULKATE_VULKAN_SHADER_HH

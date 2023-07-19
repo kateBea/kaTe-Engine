@@ -6,7 +6,6 @@
 #define KATE_ENGINE_ORTHOGRAPHIC_CAMERA_HH
 
 // Force radians always
-#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
 #include <Platform/Window/Window.hh>

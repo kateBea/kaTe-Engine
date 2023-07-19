@@ -14,10 +14,11 @@
 #include <GLFW/glfw3.h>
 
 // Project Headers
-#include <Platform/Window/Window.hh>
-#include <Renderer/RenderContext.hh>
-
 #include <Tools/Common.hh>
+
+#include <Platform/Window/Window.hh>
+
+#include <Renderer/RenderContext.hh>
 
 namespace kaTe {
     /**
@@ -35,6 +36,8 @@ namespace kaTe {
 
         KT_NODISCARD auto GetWidth() const -> Int32_T override { return m_Properties.GetWidth(); }
         KT_NODISCARD auto GetHeight() const -> Int32_T override { return m_Properties.GetHeight(); }
+        KT_NODISCARD auto GetExtent() const -> std::pair<Int32_T, Int32_T> override { return { GetWidth(), GetHeight() }; }
+
         /**
          * Returns a pointer to a structure containing the
          * native Window structure
@@ -52,7 +55,6 @@ namespace kaTe {
 
         // Vulkan specifics
         auto CreateWindowSurface(VkInstance instance, VkSurfaceKHR* surface) -> void;
-        KT_NODISCARD auto GetExtent() const -> VkExtent2D { return VkExtent2D{ static_cast<UInt32_T>(GetWidth()), static_cast<UInt32_T>(GetHeight()) }; }
 
         ~MainWindow() override = default;
 
@@ -67,9 +69,9 @@ namespace kaTe {
         GLFWwindow*         m_Window{};
         EventCallbackFunc_T m_Callback{};
         bool                m_VSync{};
-        bool m_CurrentGraphicsAPIIsOpenGL{ true };
+        bool                m_CurrentGraphicsAPIIsOpenGL{ true };
     };
 
-}   // END NAMESPACE kT
+}
 
 #endif // KATE_ENGINE_LINUX_WINDOW_HH

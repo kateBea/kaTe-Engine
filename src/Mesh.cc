@@ -7,11 +7,11 @@
 #include <utility>
 
 // Project Headers
-#include "Renderer/Mesh.hh"
+#include <Renderer/Mesh.hh>
 
 namespace kaTe {
-    Mesh::Mesh(const MeshData& data)
-        : m_Data{ data } {}
+    Mesh::Mesh(MeshData data)
+        : m_Data{ std::move( data ) } {}
 
     Mesh::Mesh(Mesh&& other) noexcept
         : m_Data{ std::move(other.m_Data) } {}

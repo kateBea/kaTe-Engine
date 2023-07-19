@@ -12,14 +12,10 @@
 #include <Tools/Common.hh>
 
 namespace kaTe {
-    // TODO: add shader library and implemetattion for the specializations of this base class to accept only one shader stage to compile
-
     enum ShaderStage {
         NONE,
-
-        VERTEX_STAGE,
-        PIXEL_STAGE,
-
+        VERTEX_STAGE = BIT_SET(1),
+        FRAGMENT_STAGE = BIT_SET(2),
         COUNT,
     };
 
@@ -31,6 +27,7 @@ namespace kaTe {
         virtual auto Bind() -> void = 0;
         virtual auto Unbind() -> void = 0;
 
+        // TODO: shouldn't be here, expose Graphic's API specific details
         virtual auto SetBool(std::string_view name, bool value) -> void = 0;
         virtual auto SetInt(std::string_view name, Int32_T value) -> void = 0;
         virtual auto SetFloat(std::string_view name, float value) -> void = 0;

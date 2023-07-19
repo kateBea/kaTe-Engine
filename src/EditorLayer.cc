@@ -95,7 +95,6 @@ namespace kaTe {
         RenderCommand::Clear(bufferBits);
 
         m_ScenePanelInfo->Viewport->OnUpdate();
-
         m_ScenePanelInfo->SceneFrameBuffer->Unbind();
     }
 

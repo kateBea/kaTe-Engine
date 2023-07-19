@@ -46,7 +46,6 @@ namespace kaTe {
 
         if (sceneHasMainCam) {
             // Render stuff if the scene has a camera
-
             Renderer::BeginScene(mainCam);
 
             auto view{ m_Registry.view<TagComponent, TransformComponent, SpriteRendererComponent>() };
@@ -60,7 +59,6 @@ namespace kaTe {
                 // Right if an object is on top of another but it is rendered after before blending does not work
                 Renderer::SubmitQuad(transform.GetTransform(), sprite.GetColor());
             }
-
             Renderer::EndScene();
         }
     }
