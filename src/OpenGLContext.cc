@@ -19,22 +19,22 @@
 
 namespace kaTe {
 
-    auto OpenGLContext::Init(std::any windowHandle) -> void {
+    auto OpenGLContext::Init(std::shared_ptr<Window> windowHandle) -> void {
         try {
             // We expect the native window for Linux Window to be a GLFWwindow*
-            m_Handle = std::any_cast<GLFWwindow*>(windowHandle);
-            KT_ASSERT(m_Handle, "Window handle for OpenGL context initialization is NULL");
+            s_Handle = std::any_cast<GLFWwindow*>(windowHandle->GetNativeWindow());
+            KT_ASSERT(s_Handle, "Window handle for OpenGL context initialization is NULL");
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, KT_OPENGL_VERSION_MAJOR);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, KT_OPENGL_VERSION_MINOR);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-            glfwMakeContextCurrent(m_Handle);
+            glfwMakeContextCurrent(s_Handle);
             glewExperimental = GL_TRUE;
 
             // Using temporal variable because KATE_CORE_LOGGER_ERROR gets stripped
             // in non-DEBUG builds, so glewInit() would not be executed
-            m_GLEWInitSuccess = glewInit() == GLEW_OK;
-            KT_ASSERT(m_GLEWInitSuccess, "Failed to initialize GLEW");
+            s_GLEWInitSuccess = glewInit() == GLEW_OK;
+            KT_ASSERT(s_GLEWInitSuccess, "Failed to initialize GLEW");
 
             KATE_CORE_LOGGER_INFO("OpenGL target  {}.{}", KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR);
             KATE_CORE_LOGGER_INFO("OpenGL available {}", (const char*)glGetString(GL_VERSION));
@@ -47,11 +47,23 @@ namespace kaTe {
         }
     }
 
+    auto OpenGLContext::EnableVSync() -> void {
+        glfwSwapInterval(1);
+        s_VSync = true;
+    }
+
+    auto OpenGLContext::DisableVSync() -> void {
+        glfwSwapInterval(0);
+        s_VSync = false;
+    }
+
+
+
     auto OpenGLContext::ShutDown() -> void {
 
     }
 
-    auto OpenGLContext::DrawFrame() -> void {
-        glfwSwapBuffers(m_Handle);
+    auto OpenGLContext::Draw() -> void {
+        glfwSwapBuffers(s_Handle);
     }
 }

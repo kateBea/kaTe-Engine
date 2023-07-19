@@ -1,7 +1,10 @@
 /**
- * LinuxWindow.cc
+ * MainWindow.cc
  * Created by kate on 5/26/23.
  * */
+// C++ Standard Library
+#include <any>
+#include <memory>
 
 // Third-Party Libraries
 #include <volk.h>
@@ -16,33 +19,19 @@
 #include <Core/Events/KeyEvents.hh>
 #include <Core/Events/MouseEvents.hh>
 
-#include "Renderer/Renderer.hh"
-#include "Renderer/Vulkan/VulkanContext.hh"
+#include <Renderer/Renderer.hh>
 #include <Platform/Window/MainWindow.hh>
-#include <Renderer/OpenGL/OpenGLContext.hh>
 #include <Renderer/RenderContext.hh>
 
 namespace kaTe {
     MainWindow::MainWindow(const WindowProperties& properties)
-        :   Window{ properties }, m_Window{ nullptr }, m_Callback{}, m_VSync{ true } {}
+        :   Window{ properties }, m_Window{ nullptr }, m_Callback{} {}
 
     auto MainWindow::OnUpdate() -> void {
         glfwPollEvents();
 
         // not be done when the window is minimized, it CPU waste
-        KT_ASSERT(m_Context, "Graphics API context pointer is NULL for MainWindow::OnUpdate()");
-        m_Context->DrawFrame();
-    }
-
-    auto MainWindow::EnableVSync() -> void {
-        // specific to openGL
-        glfwSwapInterval(1);
-        m_VSync = true;
-    }
-
-    auto MainWindow::DisableVSync() -> void {
-        glfwSwapInterval(0);
-        m_VSync = false;
+        RenderContext::Draw();
     }
 
     auto MainWindow::Init() -> void {
@@ -55,8 +44,11 @@ namespace kaTe {
                 m_Properties.SetTitle(fmt::format("Radiance (OpenGL Version {}.{}.0)", KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR));
                 break;
             default:
-                m_CurrentGraphicsAPIIsOpenGL = false;
                 // TODO: query vulkan version
+                UInt32_T major{};
+                UInt32_T minor{};
+                UInt32_T patch{};
+
                 m_Properties.SetTitle(fmt::format("Radiance (Vulkan Version 1.3)"));
                 break;
         }
@@ -76,23 +68,13 @@ namespace kaTe {
         m_WindowCreateSuccess = m_Window != nullptr;
         KT_ASSERT(m_WindowCreateSuccess, "Failed to create the Window GLFW");
 
-        m_Context = GetActiveAPIContext();
-        KT_ASSERT(m_Context, "Graphics Rendering API context is NULL");
-        m_Context->Init(GetNativeWindow());
-
         SpawnOnCenter();
-
-        if (m_CurrentGraphicsAPIIsOpenGL)
-            EnableVSync();
-
         SetCallbacks();
     }
 
     auto MainWindow::ShutDown() -> void {
         KATE_CORE_LOGGER_DEBUG("Shutting down Window GLFW. Name '{}'. Dimensions [{}, {}]",
                                m_Properties.GetName(), m_Properties.GetWidth(), m_Properties.GetHeight());
-
-        delete m_Context;
 
         // Might have an internal window counter If we want to spawn multiple windows,
         // so the last one alive shuts down the GLFW library
@@ -105,7 +87,7 @@ namespace kaTe {
 
         glfwSetWindowSizeCallback(m_Window,
             [](GLFWwindow* window, Int32_T width, Int32_T height) {
-                                      MainWindow * data{static_cast<MainWindow *>(glfwGetWindowUserPointer(window)) };
+                                      MainWindow* data{static_cast<MainWindow *>(glfwGetWindowUserPointer(window)) };
                                       data->m_Properties.SetWidth(width);
                                       data->m_Properties.SetHeight(height);
 
@@ -207,19 +189,6 @@ namespace kaTe {
         GLFWmonitor* primary{ glfwGetPrimaryMonitor() };
         glfwGetMonitorWorkarea(primary, nullptr, nullptr, &monitorWidth, &monitorHeight);
         glfwSetWindowPos(m_Window, monitorWidth / 5, monitorHeight / 5);
-    }
-
-
-    auto MainWindow::GetActiveAPIContext() -> RenderContext* {
-        switch(Renderer::GetActiveGraphicsAPI()) {
-            case Renderer::GraphicsAPI::OPENGL_API:
-                return new OpenGLContext();
-            case Renderer::GraphicsAPI::VULKAN_API:
-                return nullptr;
-            default:
-                KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API");
-                return nullptr;
-        }
     }
 
     auto MainWindow::InitGLFW() -> void {

@@ -9,6 +9,7 @@
 #include "Core/Application.hh"
 #include "Editor/Panels/SettingsPanel.hh"
 #include "Renderer/RenderCommand.hh"
+#include "Renderer/RenderContext.hh"
 
 
 namespace kaTe {
@@ -27,9 +28,9 @@ namespace kaTe {
             ImGui::Separator();
             if (ImGui::Checkbox("VSync Enabled", &m_Data->VerticalSyncEnabled)) {
                 if (m_Data->VerticalSyncEnabled)
-                    Application::Get().GetMainWindow().EnableVSync();
+                    RenderContext::EnableVSync();
                 else
-                    Application::Get().GetMainWindow().DisableVSync();
+                    RenderContext::DisableVSync();
             }
 
             if (ImGui::Checkbox("Wireframe mode", &m_Data->RenderWireframeMode)) {

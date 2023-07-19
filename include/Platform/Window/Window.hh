@@ -71,11 +71,6 @@ namespace kaTe {
         virtual auto ShutDown() -> void = 0;
         virtual auto SetEventCallback(EventCallbackFunc_T func) -> void = 0;
 
-        KT_NODISCARD
-        virtual auto IsVSyncEnabled() const -> bool = 0;
-        virtual auto EnableVSync() -> void = 0;
-        virtual auto DisableVSync() -> void = 0;
-
         virtual ~Window() = default;
     public:
         Window(const Window&) = delete;

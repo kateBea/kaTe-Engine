@@ -6,16 +6,24 @@
 #define KATE_ENGINE_RENDER_CONTEXT_HH
 
 #include <any>
+#include <memory>
+
+#include <Renderer/Renderer.hh>
+
+#include <Platform/Window/Window.hh>
 
 namespace kaTe {
-    // TODO: make the context classes fully static
     class RenderContext {
     public:
         explicit RenderContext() = default;
 
-        virtual auto Init(std::any windowHandle) -> void = 0;
-        virtual auto ShutDown() -> void = 0;
-        virtual auto DrawFrame() -> void = 0;
+        static auto Init(std::shared_ptr<Window> windowHandle) -> void;
+        static auto ShutDown() -> void;
+        static auto Draw() -> void;
+
+        static auto EnableVSync() -> void;
+        static auto DisableVSync() -> void;
+        static auto IsVSyncActive() -> bool;
 
         virtual ~RenderContext() = default;
     public:
@@ -24,6 +32,10 @@ namespace kaTe {
 
         RenderContext(RenderContext&&) = delete;
         auto operator=(RenderContext&&) -> RenderContext& = delete;
+
+    private:
+        inline static Renderer::GraphicsAPI s_ActiveAPI{ Renderer::GetActiveGraphicsAPI() };
+        inline static std::shared_ptr<Window> s_WindowHandle{};
     };
 }
 

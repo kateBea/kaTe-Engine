@@ -49,27 +49,20 @@ namespace kaTe {
         auto ShutDown() -> void override;
         auto SetEventCallback(EventCallbackFunc_T func) -> void override { m_Callback = func; }
 
-        KT_NODISCARD auto IsVSyncEnabled() const -> bool override { return m_VSync; }
-        auto EnableVSync() -> void override;
-        auto DisableVSync() -> void override;
+        KT_NODISCARD auto IsVSyncEnabled() const -> bool { return RenderContext::IsVSyncActive(); }
 
-        // Vulkan specifics
         auto CreateWindowSurface(VkInstance instance, VkSurfaceKHR* surface) -> void;
 
         ~MainWindow() override = default;
-
     private:
-        // Helpers
         auto SetCallbacks() -> void;
         auto SpawnOnCenter() const -> void;
-        static auto GetActiveAPIContext() -> RenderContext*;
         static auto InitGLFW() -> void;
 
-        RenderContext*      m_Context{};
-        GLFWwindow*         m_Window{};
+    private:
+        GLFWwindow* m_Window{};
         EventCallbackFunc_T m_Callback{};
-        bool                m_VSync{};
-        bool                m_CurrentGraphicsAPIIsOpenGL{ true };
+        bool m_CurrentGraphicsAPIIsOpenGL{ false };
     };
 
 }

@@ -27,6 +27,10 @@ namespace kaTe {
 
         m_MainWindow->Init();
         m_MainWindow->SetEventCallback(KT_BIND_EVENT_FUNC(Application::OnEvent));
+
+        RenderContext::Init(m_MainWindow);
+        RenderContext::EnableVSync();
+
         InputManager::Init();
 
         Renderer::Init();

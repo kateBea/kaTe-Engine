@@ -11,15 +11,19 @@
 #include <Renderer/RenderContext.hh>
 
 namespace kaTe {
-    class OpenGLContext : public RenderContext {
+    class OpenGLContext {
     public:
         explicit OpenGLContext() = default;
 
-        auto Init(std::any windowHandle) -> void override;
-        auto ShutDown() -> void override;
-        auto DrawFrame() -> void override;
+        static auto Init(std::shared_ptr<Window> windowHandle) -> void;
+        static auto ShutDown() -> void;
+        static auto Draw() -> void;
 
-        ~OpenGLContext() override = default;
+        static auto EnableVSync() -> void;
+        static auto DisableVSync() -> void;
+        static auto IsVSyncActive() -> bool { return s_VSync; }
+
+        ~OpenGLContext() = default;
 
     public:
         // Forbidden operations on Contexts
@@ -29,8 +33,9 @@ namespace kaTe {
         OpenGLContext(OpenGLContext&&) = delete;
         auto operator=(OpenGLContext&&) -> OpenGLContext& = delete;
     private:
-        GLFWwindow* m_Handle{};
-        bool        m_GLEWInitSuccess{ false };
+        inline static GLFWwindow* s_Handle{};
+        inline static bool s_GLEWInitSuccess{ false };
+        inline static bool s_VSync{};
     };
 }
 
