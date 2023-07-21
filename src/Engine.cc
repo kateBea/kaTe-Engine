@@ -10,10 +10,8 @@
 #include <Core/Application.hh>
 #include <Core/Logger.hh>
 
-#include "Core/Timer.hh"
 #include "Editor/EditorLayer.hh"
 #include "Renderer/Vulkan/VulkanTestLayer.hh"
-#include <Core/Layers/ImGuiLayer.hh>
 
 
 namespace kaTe {

@@ -37,7 +37,7 @@ namespace kaTe {
                 if (sceneHasMainCam) {
                     mainCam = std::move(camera.GetCameraPtr());
 
-                    // The camera's position, etc. depends on its transform component
+                    // The camera's position and rotation depends on its transform component
                     mainCam->SetPosition(transform.GetTranslation(), transform.GetRotation());
                     break;
                 }

@@ -99,7 +99,6 @@ namespace kaTe {
                 indices.emplace_back(face.mIndices[index]);
         }
 
-#if 1
         // process material
         if(mesh->mMaterialIndex >= 0) {
             auto material { scene->mMaterials[mesh->mMaterialIndex] };
@@ -119,7 +118,6 @@ namespace kaTe {
                     textures.push_back(std::move(item));
             }
         }
-#endif
 
         MeshData meshData{};
 

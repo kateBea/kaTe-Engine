@@ -5,10 +5,10 @@
 #ifndef KATE_ENGINE_VULKAN_TEST_LAYER_HH
 #define KATE_ENGINE_VULKAN_TEST_LAYER_HH
 
-#include "Core/Layers/Layer.hh"
+#include "Core/Layer.hh"
 #include "Renderer/Buffers/VertexBuffer.hh"
-#include <Renderer/Renderer.hh>
 #include <Renderer/RenderCommand.hh>
+#include <Renderer/Renderer.hh>
 
 #include <Platform/InputManager.hh>
 
@@ -17,13 +17,7 @@ namespace kaTe {
     class VulkanTestLayer : public Layer {
     public:
         auto OnAttach() -> void override {
-            std::vector<float> vertices{
-                    0.0, -0.5, 0.0f,     1.0f, 0.0f, 0.0f, 1.0f,
-                    0.5,  0.5, 0.0f,     0.0f, 1.0f, 0.0f, 1.0f,
-                    -0.5,  0.5, 0.0f,     0.0f, 0.0f, 1.0f, 1.0f,
-            };
 
-            m_VertexBuffer = VertexBuffer::CreateBuffer(vertices);
         }
 
         auto OnDetach() -> void override {
@@ -31,13 +25,10 @@ namespace kaTe {
         }
 
         auto OnUpdate() -> void override {
-            RendererAPI::BufferBits bufferBits{};
-            bufferBits[RendererAPI::BufferBit::COLOR_BUFFER_BIT] = true;
 
             RenderCommand::SetClearColor(m_ClearColor);
-            //RenderCommand::Clear(bufferBits);
 
-            Renderer::Submit(m_VertexBuffer);
+            //Renderer::Submit(<#initializer #>);
         }
 
         auto OnEvent(Event& event) -> void override {

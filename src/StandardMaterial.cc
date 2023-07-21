@@ -31,10 +31,6 @@ namespace kaTe {
         CreateDescriptorSets();
     }
 
-    auto StandardMaterial::Use() -> void {
-
-    }
-
     auto StandardMaterial::OnRelease() const -> void {
         vkDeviceWaitIdle(VulkanContext::GetPrimaryLogicalDevice());
 
@@ -68,14 +64,16 @@ namespace kaTe {
 
     auto StandardMaterial::CreatePipeline() -> void {
         auto pipelineConfig{ VulkanPipeline::GetDefaultPipelineConfigInfo() };
-        pipelineConfig.renderPass = VulkanRenderer::s_SwapChain->GetRenderPass();
+        pipelineConfig.renderPass = VulkanContext::GetSwapChain()->GetRenderPass();
         pipelineConfig.pipelineLayout = m_PipelineLayout;
 
-        m_Pipeline = std::make_shared<VulkanPipeline>("../assets/basicVert.sprv", "../assets/basicFrag.sprv", pipelineConfig);
+        m_Pipeline = std::make_shared<VulkanPipeline>("../assets/shaders/vulkan-spirv/basicVert.sprv",
+                                                      "../assets/shaders/vulkan-spirv/basicFrag.sprv",
+                                                      pipelineConfig);
     }
 
     auto StandardMaterial::BindDescriptorSets(VkCommandBuffer commandBuffer) -> void {
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_PipelineLayout, 0, 1, &m_DescriptorSets[VulkanRenderer::s_SwapChain->GetCurrentFrame()], 0, nullptr);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_PipelineLayout, 0, 1, &m_DescriptorSets[VulkanContext::GetSwapChain()->GetCurrentFrame()], 0, nullptr);
     }
 
     auto StandardMaterial::CreateDescriptorSetLayout() -> void {
@@ -241,7 +239,7 @@ namespace kaTe {
         pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_NONE;
         pipelineConfig.rasterizationInfo.lineWidth = pipelineConfig.rasterizationInfo.polygonMode == VK_POLYGON_MODE_LINE ? GPU_STANDARD_LINE_WIDTH : 0.0f;
 
-        pipelineConfig.renderPass = VulkanRenderer::s_SwapChain->GetRenderPass();
+        pipelineConfig.renderPass = VulkanContext::GetSwapChain()->GetRenderPass();
         pipelineConfig.pipelineLayout = m_PipelineLayout;
 
         m_Pipeline = std::make_shared<VulkanPipeline>("../assets/basicVert.sprv", "../assets/basicFrag.sprv", pipelineConfig);
@@ -256,7 +254,7 @@ namespace kaTe {
         pipelineConfig.rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT;
         pipelineConfig.rasterizationInfo.lineWidth = 0.0f;
 
-        pipelineConfig.renderPass = VulkanRenderer::s_SwapChain->GetRenderPass();
+        pipelineConfig.renderPass = VulkanContext::GetSwapChain()->GetRenderPass();
         pipelineConfig.pipelineLayout = m_PipelineLayout;
 
         m_Pipeline = std::make_shared<VulkanPipeline>("../assets/basicVert.sprv", "../assets/basicFrag.sprv", pipelineConfig);

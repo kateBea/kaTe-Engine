@@ -196,7 +196,7 @@ namespace kaTe {
     }
 
     auto VulkanTexture2D::TransitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) -> void {
-        VkCommandBuffer commandBuffer{ VulkanRenderer::GetCommandPool().BeginSingleTimeCommands() };
+        VkCommandBuffer commandBuffer{ dynamic_cast<VulkanRenderer*>(Renderer::GetRendererAPIActive())->GetCommandPool().BeginSingleTimeCommands() };
 
         VkImageMemoryBarrier barrier{};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -237,11 +237,11 @@ namespace kaTe {
 
 
         vkCmdPipelineBarrier(commandBuffer, sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
-        VulkanRenderer::GetCommandPool().EndSingleTimeCommands(commandBuffer);
+        dynamic_cast<VulkanRenderer*>(Renderer::GetRendererAPIActive())->GetCommandPool().EndSingleTimeCommands(commandBuffer);
     }
 
     auto VulkanTexture2D::CopyBufferToImage(VkBuffer buffer, VkImage image, UInt32_T width, UInt32_T height) -> void {
-        VkCommandBuffer commandBuffer{ VulkanRenderer::GetCommandPool().BeginSingleTimeCommands() };
+        VkCommandBuffer commandBuffer{ dynamic_cast<VulkanRenderer*>(Renderer::GetRendererAPIActive())->GetCommandPool().BeginSingleTimeCommands() };
 
         VkBufferImageCopy region{};
         region.bufferOffset = 0;
@@ -256,7 +256,7 @@ namespace kaTe {
 
         vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 
-        VulkanRenderer::GetCommandPool().EndSingleTimeCommands(commandBuffer);
+        dynamic_cast<VulkanRenderer*>(Renderer::GetRendererAPIActive())->GetCommandPool().EndSingleTimeCommands(commandBuffer);
     }
 
     auto VulkanTexture2D::OnRelease() const -> void {

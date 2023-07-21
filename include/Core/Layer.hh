@@ -11,8 +11,8 @@
 #include <string_view>
 
 // Project Headers
-#include <Tools/Common.hh>
-#include <Core/Events/Event.hh>
+#include "Core/Events/Event.hh"
+#include "Tools/Common.hh"
 
 namespace kaTe {
 

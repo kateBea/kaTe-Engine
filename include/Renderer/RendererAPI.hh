@@ -8,10 +8,12 @@
 
 #include <Tools/Common.hh>
 
-#include "Core/Events/Event.hh"
+#include <Core/Events/Event.hh>
+
 #include <Renderer/Buffers/IndexBuffer.hh>
 #include <Renderer/Buffers/VertexBuffer.hh>
 #include <Renderer/Material/BaseShader.hh>
+#include <Renderer/RenderingUtilities.hh>
 
 
 namespace kaTe {
@@ -24,13 +26,9 @@ namespace kaTe {
         explicit RendererAPI() = default;
 
 		enum BufferBit {
-            NONE,
 			COLOR_BUFFER_BIT = 0,
 			DEPTH_BUFFER_BIT = 1,
-            COUNT,
 		};
-
-        using BufferBits = std::array<bool, BufferBit::COUNT>;
 
         virtual auto Init() -> void = 0;
         virtual auto Shutdown() -> void = 0;
@@ -40,22 +38,10 @@ namespace kaTe {
 
 		virtual auto SetClearColor(const glm::vec4& color) -> void = 0;
 		virtual auto SetClearColor(float red, float green, float blue, float alpha) -> void = 0;
-		virtual auto Clear(const BufferBits& bufferBits) -> void = 0;
 
-		virtual auto DrawIndexed(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void = 0;
-        virtual auto DrawIndexed(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void = 0;
-
-        virtual auto Draw(const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void = 0;
-		virtual auto Draw(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void = 0;
-
-		virtual auto Draw(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void = 0;
-        virtual auto Draw(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void = 0;
+        virtual auto Draw(const RenderingData& data) -> void = 0;
 
 		virtual auto SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void = 0;
-
-        KT_NODISCARD virtual auto GetSwapChain() -> std::any = 0;
-        KT_NODISCARD virtual auto GetCommandBuffers() -> std::any = 0;
-
         virtual auto OnEvent(Event& event) -> void = 0;
 
         virtual ~RendererAPI() = default;

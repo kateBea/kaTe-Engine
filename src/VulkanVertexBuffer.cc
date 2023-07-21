@@ -149,13 +149,13 @@ namespace kaTe {
     }
 
     auto VulkanVertexBuffer::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) -> void {
-        VkCommandBuffer commandBuffer{ VulkanRenderer::GetCommandPool().BeginSingleTimeCommands() };
+        VkCommandBuffer commandBuffer{ dynamic_cast<VulkanRenderer*>(Renderer::GetRendererAPIActive())->GetCommandPool().BeginSingleTimeCommands() };
 
         VkBufferCopy copyRegion{};
         copyRegion.size = size;
         vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
 
-        VulkanRenderer::GetCommandPool().EndSingleTimeCommands(commandBuffer);
+        dynamic_cast<VulkanRenderer*>(Renderer::GetRendererAPIActive())->GetCommandPool().EndSingleTimeCommands(commandBuffer);
     }
 
     auto VulkanVertexBuffer::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) -> void {

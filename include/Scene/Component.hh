@@ -61,7 +61,7 @@ namespace kaTe {
         KT_NODISCARD auto GetScale() const -> const glm::vec3& { return m_Scale; }
         KT_NODISCARD auto GetTransform() const -> const glm::mat4& { return m_Transform; }
 
-        // "angles" specifies the rotation angle in degrees of each axis
+        // "angles" specifies the rotation angle in degrees for each axis
         auto ComputeTransform(const glm::vec3& position, const glm::vec3& size, const glm::vec3& angles = glm::vec3(0.0f)) -> void {
             m_Translation = position;
             m_Scale = size;

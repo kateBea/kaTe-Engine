@@ -7,8 +7,8 @@
 #include <algorithm>
 
 // Project headers
+#include "Core/LayerStack.hh"
 #include <Core/Logger.hh>
-#include <Core/Layers/LayerStack.hh>
 
 namespace kaTe {
     auto LayerStack::addLayer(const std::shared_ptr<Layer>& layer) -> void {

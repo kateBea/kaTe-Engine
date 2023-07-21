@@ -20,10 +20,14 @@
 #include <Core/Assert.hh>
 #include <Core/Logger.hh>
 
+#include <Core/Application.hh>
+
 #include <Renderer/Vulkan/VulkanContext.hh>
 
 #include <Platform/Window/Window.hh>
 #include <Platform/Window/MainWindow.hh>
+
+#include <Renderer/Vulkan/VulkanSwapChain.hh>
 
 
 
@@ -441,6 +445,7 @@ namespace kaTe {
             DestroyDebugUtilsMessengerEXT(GetInstance(), s_ContextData.DebugMessenger, nullptr);
 
         vkDestroySurfaceKHR(GetInstance(), GetSurface(), nullptr);
+        s_SwapChain->OnRelease();
 
         // Perform destruction on primary device only since there's
         // only one for now, see Logical Device creation
@@ -507,5 +512,18 @@ namespace kaTe {
             throw std::runtime_error("failed to allocate vertex buffer memory!");
 
         vkBindBufferMemory(VulkanContext::GetPrimaryLogicalDevice(), buffer, bufferMemory, 0);
+    }
+
+    auto VulkanContext::RecreateSwapChain() -> void {
+        vkDeviceWaitIdle(VulkanContext::GetPrimaryLogicalDevice());
+        auto appWindowExtent{ Application::Get().GetMainWindowPtr()->GetExtent() };
+        VkExtent2D extent{ (UInt32_T)appWindowExtent.first, (UInt32_T)appWindowExtent.second };
+        if (s_SwapChain)
+            s_SwapChain->OnRelease();
+
+        s_SwapChain = std::make_shared<VulkanSwapChain>(extent);
+    }
+    auto VulkanContext::GetSwapChain() -> std::shared_ptr<VulkanSwapChain> {
+        return s_SwapChain;
     }
 }

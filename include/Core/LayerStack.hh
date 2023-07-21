@@ -10,8 +10,8 @@
 #include <memory>
 
 // Project Headers
-#include <Core/Layers/Layer.hh>
-#include <Tools/Common.hh>
+#include "Layer.hh"
+#include "Tools/Common.hh"
 
 namespace kaTe {
     /**

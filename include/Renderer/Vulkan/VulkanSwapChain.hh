@@ -31,12 +31,13 @@ namespace kaTe {
         KT_NODISCARD auto GetHeight() const -> UInt32_T { return m_SwapChainExtent.height; }
         KT_NODISCARD auto GetExtentAspectRatio() const -> float { return static_cast<float>(m_SwapChainExtent.width) / static_cast<float>(m_SwapChainExtent.height); }
 
-        KT_NODISCARD static auto FindDepthFormat() -> VkFormat;
         KT_NODISCARD auto AcquireNextImage(UInt32_T* imageIndex) -> VkResult;
         KT_NODISCARD auto SubmitCommandBuffers(const VkCommandBuffer* buffers, const UInt32_T *imageIndex) -> VkResult;
         KT_NODISCARD auto GetCurrentFrame() const -> UInt32_T { return m_CurrentFrame; }
 
-        auto OnRelease() -> void;
+        KT_NODISCARD static auto FindDepthFormat() -> VkFormat;
+
+        auto OnRelease() const -> void;
 
         ~VulkanSwapChain() = default;
     public:

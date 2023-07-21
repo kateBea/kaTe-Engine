@@ -379,13 +379,12 @@ namespace kaTe {
                 VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
     }
 
-    auto VulkanSwapChain::OnRelease() -> void {
+    auto VulkanSwapChain::OnRelease() const -> void {
         vkDeviceWaitIdle(VulkanContext::GetPrimaryLogicalDevice());
 
         for (auto imageView: m_SwapChainImageViews)
             vkDestroyImageView(VulkanContext::GetPrimaryLogicalDevice(), imageView, nullptr);
 
-        m_SwapChainImageViews.clear();
         vkDestroySwapchainKHR(VulkanContext::GetPrimaryLogicalDevice(), m_SwapChain, nullptr);
 
         // Depth resources cleanup

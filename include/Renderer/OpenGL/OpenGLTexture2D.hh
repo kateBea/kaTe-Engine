@@ -39,7 +39,7 @@ namespace kaTe {
          * */
         KT_NODISCARD auto GetId() const -> UInt32_T override { return m_Id; }
 
-        KT_NODISCARD auto GetChannels() const -> UInt32_T { return m_Channels; }
+        KT_NODISCARD auto GetChannels() const -> UInt32_T override { return m_Channels; }
         KT_NODISCARD auto GetWidth() const -> UInt32_T override { return m_Width; }
         KT_NODISCARD auto GetHeight() const -> UInt32_T override { return m_Height; }
 
@@ -60,7 +60,6 @@ namespace kaTe {
         UInt32_T    m_Width{};
         UInt32_T    m_Height{};
         UInt32_T    m_Channels{};
-
 
         GLenum      m_InternalFormat{}; // Specifies the sized internal format to be used to store texture image data
         GLenum      m_Format{};         // Specifies the format of the pixel data

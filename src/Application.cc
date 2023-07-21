@@ -9,7 +9,7 @@
 #include <Core/Application.hh>
 #include <Tools/Common.hh>
 
-#include <Core/Layers/ImGuiLayer.hh>
+#include "Core/ImGui/ImGuiLayer.hh"
 #include <Platform/InputManager.hh>
 #include <Platform/Window/MainWindow.hh>
 

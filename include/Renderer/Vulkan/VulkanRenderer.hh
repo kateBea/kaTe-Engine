@@ -12,10 +12,12 @@
 #include <glm/glm.hpp>
 
 #include <Tools/Common.hh>
+#include <Renderer/RendererAPI.hh>
+
 #include <Renderer/Buffers/VertexBuffer.hh>
 #include <Renderer/Buffers/IndexBuffer.hh>
 #include <Renderer/Model.hh>
-
+#include <Renderer/Renderer.hh>
 #include <Renderer/Material/Material.hh>
 #include <Renderer/Vulkan/StandardMaterial.hh>
 #include <Renderer/Vulkan/VulkanCommandPool.hh>
@@ -32,67 +34,55 @@ namespace kaTe {
         glm::mat4 Projection{};
     };
 
-    class VulkanRenderer {
+    class VulkanRenderer : public RendererAPI {
     public:
         explicit VulkanRenderer() = default;
 
-        static auto Init() -> void;
-        static auto Shutdown() -> void;
+        auto Init() -> void override;
+        auto Shutdown() -> void override;
 
-        static auto EnableWireframeMode() -> void;
-        static auto DisableWireframeMode() -> void;
+        auto EnableWireframeMode() -> void override;
+        auto DisableWireframeMode() -> void override;
 
-        static auto SetClearColor(const glm::vec4& color) -> void;
-        static auto SetClearColor(float red, float green, float blue, float alpha) -> void;
+        auto SetClearColor(const glm::vec4& color) -> void override;
+        auto SetClearColor(float red, float green, float blue, float alpha) -> void override;
 
-        static auto SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void;
+        auto Draw(const DrawData& data) -> void;
+        auto Draw(const RenderingData &data) -> void override;
 
-        static auto Draw(const DrawData& data) -> void;
+        auto DrawIndexed(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void;
 
-        static auto GetCommandPool() -> VulkanCommandPool& { return *s_CommandPool; }
+        auto SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void override;
+        auto OnEvent(Event& event) -> void override;
 
-        ~VulkanRenderer() = default;
+        auto GetCommandPool() -> VulkanCommandPool& { return *m_CommandPool; }
+
+        ~VulkanRenderer() override = default;
     private:
         friend class StandardMaterial;
         friend class Application;
 
     private:
-        static auto CreateCommandBuffers() -> void;
-        static auto DrawFrame(const Model &model) -> void;
+        /*************************************************************
+        * HELPERS
+        * ********************************************************+ */
+        auto CreateCommandBuffers() -> void;
+        auto DrawFrame(const Model &model) -> void;
+        auto CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) -> void;
+        auto RecordCommandBuffers(UInt32_T imageIndex, const Mesh& model) -> void;
 
-        static auto CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) -> void;
-
-        // ImGui
-        static auto InitImGui() -> void;
-       static auto CreateImGuiRenderPass() -> void;
-       static auto CreateImGuiCommandPool() -> void;
-       static auto CreateImGuiCommandBuffers() -> void;
-       static auto CreateImGuiFrameBuffers() -> void;
-
-        static auto RecreateSwapChain() -> void;
-        static auto RecordCommandBuffers(UInt32_T imageIndex, const Mesh& model) -> void;
     private:
         /*************************************************************
-        * FOR IMGUI
+        * PRIVATE MEMBERS
         * ********************************************************+ */
-        inline static VkDescriptorPool s_ImGuiDescriptorPool{};
-        inline static VkRenderPass s_ImGuiRenderPass{};
-        inline static std::vector<VkFramebuffer> s_ImGuiFrameBuffers{};
-        inline static VkCommandPool s_ImGuiCommandPool{};
-        inline static std::vector<VkCommandBuffer> s_ImGuiCommandBuffers{};
+        std::shared_ptr<StandardMaterial> m_DefaultMaterial{};
+        std::shared_ptr<VulkanCommandPool> m_CommandPool{};
+        std::vector<VkCommandBuffer> m_CommandBuffers{};
 
+        glm::vec4 m_ClearColor{};
 
-        /*************************************************************
-        * PRIVATE STATIC MEMBER VARIABLES
-        * ********************************************************+ */
-        inline static std::shared_ptr<StandardMaterial> s_DefaultMaterial{};
-        inline static std::shared_ptr<VulkanSwapChain>  s_SwapChain{};
-        inline static std::shared_ptr<VulkanCommandPool> s_CommandPool{};
-
-        inline static VkDescriptorPool s_ImguiPool{};
-        inline static std::vector<VkCommandBuffer> s_CommandBuffers{};
-
-        inline static glm::vec4 s_ClearColor{};
+        VkViewport m_Viewport{};
+        VkRect2D m_Scissor{};
     };
 }
 

@@ -54,6 +54,7 @@ namespace kaTe {
         friend class VulkanTexture2D;
         friend class VulkanFrameBuffer;
         friend class StandardMaterial;
+        friend class ImGuiLayer;
     private:
         struct ContextData {
             std::vector<VkPhysicalDevice> PhysicalDevices{};
@@ -128,6 +129,13 @@ namespace kaTe {
         static auto CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory) -> void;
 
         /*************************************************************
+        * SWAPCHAIN
+        * ********************************************************+ */
+        static auto RecreateSwapChain() -> void;
+        KT_NODISCARD static auto GetSwapChain() -> std::shared_ptr<VulkanSwapChain>;
+
+
+        /*************************************************************
         * UTILITY FUNCTIONS
         * ********************************************************+ */
 
@@ -198,6 +206,8 @@ namespace kaTe {
             .EnableValidationLayers = true,
 #endif
         };
+
+        inline static std::shared_ptr<VulkanSwapChain> s_SwapChain{};
 
         // This information is physical device specific
         inline static std::vector<SwapChainSupportDetails> s_SwapChainSupportDetails{};

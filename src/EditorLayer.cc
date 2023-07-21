@@ -87,12 +87,6 @@ namespace kaTe {
         m_ScenePanelInfo->SceneFrameBuffer->Bind();
 
         RenderCommand::SetClearColor(m_SettingsPanelInfo->ClearColor);
-        RendererAPI::BufferBits bufferBits{};
-
-        bufferBits[RendererAPI::BufferBit::COLOR_BUFFER_BIT] = true;
-        bufferBits[RendererAPI::BufferBit::DEPTH_BUFFER_BIT] = true;
-
-        RenderCommand::Clear(bufferBits);
 
         m_ScenePanelInfo->Viewport->OnUpdate();
         m_ScenePanelInfo->SceneFrameBuffer->Unbind();

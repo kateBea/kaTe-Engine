@@ -3,85 +3,60 @@
 //
 
 #include <memory>
+
 #include <GL/glew.h>
 
-#include <Core/Logger.hh>
-#include <Renderer/OpenGL/OpenGLShader.hh>
 #include <Renderer/OpenGL/OpenGLRenderer.hh>
 
 namespace kaTe {
     auto OpenGLRenderer::SetClearColor(float red, float green, float blue, float alpha) -> void {
         glClearColor(red, green, blue, alpha);
-    }
-
-    auto OpenGLRenderer::Clear(const BufferBits& bufferBits) -> void {
-        GLbitfield mask{};
-        using BufferBit = RendererAPI::BufferBit;
-
-        if (bufferBits[BufferBit::DEPTH_BUFFER_BIT]) mask = GL_DEPTH_BUFFER_BIT;
-        if (bufferBits[BufferBit::COLOR_BUFFER_BIT]) mask |= GL_COLOR_BUFFER_BIT;
-
-        glClear(mask);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     }
 
     auto OpenGLRenderer::SetClearColor(const glm::vec4 &color) -> void {
         glClearColor(color.r, color.g, color.b, color.a);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     }
 
     auto OpenGLRenderer::SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void {
-        glViewport(x, y, width, height);
+        glViewport((GLsizei)x, (GLsizei)y, (GLsizei)width, (GLsizei)height);
     }
 
-    auto OpenGLRenderer::DrawIndexed([[maybe_unused]] const std::shared_ptr<VertexBuffer> &vertexBuffer, [[maybe_unused]] const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
-
-    }
-
-    auto OpenGLRenderer::DrawIndexed(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
+    auto OpenGLRenderer::DrawIndexed(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glEnable(GL_BLEND);
-        std::dynamic_pointer_cast<OpenGLShader>(shader)->Bind();
+        m_DefaultMaterial.BindShader();
         m_VertexArray.UseVertexBuffer(vertexBuffer);
         indexBuffer->Bind();
 
-        glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, (GLsizei)indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
     }
 
-    auto OpenGLRenderer::Draw(const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void {
+    auto OpenGLRenderer::Draw(const RenderingData& data) -> void {
 
-    }
+        m_DefaultMaterial.GetShader()->SetVec4("u_Color", data.Color);
+        m_DefaultMaterial.GetShader()->SetMat4("u_ProjectionView", data.TransformData.ProjectionView);
+        m_DefaultMaterial.GetShader()->SetMat4("u_Transform", data.TransformData.Transform);
 
-    auto OpenGLRenderer::Draw(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer) -> void {
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_BLEND);
-        m_DefaultVertexPixelShaders.Bind();
-        m_VertexArray.UseVertexBuffer(vertexBuffer);
-        indexBuffer->Bind();
+        if (data.TextureData != nullptr) {
+            m_DefaultMaterial.SetTextureSampler(0);
+            std::dynamic_pointer_cast<OpenGLTexture2D>(data.TextureData)->Bind(0);
+        }
 
-        glDrawElements(GL_TRIANGLES, indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
-    }
-
-    auto OpenGLRenderer::Draw(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer) -> void {
-
-    }
-
-    auto OpenGLRenderer::Draw(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void {
-
+        if (data.IndexBufferData != nullptr)
+            DrawIndexed(data.VertexBufferData, data.IndexBufferData);
     }
 
     auto OpenGLRenderer::Init() -> void {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        KATE_CORE_LOGGER_INFO("Render blending enabled");
-        m_DefaultVertexPixelShaders.Upload("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/colorShader.glsl");
+        m_DefaultMaterial.UploadShaders("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/debugShaderFrag.glsl");
     }
 
     auto OpenGLRenderer::Shutdown() -> void {
 
-    }
-
-    auto OpenGLRenderer::SetDefaultShader(const Path_T &vertShaderPath, const Path_T &pixelShaderPath) -> void {
-        m_DefaultVertexPixelShaders.Upload(vertShaderPath, pixelShaderPath);
     }
 
     auto OpenGLRenderer::EnableWireframeMode() -> void {
@@ -95,4 +70,5 @@ namespace kaTe {
     auto OpenGLRenderer::OnEvent(Event& event) -> void {
 
     }
+
 }

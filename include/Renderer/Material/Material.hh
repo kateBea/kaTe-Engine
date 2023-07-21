@@ -36,7 +36,6 @@ namespace kaTe {
 
         KT_NODISCARD static auto Create(Type matType) -> std::shared_ptr<Material>;
 
-        virtual auto Use() -> void = 0;
         virtual ~Material() = default;
     private:
         std::string m_Name{};

@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "Core/Layers/Layer.hh"
+#include "Core/Layer.hh"
 #include "Editor.hh"
 #include "Editor/Panels/HierarchyPanel.hh"
 #include "Editor/Panels/InspectorPanel.hh"

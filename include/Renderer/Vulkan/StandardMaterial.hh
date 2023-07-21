@@ -36,7 +36,6 @@ namespace kaTe {
         auto operator=(StandardMaterial&& other) -> StandardMaterial& = default;
 
         auto OnRelease() const -> void;
-        auto Use() -> void override;
 
         auto GetTexture() -> std::shared_ptr<VulkanTexture2D>& { return m_Texture; }
 
@@ -44,7 +43,7 @@ namespace kaTe {
         auto SetViewMatrix(const glm::mat4& view) -> void;
         auto SetProjectionMatrix(const glm::mat4& proj) -> void;
 
-        //auto SetTexture(const std::shared_ptr<Texture>& texture) -> void { m_Texture = std::dynamic_pointer_cast<VulkanTexture2D>(texture); }
+        auto SetTexture(const std::shared_ptr<Texture>& texture) -> void { m_Texture = std::dynamic_pointer_cast<VulkanTexture2D>(texture); }
 
         auto GetPipeline() -> VulkanPipeline& { return *m_Pipeline; }
         auto BindDescriptorSets(VkCommandBuffer commandBuffer) -> void;

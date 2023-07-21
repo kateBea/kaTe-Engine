@@ -14,11 +14,6 @@ namespace kaTe {
         s_ActiveRendererAPI = activeAPI;
     }
 
-    auto RenderCommand::Clear(BufferBits bufferBits) -> void {
-        KT_ASSERT(s_ActiveRendererAPI, "Render command active API is NULL");
-        s_ActiveRendererAPI->Clear(bufferBits);
-    }
-
     auto RenderCommand::SetClearColor(const glm::vec4& color) -> void {
         KT_ASSERT(s_ActiveRendererAPI, "Render command active API is NULL");
         s_ActiveRendererAPI->SetClearColor(color);
@@ -29,34 +24,10 @@ namespace kaTe {
         s_ActiveRendererAPI->SetClearColor(red, green, blue, alpha);
     }
 
-    auto RenderCommand::DrawIndexed(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer) -> void {
-        KT_ASSERT(s_ActiveRendererAPI, "Render command active API is NULL");
-        s_ActiveRendererAPI->DrawIndexed(vertexBuffer, indexBuffer);
-    }
 
-    auto RenderCommand::DrawIndexed(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer) -> void {
+    auto RenderCommand::Draw(const RenderingData& data) -> void {
         KT_ASSERT(s_ActiveRendererAPI, "Render command active API is NULL");
-        s_ActiveRendererAPI->DrawIndexed(shader, vertexBuffer, indexBuffer);
-    }
-
-    auto RenderCommand::Draw(const std::shared_ptr<VertexBuffer>& vertexBuffer) -> void {
-        KT_ASSERT(s_ActiveRendererAPI, "Render command active API is NULL");
-        s_ActiveRendererAPI->Draw(vertexBuffer);
-    }
-
-    auto RenderCommand::Draw(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer) -> void {
-        KT_ASSERT(s_ActiveRendererAPI, "Render command active API is NULL");
-        s_ActiveRendererAPI->Draw(vertexBuffer, indexBuffer);
-    }
-
-    auto RenderCommand::Draw(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer) -> void {
-        KT_ASSERT(s_ActiveRendererAPI, "Render command active API is NULL");
-        s_ActiveRendererAPI->Draw(shader, vertexBuffer);
-    }
-
-    auto RenderCommand::Draw(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer) -> void {
-        KT_ASSERT(s_ActiveRendererAPI, "Render command active API is NULL");
-        s_ActiveRendererAPI->Draw(shader, vertexBuffer, indexBuffer);
+        s_ActiveRendererAPI->Draw(data);
     }
 
     auto RenderCommand::UpdateViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void {

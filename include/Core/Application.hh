@@ -10,10 +10,10 @@
 #include <memory>
 
 // Project Headers
-#include "Core/Layers/ImGuiLayer.hh"
+#include "Core/ImGui/ImGuiLayer.hh"
+#include "LayerStack.hh"
 #include <Core/Events/AppEvents.hh>
 #include <Core/Events/Event.hh>
-#include <Core/Layers/LayerStack.hh>
 #include <Core/TimeManager.hh>
 #include <Platform/Window/Window.hh>
 #include <Tools/Singleton.hh>

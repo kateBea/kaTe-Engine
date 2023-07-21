@@ -15,7 +15,6 @@
 
 #include <Renderer/Renderer.hh>
 #include <Renderer/RenderCommand.hh>
-
 #include <Renderer/OpenGL/OpenGLRenderer.hh>
 #include <Renderer/Vulkan/VulkanRenderer.hh>
 
@@ -28,19 +27,8 @@ namespace kaTe {
         s_DrawData->CameraForScene = std::move(camera);
     }
 
-    auto Renderer::Submit(const std::shared_ptr<VertexBuffer>& vertexBuffer) -> void {
-        RenderCommand::Draw(vertexBuffer);
-    }
-
-    auto Renderer::Submit(const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer) -> void {
-        RenderCommand::DrawIndexed(vertexBuffer, indexBuffer);
-    }
-
-    auto Renderer::Submit(const std::shared_ptr<BaseShader>& shader, const std::shared_ptr<VertexBuffer>& vertexBuffer, const std::shared_ptr<IndexBuffer>& indexBuffer, const glm::mat4 &transform) -> void {
-        // Currently submit draws our geometry directly, not buffered
-        shader->SetMat4("u_ProjectionView", s_DrawData->OrthographicCameraForScene->GetProjectionView());
-        shader->SetMat4("u_Transform", transform);
-        RenderCommand::DrawIndexed(shader, vertexBuffer, indexBuffer);
+    auto Renderer::Submit(const RenderingData& data) -> void {
+        RenderCommand::Draw(data);
     }
 
     auto Renderer::EndScene() -> void {
@@ -70,16 +58,11 @@ namespace kaTe {
         };
 
         s_QuadData->VertexBufferData = VertexBuffer::CreateBuffer(squareData);
-        s_QuadData->IndexBufferData = IndexBuffer::CreateBuffer({0, 1, 2, 2, 3, 0});
+        s_QuadData->IndexBufferData = IndexBuffer::CreateBuffer({ 0, 1, 2, 2, 3, 0 });
 
-        s_QuadData->ColorShader     = BaseShader::CreateShader("../assets/shaders/debugShaderVert.glsl", "../assets/shaders/colorShader.glsl");
-        s_QuadData->TextureShader   = BaseShader::CreateShader("../assets/shaders/textureVert.glsl", "../assets/shaders/textureFrag.glsl");
-
-        s_QuadData->TextureShader->SetInt("u_TextSampler", 0);
         s_QuadData->VertexBufferData->SetBufferLayout(BufferLayout{
             { ShaderDataType::FLOAT3_TYPE, "a_Position" },
             { ShaderDataType::FLOAT2_TYPE, "a_TextureCoordinates" }
-
         });
     }
 
@@ -90,7 +73,7 @@ namespace kaTe {
                 s_ActiveRendererAPI->Init();
                 break;
             case GraphicsAPI::VULKAN_API:
-                s_ActiveRendererAPI = nullptr;
+                s_ActiveRendererAPI = new VulkanRenderer();
                 s_ActiveRendererAPI->Init();
                 break;
             default:
@@ -106,10 +89,6 @@ namespace kaTe {
     auto Renderer::OnWindowResize(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void {
         // Temporary. Should change when we have multiple frame buffers to render to
         RenderCommand::UpdateViewPort(x, y, width, height);
-    }
-
-    auto Renderer::SubmitQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, bool useOrthographicCamera) -> void {
-        SubmitQuad(glm::vec3(position, 0.0), size, color, angle, useOrthographicCamera);
     }
 
     auto Renderer::SubmitQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, bool useOrthographicCamera) -> void {
@@ -129,14 +108,22 @@ namespace kaTe {
         glm::mat4 rotation{ glm::rotate(IdentityMatrix, (float)glm::radians(angle), ZAxis) };
         glm::mat4 transform{ glm::translate(IdentityMatrix, position) * scale * rotation };
 
-        s_QuadData->ColorShader->SetVec4("u_Color", color);
-        s_QuadData->ColorShader->SetMat4("u_ProjectionView", cameraViewProj);
+        RenderingData data{
+                .VertexBufferData = s_QuadData->VertexBufferData,
+                .IndexBufferData = s_QuadData->IndexBufferData,
 
-        SubmitQuad(transform, color, useOrthographicCamera);
-    }
+                .TransformData{ .ProjectionView = cameraViewProj, .Transform = transform },
+                .Color = color,
+        };
 
-    auto Renderer::SubmitQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, double angle, const std::shared_ptr<Texture>& texture, bool useOrthographicCamera) -> void {
-        SubmitQuad(glm::vec3(position, 0.0), size, color, angle, texture, useOrthographicCamera);
+        // Render
+        RenderCommand::Draw(data);
+
+        // Rendering Stats management
+        s_RenderingStats->IncrementQuadCount(1);
+        // We increment the number of draw calls because for now
+        // The RenderCommand directly flushes the draw call
+        s_RenderingStats->IncrementDrawCallCount(1);
     }
 
     auto Renderer::SubmitQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, double angle, const std::shared_ptr<Texture>& texture, bool useOrthographicCamera) -> void {
@@ -159,12 +146,16 @@ namespace kaTe {
         else
             cameraViewProj = s_DrawData->OrthographicCameraForScene->GetProjectionView();
 
-        s_QuadData->ColorShader->SetVec4("u_Color", color);
-        s_QuadData->ColorShader->SetMat4("u_ProjectionView", cameraViewProj);
-        s_QuadData->ColorShader->SetMat4("u_Transform", transform);
+        RenderingData data{
+                .VertexBufferData = s_QuadData->VertexBufferData,
+                .IndexBufferData = s_QuadData->IndexBufferData,
+
+                .TransformData{ .ProjectionView = cameraViewProj , .Transform = transform},
+                .Color = color,
+        };
 
         // Render
-        RenderCommand::DrawIndexed(s_QuadData->ColorShader, s_QuadData->VertexBufferData, s_QuadData->IndexBufferData);
+        RenderCommand::Draw(data);
 
         // Rendering Stats management
         s_RenderingStats->IncrementQuadCount(1);
@@ -182,25 +173,22 @@ namespace kaTe {
         else
             cameraViewProj = s_DrawData->OrthographicCameraForScene->GetProjectionView();
 
-        s_QuadData->TextureShader->SetMat4("u_ProjectionView", cameraViewProj);
-        s_QuadData->TextureShader->SetMat4("u_Transform", transform);
-        texture->Bind();
+        RenderingData data{
+                .VertexBufferData = s_QuadData->VertexBufferData,
+                .IndexBufferData = s_QuadData->IndexBufferData,
+                .TextureData = texture,
+                .TransformData{ .ProjectionView = cameraViewProj, .Transform = transform },
+                .Color = color,
+        };
 
         // Render
-        RenderCommand::DrawIndexed(s_QuadData->TextureShader, s_QuadData->VertexBufferData, s_QuadData->IndexBufferData);
+        RenderCommand::Draw(data);
 
         // Rendering Stats management
         s_RenderingStats->IncrementQuadCount(1);
         // We increment the number of draw calls because for now
         // The RenderCommand directly flushes the draw call
         s_RenderingStats->IncrementDrawCallCount(1);
-    }
-
-    auto Renderer::GetSwapChain() -> std::any {
-        return s_ActiveRendererAPI->GetSwapChain();
-    }
-    auto Renderer::GetCommandBuffers() -> std::any {
-        return s_ActiveRendererAPI->GetCommandBuffers();
     }
 
     auto Renderer::OnEvent(Event& event) -> void {

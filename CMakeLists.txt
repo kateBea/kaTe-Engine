@@ -61,7 +61,7 @@ set(RENDERER_SOURCES
         src/VulkanTexture2D.cc
         src/VulkanDescriptorPool.cc
         src/VulkanPipeline.cc
-        src/VulkanSwapChain.cc src/RenderContext.cc)
+        src/VulkanSwapChain.cc src/RenderContext.cc src/OpenGLDefaultMaterial.cc)
 
 set(IMGUI_SOURCES
         lib/imgui/imgui.cpp

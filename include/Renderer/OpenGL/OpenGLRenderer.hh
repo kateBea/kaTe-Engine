@@ -9,15 +9,16 @@
 
 #include <glm/vec4.hpp>
 
-#include <Renderer/RendererAPI.hh>
 #include <Tools/Common.hh>
 
-#include "Renderer/Material/BaseShader.hh"
-#include "Renderer/Buffers/IndexBuffer.hh"
-#include "Renderer/Buffers/VertexBuffer.hh"
+#include <Renderer/RendererAPI.hh>
+
+#include <Renderer/Material/BaseShader.hh>
+#include <Renderer/Buffers/IndexBuffer.hh>
+#include <Renderer/Buffers/VertexBuffer.hh>
 
 #include <Renderer/OpenGL/OpenGLVertexArray.hh>
-#include <Renderer/OpenGL/OpenGLShader.hh>
+#include <Renderer/OpenGL/OpenGLDefaultMaterial.hh>
 
 namespace kaTe {
     class OpenGLRenderer : public RendererAPI {
@@ -32,27 +33,14 @@ namespace kaTe {
 
         auto SetClearColor(const glm::vec4& color) -> void override;
         auto SetClearColor(float red, float green, float blue, float alpha) -> void override;
-        auto Clear(const BufferBits& bufferBits) -> void override;
         auto SetViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void override;
 
-        auto DrawIndexed(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void override;
-        auto DrawIndexed(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void override;
-
-        // virtual auto draw(const Mesh& mesh) -> void = 0;
-        auto Draw(const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void override;
-        auto Draw(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void override;
-        // There's no reason to draw a mesh indexed as it may probably have its own indices
-
-        // virtual auto draw(const Shader& shader, const Mesh& mesh) -> void = 0;
-        auto Draw(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer) -> void override;
-        auto Draw(const std::shared_ptr<BaseShader> &shader, const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void override;
-
-        auto SetDefaultShader(const Path_T& vertShaderPath, const Path_T& pixelShaderPath) -> void;
-
-        KT_NODISCARD auto GetSwapChain() -> std::any override { KATE_CORE_LOGGER_WARN("Unnecessary call to GetSwapChain for OpenGLRenderer"); return (void*)nullptr; };
-        KT_NODISCARD auto GetCommandBuffers() -> std::any override { KATE_CORE_LOGGER_WARN("Unnecessary call to GetSwapChain for OpenGLRenderer"); return (void*)nullptr; }
+        auto Draw(const RenderingData& data) -> void override;
+        auto DrawIndexed(const std::shared_ptr<VertexBuffer> &vertexBuffer, const std::shared_ptr<IndexBuffer> &indexBuffer) -> void;
 
         auto OnEvent(Event& event) -> void override;
+
+        ~OpenGLRenderer() override = default;
     public:
         // Forbidden operations
         OpenGLRenderer(const OpenGLRenderer&) = delete;
@@ -61,8 +49,7 @@ namespace kaTe {
         OpenGLRenderer(OpenGLRenderer&&) = delete;
         auto operator=(OpenGLRenderer&&) -> OpenGLRenderer& = delete;
     private:
-        // This shader can be used if none is provided to Draw() family functions when they are invoked without a shader
-        OpenGLShader m_DefaultVertexPixelShaders{};
+        OpenGLDefaultMaterial m_DefaultMaterial{};
 
         /**
 		 * See: https://learnopengl.com/Getting-started/Hello-Triangle
@@ -80,12 +67,11 @@ namespace kaTe {
 		 * In compatibility mode, OpenGL already offers a default Vertex Array.
 		 * See: https://www.khronos.org/opengl/wiki/Vertex_Specification
 		 *
-		 * There's no need to have multiple VAO's really, we can just use a single one and setup the attributes properly before
+		 * There's no need to have multiple VAO's, we can just use a single one and setup the attributes properly before
 		 * a draw call with glEnableVertexAttribArray() && glVertexAttribPointer()
 		 * */
 
         OpenGLVertexArray m_VertexArray{};
-
     };
 }
 
