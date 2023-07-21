@@ -9,29 +9,16 @@
 
 #include <volk.h>
 
-#include <Tools/Common.hh>
-#include <Renderer/Material/BaseShader.hh>
+#include <Renderer/Material/Shader.hh>
 #include <Renderer/Vulkan/VulkanPipeline.hh>
+#include <Tools/Common.hh>
 
 namespace kaTe {
-    class VulkanShader : public BaseShader {
+    class VulkanShader : public Shader {
     public:
         explicit VulkanShader(ShaderStage stage);
 
         auto Upload(const Path_T& src) -> void;
-
-        auto Bind() -> void override {}
-        auto Unbind() -> void override {}
-
-        auto SetBool(std::string_view name, bool value) -> void override {}
-        auto SetInt(std::string_view name, Int32_T value) -> void override {}
-        auto SetFloat(std::string_view name, float value) -> void override {}
-        auto SetVec2(std::string_view name, const glm::vec2& vec) -> void override {}
-        auto SetVec3(std::string_view name, const glm::vec3& vec) -> void override {}
-        auto SetVec4(std::string_view name, const glm::vec4& vec) -> void override {}
-        auto SetMat3(std::string_view name, const glm::mat3& mat) -> void override {}
-        auto SetMat4(std::string_view name, const glm::mat4& mat) -> void override {}
-
         auto OnRelease() const -> void;
 
     private:
@@ -59,32 +46,7 @@ namespace kaTe {
         };
 
         ShaderInfo m_Data{};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     };
 }
-
 
 #endif //VULKATE_VULKAN_SHADER_HH

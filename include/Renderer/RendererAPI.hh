@@ -12,7 +12,7 @@
 
 #include <Renderer/Buffers/IndexBuffer.hh>
 #include <Renderer/Buffers/VertexBuffer.hh>
-#include <Renderer/Material/BaseShader.hh>
+#include <Renderer/Material/Shader.hh>
 #include <Renderer/RenderingUtilities.hh>
 
 

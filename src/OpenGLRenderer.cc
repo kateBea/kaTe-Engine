@@ -35,9 +35,9 @@ namespace kaTe {
 
     auto OpenGLRenderer::Draw(const RenderingData& data) -> void {
 
-        m_DefaultMaterial.GetShader()->SetVec4("u_Color", data.Color);
-        m_DefaultMaterial.GetShader()->SetMat4("u_ProjectionView", data.TransformData.ProjectionView);
-        m_DefaultMaterial.GetShader()->SetMat4("u_Transform", data.TransformData.Transform);
+        m_DefaultMaterial.SetTiltingColor(data.Color);
+        m_DefaultMaterial.SetProjectionView(data.TransformData.ProjectionView);
+        m_DefaultMaterial.SetTransform(data.TransformData.Transform);
 
         if (data.TextureData != nullptr) {
             m_DefaultMaterial.SetTextureSampler(0);

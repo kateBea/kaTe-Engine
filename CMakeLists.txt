@@ -43,7 +43,7 @@ set(RENDERER_SOURCES
         src/OpenGLTexture2D.cc
         src/RenderCommand.cc
         src/OrthographicCameraController.cc
-        src/BaseShader.cc
+        src/Shader.cc
         src/FrameBuffer.cc
         src/OpenGLFrameBuffer.cc
         src/Camera.cc

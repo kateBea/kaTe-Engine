@@ -13,9 +13,9 @@
 
 #include <Renderer/RendererAPI.hh>
 
-#include <Renderer/Material/BaseShader.hh>
 #include <Renderer/Buffers/IndexBuffer.hh>
 #include <Renderer/Buffers/VertexBuffer.hh>
+#include <Renderer/Material/Shader.hh>
 
 #include <Renderer/OpenGL/OpenGLVertexArray.hh>
 #include <Renderer/OpenGL/OpenGLDefaultMaterial.hh>

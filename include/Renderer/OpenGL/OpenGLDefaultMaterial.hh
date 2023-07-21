@@ -25,7 +25,7 @@ namespace kaTe {
         explicit OpenGLDefaultMaterial() : Material{ "OpenGL Default Material" } {}
 
         auto BindShader() -> void;
-        auto UnbindShader() -> void;
+        static auto UnbindShader() -> void;
 
         auto BindTexture() -> void;
         auto UnbindTexture() -> void;
@@ -37,6 +37,7 @@ namespace kaTe {
 
         auto SetTextureSampler(Int32_T value) -> void;
         auto SetTiltingColor(float red, float green, float blue, float alpha) -> void;
+        auto SetTiltingColor(const glm::vec4& color) -> void;
 
         auto SetProjectionView(const glm::mat4& mat) -> void;
         auto SetTransform(const glm::mat4& mat) -> void;

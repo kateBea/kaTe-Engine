@@ -19,7 +19,7 @@
 #include "Renderer/Buffers/VertexBuffer.hh"
 #include "Renderer/Camera/OrthographicCamera.hh"
 #include "Renderer/Camera/OrthographicCameraController.hh"
-#include "Renderer/Material/BaseShader.hh"
+#include "Renderer/Material/Shader.hh"
 #include "Renderer/Material/Texture.hh"
 #include "Renderer/Model.hh"
 #include "Scene/Scene.hh"

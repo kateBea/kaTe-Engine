@@ -20,11 +20,11 @@
 #include <glm/mat4x4.hpp>
 
 // Project headers
+#include <Renderer/Material/Shader.hh>
 #include <Tools/Common.hh>
-#include <Renderer/Material/BaseShader.hh>
 
 namespace kaTe {
-    class OpenGLShader : public BaseShader {
+    class OpenGLShader : public Shader {
     public:
         /**
          * Default initialization for Shader. DOES NOT Create a valid shader program
@@ -48,7 +48,7 @@ namespace kaTe {
          * @param vertexSourceDir directory to the Vertex Shader source file
          * @param fragmentSourceDir directory to the pixel Shader source file
          * */
-        OpenGLShader(const Path_T& vertexSourceDir, const std::filesystem::path& fragmentSourceDir);
+        OpenGLShader(const Path_T& vertexSourceDir, const Path_T& fragmentSourceDir);
 
         /**
          * Loads the shaders specified from paths
@@ -61,9 +61,9 @@ namespace kaTe {
         /**
          * Use this Shader program
          * */
-        auto Bind() -> void override { glUseProgram(m_Id); }
+        auto Bind() const -> void { glUseProgram(m_Id); }
 
-        auto Unbind() -> void override { glUseProgram(0); }
+        static auto Unbind() -> void { glUseProgram(0); }
 
         /**
          * Get Shader program ID
@@ -71,18 +71,6 @@ namespace kaTe {
          * */
         KT_NODISCARD auto GetProgram() const -> UInt32_T { return m_Id; }
 
-    public:
-        auto SetBool(std::string_view name, bool value) -> void override { SetUniformBool(name, value); }
-        auto SetInt(std::string_view name, Int32_T value) -> void override { SetUniformInt(name, value); }
-        auto SetFloat(std::string_view name, float value) -> void override { SetUniformFloat(name, value); }
-        auto SetVec2(std::string_view name, const glm::vec2& value) -> void override { SetUniformVec2(name, value); }
-        auto SetVec3(std::string_view name, const glm::vec3& value) -> void override { SetUniformVec3(name, value); }
-        auto SetVec4(std::string_view name, const glm::vec4& value) -> void override { SetUniformVec4(name, value); }
-        auto SetMat3(std::string_view name, const glm::mat3& value) -> void override { SetUniformMat3(name, value); }
-        auto SetMat4(std::string_view name, const glm::mat4& value) -> void override { SetUniformMat4(name, value); }
-
-        ~OpenGLShader() override { glDeleteProgram(GetProgram()); }
-    private:
         /**
          * Sets the given boolean value to the uniform identified by "name",
          * it has no effect if this Shader has no uniform with given name. This function
@@ -157,7 +145,9 @@ namespace kaTe {
          * @param mat value for the uniform
          * */
         auto SetUniformMat4(std::string_view name, const glm::mat4& mat) -> void;
-    private:
+
+        ~OpenGLShader() override { glDeleteProgram(GetProgram()); }
+    public:
         // Forbidden operations
         OpenGLShader(const OpenGLShader &) = delete;
         OpenGLShader & operator=(const OpenGLShader &) = delete;

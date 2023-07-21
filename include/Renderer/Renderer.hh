@@ -23,7 +23,7 @@
 #include <Renderer/Buffers/VertexBuffer.hh>
 #include <Renderer/Camera/Camera.hh>
 #include <Renderer/Camera/OrthographicCamera.hh>
-#include <Renderer/Material/BaseShader.hh>
+#include <Renderer/Material/Shader.hh>
 #include <Renderer/Material/Texture.hh>
 
 
@@ -114,9 +114,9 @@ namespace kaTe {
             std::shared_ptr<IndexBuffer> IndexBufferData{};
 
             // TODO: remove
-            std::shared_ptr<BaseShader> ColorShader{};
-            std::shared_ptr<BaseShader> TextureShader{};
-            std::shared_ptr<BaseShader> DefaultShader{};
+            std::shared_ptr<Shader> ColorShader{};
+            std::shared_ptr<Shader> TextureShader{};
+            std::shared_ptr<Shader> DefaultShader{};
 
             std::shared_ptr<Camera> CameraForScene{};
             std::shared_ptr<OrthographicCamera> OrthographicCameraForScene{};
@@ -127,8 +127,8 @@ namespace kaTe {
             std::shared_ptr<IndexBuffer> IndexBufferData{};
 
             // TODO: remove
-            std::shared_ptr<BaseShader> ColorShader{};
-            std::shared_ptr<BaseShader> TextureShader{};
+            std::shared_ptr<Shader> ColorShader{};
+            std::shared_ptr<Shader> TextureShader{};
 
             std::shared_ptr<Camera> CameraForScene{};
             std::shared_ptr<OrthographicCamera> OrthographicCameraForScene{};

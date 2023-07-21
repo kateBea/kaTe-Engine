@@ -8,9 +8,9 @@
 #include "Renderer/Buffers/IndexBuffer.hh"
 #include "Renderer/Buffers/VertexBuffer.hh"
 
+#include <Renderer/Material/Shader.hh>
 #include <Renderer/Renderer.hh>
 #include <Renderer/RendererAPI.hh>
-#include <Renderer/Material/BaseShader.hh>
 
 #include <Core/Logger.hh>
 #include <Tools/Common.hh>
