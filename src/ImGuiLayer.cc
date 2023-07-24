@@ -117,11 +117,31 @@ namespace kaTe {
     }
 
     auto ImGuiLayer::EndFrame() -> void {
-        if (m_UseOpenGL)
-            EndImGuiFrameForOpenGL();
+        ImGuiIO& io{ ImGui::GetIO() };
 
-        if (m_UseVulkan)
+        if (m_UseOpenGL) {
+            EndImGuiFrameForOpenGL();
+            // Update and Render additional Platform Windows
+            // (Platform functions may change the current OpenGL context,
+            // so we save/restore it to make it easier to paste this code elsewhere.
+            //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+            if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+                GLFWwindow *backupCurrentContext{glfwGetCurrentContext()};
+                ImGui::UpdatePlatformWindows();
+                ImGui::RenderPlatformWindowsDefault();
+
+                // Implies we are using OpenGL with GLFW
+                glfwMakeContextCurrent(backupCurrentContext);
+            }
+        }
+
+        if (m_UseVulkan) {
             EndImGuiFrameForVulkan();
+            if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+                ImGui::UpdatePlatformWindows();
+                ImGui::RenderPlatformWindowsDefault();
+            }
+        }
     }
 
     auto ImGuiLayer::OnImGuiRender() -> void {
@@ -156,19 +176,6 @@ namespace kaTe {
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        // Update and Render additional Platform Windows
-        // (Platform functions may change the current OpenGL context,
-        // so we save/restore it to make it easier to paste this code elsewhere.
-        //  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-            GLFWwindow *backupCurrentContext{glfwGetCurrentContext()};
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
-
-            // Implies we are using OpenGL with GLFW
-            glfwMakeContextCurrent(backupCurrentContext);
-        }
     }
 
     auto ImGuiLayer::InitImGuiForVulkan(GLFWwindow *window) -> void {
@@ -220,19 +227,17 @@ namespace kaTe {
         if (!ImGui_ImplVulkan_Init(&initInfo, VulkanContext::GetSwapChain()->GetRenderPass()/*m_ImGuiRenderPass*/))
             throw std::runtime_error("Failed to initialize Vulkan for ImGui");
 
-        //execute a gpu command to upload imgui font textures
+        // execute a gpu command to upload imgui font textures
         auto command{m_CommandPool->BeginSingleTimeCommands()};
         ImGui_ImplVulkan_CreateFontsTexture(command);
         m_CommandPool->EndSingleTimeCommands(command);
 
-        //clear font textures from cpu data
+        // clear font textures from cpu data
         vkDeviceWaitIdle(VulkanContext::GetPrimaryLogicalDevice());
         ImGui_ImplVulkan_DestroyFontUploadObjects();
     }
 
     auto ImGuiLayer::BeginImGuiFrameForVulkan() -> void {
-        // TODO: swapchain recreate for imgui, see ImGui Vulkan examples
-
         ImGui_ImplVulkan_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -248,36 +253,32 @@ namespace kaTe {
         UInt32_T swapChainImageIndex{};
         auto ret{ AcquireNextSwapChainImage(swapChainImageIndex) };
 
-        if (ret == VK_ERROR_OUT_OF_DATE_KHR)
+        if (ret == VK_ERROR_OUT_OF_DATE_KHR) {
             VulkanContext::RecreateSwapChain();
+            return;
+        }
 
-        if (ret != VK_SUBOPTIMAL_KHR)
-            VulkanContext::RecreateSwapChain();
+        if (ret != VK_SUCCESS)
+            throw std::runtime_error("failed to acquire swap chain image!");
 
         RecordImGuiCommandBuffers(swapChainImageIndex);
-
         ret = SubmitImGuiCommandBuffers(swapChainImageIndex);
-        if (ret == VK_ERROR_OUT_OF_DATE_KHR || ret == VK_SUBOPTIMAL_KHR)
+        if (ret == VK_ERROR_OUT_OF_DATE_KHR || ret == VK_SUBOPTIMAL_KHR) {
             VulkanContext::RecreateSwapChain();
-
-        vkDeviceWaitIdle(VulkanContext::GetPrimaryLogicalDevice());
+            return;
+        }
 
         if (ret != VK_SUCCESS)
             throw std::runtime_error("failed to submit imgui command buffers!");
 
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
-        }
     }
 
     auto ImGuiLayer::AcquireNextSwapChainImage(UInt32_T &imageIndex) -> VkResult {
         return VulkanContext::GetSwapChain()->AcquireNextImage(&imageIndex);
-
     }
 
     auto ImGuiLayer::SubmitImGuiCommandBuffers(UInt32_T &imageIndex) -> VkResult {
-        return  VulkanContext::GetSwapChain()->SubmitCommandBuffers(&m_ImGuiCommandBuffers[imageIndex], &imageIndex);
+        return  VulkanContext::GetSwapChain()->SubmitCommandBuffers(&m_ImGuiCommandBuffers[imageIndex], imageIndex);
     }
 
     auto ImGuiLayer::RecordImGuiCommandBuffers(UInt32_T imageIndex) -> void {

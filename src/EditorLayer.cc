@@ -73,7 +73,7 @@ namespace kaTe {
         {
             // scripting test
             // TODO: does not compile
-            //m_MainCamEntity.GetComponent<NativeScriptComponent>().Bind<CameraController>();
+            // m_MainCamEntity.GetComponent<NativeScriptComponent>().Bind<CameraController>();
         }
     }
 

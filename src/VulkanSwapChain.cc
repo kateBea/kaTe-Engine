@@ -31,17 +31,17 @@ namespace kaTe {
         return result;
     }
 
-    auto VulkanSwapChain::SubmitCommandBuffers(const VkCommandBuffer* buffers, const UInt32_T* imageIndex) -> VkResult {
-        if (m_ImagesInFlight[*imageIndex] != VK_NULL_HANDLE)
-            vkWaitForFences(VulkanContext::GetPrimaryLogicalDevice(), 1, &m_ImagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
+    auto VulkanSwapChain::SubmitCommandBuffers(const VkCommandBuffer* buffers, const UInt32_T imageIndex) -> VkResult {
+        if (m_ImagesInFlight[imageIndex] != VK_NULL_HANDLE)
+            vkWaitForFences(VulkanContext::GetPrimaryLogicalDevice(), 1, &m_ImagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
 
-        m_ImagesInFlight[*imageIndex] = m_InFlightFences[m_CurrentFrame];
+        m_ImagesInFlight[imageIndex] = m_InFlightFences[m_CurrentFrame];
 
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
         std::array<VkSemaphore, 1> waitSemaphores{ m_ImageAvailableSemaphores[m_CurrentFrame] };
-        std::array<VkPipelineStageFlags, 1> waitStages{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+        std::array<VkPipelineStageFlags, 1> waitStages{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
         submitInfo.waitSemaphoreCount = waitSemaphores.size();
         submitInfo.pWaitSemaphores = waitSemaphores.data();
         submitInfo.pWaitDstStageMask = waitStages.data();
@@ -60,14 +60,13 @@ namespace kaTe {
 
         VkPresentInfoKHR presentInfo{};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
         presentInfo.waitSemaphoreCount = signalSemaphores.size();
         presentInfo.pWaitSemaphores = signalSemaphores.data();
 
         std::array<VkSwapchainKHR, 1> swapChains{ m_SwapChain };
         presentInfo.swapchainCount = swapChains.size();
         presentInfo.pSwapchains = swapChains.data();
-        presentInfo.pImageIndices = imageIndex;
+        presentInfo.pImageIndices = &imageIndex;
 
         auto result{ vkQueuePresentKHR(VulkanContext::GetPrimaryLogicalDevicePresentQueue(), &presentInfo) };
         m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;

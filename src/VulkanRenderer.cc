@@ -131,7 +131,7 @@ namespace kaTe {
         for (const auto& mesh : model.GetMeshes())
             RecordCommandBuffers(imageIndex, mesh);
 
-        result = VulkanContext::GetSwapChain()->SubmitCommandBuffers(&m_CommandBuffers[imageIndex], &imageIndex);
+        result = VulkanContext::GetSwapChain()->SubmitCommandBuffers(&m_CommandBuffers[imageIndex], imageIndex);
 
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
             VulkanContext::RecreateSwapChain();
@@ -144,7 +144,6 @@ namespace kaTe {
 
     auto VulkanRenderer::RecordCommandBuffers(UInt32_T imageIndex, const Mesh& mesh) -> void {
         VkCommandBufferBeginInfo beginInfo{};
-
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
         if (vkBeginCommandBuffer(m_CommandBuffers[imageIndex], &beginInfo) != VK_SUCCESS)
