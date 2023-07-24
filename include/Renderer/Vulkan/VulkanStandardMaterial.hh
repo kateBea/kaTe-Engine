@@ -1,5 +1,5 @@
 /**
- * StandardMaterial.hh
+ * VulkanStandardMaterial.hh
  * Created by kate on 6/30/23.
  * */
 
@@ -25,15 +25,15 @@
 #include <Renderer/Vulkan/VulkanTexture2D.hh>
 
 namespace kaTe {
-    class StandardMaterial : public Material {
+    class VulkanStandardMaterial : public Material {
     public:
-        explicit StandardMaterial(std::string_view name = "StandardMaterial");
+        explicit VulkanStandardMaterial(std::string_view name = "VulkanStandardMaterial");
 
-        StandardMaterial(const StandardMaterial& other) = default;
-        StandardMaterial(StandardMaterial&& other) = default;
+        VulkanStandardMaterial(const VulkanStandardMaterial & other) = default;
+        VulkanStandardMaterial(VulkanStandardMaterial && other) = default;
 
-        auto operator=(const StandardMaterial& other) -> StandardMaterial& = default;
-        auto operator=(StandardMaterial&& other) -> StandardMaterial& = default;
+        auto operator=(const VulkanStandardMaterial & other) -> VulkanStandardMaterial & = default;
+        auto operator=(VulkanStandardMaterial && other) -> VulkanStandardMaterial & = default;
 
         auto OnRelease() const -> void;
 

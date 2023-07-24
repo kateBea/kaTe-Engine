@@ -1,5 +1,5 @@
 /**
- * StandardMaterial.cc
+ * VulkanStandardMaterial.cc
  * Created by kate on 7/10/2023.
  * */
 
@@ -12,12 +12,12 @@
 
 // Project Headers
 #include <Renderer/Vulkan/VulkanContext.hh>
-#include <Renderer/Vulkan/VulkanSwapChain.hh>
-#include <Renderer/Vulkan/StandardMaterial.hh>
 #include <Renderer/Vulkan/VulkanRenderer.hh>
+#include <Renderer/Vulkan/VulkanStandardMaterial.hh>
+#include <Renderer/Vulkan/VulkanSwapChain.hh>
 
 namespace kaTe {
-    StandardMaterial::StandardMaterial(std::string_view name)
+    VulkanStandardMaterial::VulkanStandardMaterial(std::string_view name)
         :   Material{ name }
     {
         m_Texture = std::make_shared<VulkanTexture2D>("../assets/textures/lava512x512.png");
@@ -31,7 +31,7 @@ namespace kaTe {
         CreateDescriptorSets();
     }
 
-    auto StandardMaterial::OnRelease() const -> void {
+    auto VulkanStandardMaterial::OnRelease() const -> void {
         vkDeviceWaitIdle(VulkanContext::GetPrimaryLogicalDevice());
 
         vkDestroyDescriptorPool(VulkanContext::GetPrimaryLogicalDevice(), m_DescriptorPool, nullptr);
@@ -47,7 +47,7 @@ namespace kaTe {
         m_Texture->OnRelease();
     }
 
-    auto StandardMaterial::CreatePipelineLayout() -> void {
+    auto VulkanStandardMaterial::CreatePipelineLayout() -> void {
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         pipelineLayoutInfo.setLayoutCount = 0;
@@ -62,7 +62,7 @@ namespace kaTe {
             throw std::runtime_error("Failed to create pipeline layout");
     }
 
-    auto StandardMaterial::CreatePipeline() -> void {
+    auto VulkanStandardMaterial::CreatePipeline() -> void {
         auto pipelineConfig{ VulkanPipeline::GetDefaultPipelineConfigInfo() };
         pipelineConfig.renderPass = VulkanContext::GetSwapChain()->GetRenderPass();
         pipelineConfig.pipelineLayout = m_PipelineLayout;
@@ -72,11 +72,11 @@ namespace kaTe {
                                                       pipelineConfig);
     }
 
-    auto StandardMaterial::BindDescriptorSets(VkCommandBuffer commandBuffer) -> void {
+    auto VulkanStandardMaterial::BindDescriptorSets(VkCommandBuffer commandBuffer) -> void {
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_PipelineLayout, 0, 1, &m_DescriptorSets[VulkanContext::GetSwapChain()->GetCurrentFrame()], 0, nullptr);
     }
 
-    auto StandardMaterial::CreateDescriptorSetLayout() -> void {
+    auto VulkanStandardMaterial::CreateDescriptorSetLayout() -> void {
         VkDescriptorSetLayoutBinding transformLayoutBinding{};
         transformLayoutBinding.binding = 0;
         transformLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -103,7 +103,7 @@ namespace kaTe {
 
     }
 
-    auto StandardMaterial::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) -> void {
+    auto VulkanStandardMaterial::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) -> void {
         VkBufferCreateInfo bufferInfo{};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         bufferInfo.size = size;
@@ -135,7 +135,7 @@ namespace kaTe {
         vkBindBufferMemory(VulkanContext::GetPrimaryLogicalDevice(), buffer, bufferMemory, 0);
     }
 
-    auto StandardMaterial::CreateUniformBuffers() -> void {
+    auto VulkanStandardMaterial::CreateUniformBuffers() -> void {
         VkDeviceSize bufferSize{ sizeof(UniformBufferObject) };
 
         m_UniformBuffers.resize(VulkanSwapChain::MAX_FRAMES_IN_FLIGHT);
@@ -148,11 +148,11 @@ namespace kaTe {
         }
     }
 
-    auto StandardMaterial::UpdateUniformBuffers(UInt32_T frame) -> void {
+    auto VulkanStandardMaterial::UpdateUniformBuffers(UInt32_T frame) -> void {
         std::memcpy(m_UniformBuffersMapped[frame], &m_Transform, sizeof(m_Transform));
     }
 
-    auto StandardMaterial::CreateDescriptorPool() -> void {
+    auto VulkanStandardMaterial::CreateDescriptorPool() -> void {
         std::array<VkDescriptorPoolSize, 2> poolSizes{};
         poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         poolSizes[0].descriptorCount = static_cast<UInt32_T>(VulkanSwapChain::MAX_FRAMES_IN_FLIGHT);
@@ -170,7 +170,7 @@ namespace kaTe {
             throw std::runtime_error("failed to create descriptor pool!");
     }
 
-    auto StandardMaterial::CreateDescriptorSets() -> void {
+    auto VulkanStandardMaterial::CreateDescriptorSets() -> void {
         std::vector<VkDescriptorSetLayout> layouts(VulkanSwapChain::MAX_FRAMES_IN_FLIGHT, m_DescriptorSetLayout);
 
         VkDescriptorSetAllocateInfo allocInfo{};
@@ -217,19 +217,19 @@ namespace kaTe {
         }
     }
 
-    auto StandardMaterial::SetModelMatrix(const glm::mat4& model) -> void {
+    auto VulkanStandardMaterial::SetModelMatrix(const glm::mat4& model) -> void {
         m_Transform.Model = model;
     }
 
-    auto StandardMaterial::SetViewMatrix(const glm::mat4 &view) -> void {
+    auto VulkanStandardMaterial::SetViewMatrix(const glm::mat4 &view) -> void {
         m_Transform.View = view;
     }
 
-    auto StandardMaterial::SetProjectionMatrix(const glm::mat4& proj) -> void {
+    auto VulkanStandardMaterial::SetProjectionMatrix(const glm::mat4& proj) -> void {
         m_Transform.Projection = proj;
     }
 
-    auto StandardMaterial::EnableWireframe() -> void {
+    auto VulkanStandardMaterial::EnableWireframe() -> void {
         m_Pipeline->OnRelease();
 
         auto pipelineConfig{ VulkanPipeline::GetDefaultPipelineConfigInfo() };
@@ -245,7 +245,7 @@ namespace kaTe {
         m_Pipeline = std::make_shared<VulkanPipeline>("../assets/basicVert.sprv", "../assets/basicFrag.sprv", pipelineConfig);
     }
 
-    auto StandardMaterial::DisableWireframe() -> void {
+    auto VulkanStandardMaterial::DisableWireframe() -> void {
         m_Pipeline->OnRelease();
 
         auto pipelineConfig{ VulkanPipeline::GetDefaultPipelineConfigInfo() };

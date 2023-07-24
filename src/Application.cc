@@ -77,22 +77,25 @@ namespace kaTe {
     }
 
     auto Application::PushLayer(const std::shared_ptr<Layer>& layer) -> void {
-        m_LayerStack->addLayer(layer);
+        m_LayerStack->AddLayer(layer);
     }
 
     auto Application::PushOverlay(const std::shared_ptr<Layer>& overlay) -> void {
-        m_LayerStack->addOverlay(overlay);
+        m_LayerStack->AddOverlay(overlay);
         overlay->OnAttach();
     }
 
     auto Application::ShutDown() -> void {
         KATE_CORE_LOGGER_INFO("Shutting down kaTe Engine");
 
+        m_LayerStack->PopOverlay(m_ImGuiLayer);
+        m_ImGuiLayer->OnDetach();
+
         InputManager::ShutDown();
         RenderCommand::ShutDown();
         Renderer::ShutDown();
 
-        m_LayerStack->shutDown();
+        m_LayerStack->ShutDown();
         m_MainWindow->ShutDown();
     }
 
@@ -109,8 +112,9 @@ namespace kaTe {
         TimeManager::UpdateDeltaTime();
 
         if (!m_MainWindowMinimized) {
+            auto ts{ TimeManager::GetDeltaTime() };
             for (auto& layer : *m_LayerStack)
-                layer->OnUpdate();
+                layer->OnUpdate(ts);
         }
 
         m_ImGuiLayer->BeginFrame();

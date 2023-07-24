@@ -44,8 +44,10 @@ namespace kaTe {
             std::dynamic_pointer_cast<OpenGLTexture2D>(data.TextureData)->Bind(0);
         }
 
-        if (data.IndexBufferData != nullptr)
+        if (data.IndexBufferData != nullptr) {
+            m_DefaultMaterial.UploadUniformBuffersData();
             DrawIndexed(data.VertexBufferData, data.IndexBufferData);
+        }
     }
 
     auto OpenGLRenderer::Init() -> void {

@@ -32,7 +32,7 @@ namespace kaTe {
 
         virtual auto OnAttach() -> void = 0;
         virtual auto OnDetach() -> void = 0;
-        virtual auto OnUpdate() -> void = 0;
+        virtual auto OnUpdate(double ts) -> void = 0;
 
         // These functions are defined here because a layer may not need them,
         // therefore, it should not provide a definition for them

@@ -31,7 +31,7 @@ namespace kaTe {
 
         auto OnAttach() -> void override;
         auto OnDetach() -> void override;
-        auto OnUpdate() -> void override;
+        auto OnUpdate(double ts) -> void override;
         auto OnEvent(Event& event) -> void override;
         auto OnImGuiRender() -> void override;
 
@@ -58,7 +58,6 @@ namespace kaTe {
         auto CreateImGuiRenderPass() -> void;
         auto CreateImGuiCommandPool() -> void;
         auto CreateImGuiCommandBuffers() -> void;
-        auto CreateImGuiFrameBuffers() -> void;
 
         auto AcquireNextSwapChainImage(UInt32_T& imageIndex) -> void;
         auto RecordImGuiCommandBuffers(UInt32_T imageIndex) -> void;
@@ -75,9 +74,9 @@ namespace kaTe {
         * ********************************************************+ */
         VkDescriptorPool m_ImGuiDescriptorPool{};
         VkRenderPass m_ImGuiRenderPass{};
-        std::vector<VkFramebuffer> m_ImGuiFrameBuffers{};
-        std::vector<VkCommandBuffer> m_ImGuiCommandBuffers{};
+
         std::shared_ptr<VulkanCommandPool> m_CommandPool{};
+        std::vector<VkCommandBuffer> m_ImGuiCommandBuffers{};
     };
 
 }

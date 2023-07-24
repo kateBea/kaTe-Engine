@@ -26,6 +26,7 @@ namespace kaTe {
     auto EditorLayer::OnAttach() -> void {
         Window& window{ Application::Get().GetMainWindow() };
 
+        // Necessary for OpenGL, must be removed
         FrameBufferCreateInfo createInfo{};
 
         createInfo.width = window.GetWidth();
@@ -68,9 +69,6 @@ namespace kaTe {
         m_StatsPanel = std::make_shared<StatsPanel>(m_StatsPanelInfo);
 
         model.LoadFromFile("../assets/models/Pod42/source/POD/POD.obj");
-        m_OtherCam = std::make_shared<SceneCamera>(glm::ortho(-aspect, aspect, -1.0, 1.0));
-        m_OtherCam->SetPerspective(0.01, 1000.0f, 45);
-        m_OtherCam->SetPosition({0.0f, 0.0f, -5.0f });
 
         {
             // scripting test
@@ -83,13 +81,16 @@ namespace kaTe {
 
     }
 
-    auto EditorLayer::OnUpdate() -> void {
+    auto EditorLayer::OnUpdate(double ts) -> void {
+#if false
+        // TODO: must probably be ported to the scene panel, which should handle rendering stuff to its viewport
         m_ScenePanelInfo->SceneFrameBuffer->Bind();
 
         RenderCommand::SetClearColor(m_SettingsPanelInfo->ClearColor);
 
         m_ScenePanelInfo->Viewport->OnUpdate();
         m_ScenePanelInfo->SceneFrameBuffer->Unbind();
+#endif
     }
 
     auto EditorLayer::OnEvent(Event &event) -> void {
@@ -106,7 +107,8 @@ namespace kaTe {
         m_SettingsPanel->MakeVisible(m_DockEditorData.SettingPanelVisible);
         m_HierarchyPanel->MakeVisible(m_DockEditorData.HierarchyPanelVisible);
         m_InspectorPanel->MakeVisible(m_DockEditorData.InspectorPanelVisible);
-        m_ScenePanel->MakeVisible(m_DockEditorData.ScenePanelVisible);
+        //m_ScenePanel->MakeVisible(m_DockEditorData.ScenePanelVisible);
+        m_ScenePanel->MakeVisible(false);
         m_StatsPanel->MakeVisible(m_DockEditorData.StatsPanelVisible);
 
         m_SettingsPanel->OnUpdate();

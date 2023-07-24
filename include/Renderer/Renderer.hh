@@ -40,22 +40,23 @@ namespace kaTe {
 
         static auto BeginScene(std::shared_ptr<Camera> camera) -> void;
         static auto BeginScene(std::shared_ptr<OrthographicCamera> camera) -> void;
-
         static auto EndScene() -> void;
 
         static auto Submit(const RenderingData& data) -> void;
-
         static auto Flush() -> void;
 
         static auto OnEvent(Event &event) -> void;
-        static auto OnWindowResize(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void;
 
         KT_NODISCARD static auto GetActiveGraphicsAPI() -> GraphicsAPI { return s_ActiveAPI;  }
         KT_NODISCARD static auto GetRendererAPIActive() -> RendererAPI* { return s_ActiveRendererAPI;  }
 
-        // For 2D drawing
+        /*************************************************************
+        * FOR 2D DRAWING
+        * ********************************************************+ */
 
-        // NOTE: the angle is in degrees
+        /**
+         * Submits a Quad for drawing, expects the angle to be in degrees
+         * */
         static auto SubmitQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, double angle, bool useOrthographicCamera = false) -> void;
         static auto SubmitQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, double angle, const std::shared_ptr<Texture> &texture, bool useOrthographicCamera = false) -> void;
 
@@ -80,7 +81,7 @@ namespace kaTe {
         // For the time being, we only have one main window, therefore, this attribute is going
         // to be static. In case we want to try different API at runtime, we may
         // have more than one Renderer API specific active
-        inline static GraphicsAPI s_ActiveAPI{ GraphicsAPI::OPENGL_API };
+        inline static GraphicsAPI s_ActiveAPI{ GraphicsAPI::VULKAN_API };
 
         static auto PickGraphicsAPI() -> void;
     private:
@@ -112,12 +113,6 @@ namespace kaTe {
         struct RendererDrawData {
             std::shared_ptr<VertexBuffer> VertexBufferData{};
             std::shared_ptr<IndexBuffer> IndexBufferData{};
-
-            // TODO: remove
-            std::shared_ptr<Shader> ColorShader{};
-            std::shared_ptr<Shader> TextureShader{};
-            std::shared_ptr<Shader> DefaultShader{};
-
             std::shared_ptr<Camera> CameraForScene{};
             std::shared_ptr<OrthographicCamera> OrthographicCameraForScene{};
         };
@@ -125,11 +120,6 @@ namespace kaTe {
         struct Renderer2DDrawData {
             std::shared_ptr<VertexBuffer> VertexBufferData{};
             std::shared_ptr<IndexBuffer> IndexBufferData{};
-
-            // TODO: remove
-            std::shared_ptr<Shader> ColorShader{};
-            std::shared_ptr<Shader> TextureShader{};
-
             std::shared_ptr<Camera> CameraForScene{};
             std::shared_ptr<OrthographicCamera> OrthographicCameraForScene{};
         };

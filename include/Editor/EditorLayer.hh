@@ -1,6 +1,7 @@
-//
-// Created by kate on 6/12/23.
-//
+/**
+ * EditorLayer.hh
+ * Created by kate on 6/12/23.
+ * */
 
 #ifndef KATE_ENGINE_EDITOR_LAYER_HH
 #define KATE_ENGINE_EDITOR_LAYER_HH
@@ -18,7 +19,6 @@
 #include "Renderer/Buffers/IndexBuffer.hh"
 #include "Renderer/Buffers/VertexBuffer.hh"
 #include "Renderer/Camera/OrthographicCamera.hh"
-#include "Renderer/Camera/OrthographicCameraController.hh"
 #include "Renderer/Material/Shader.hh"
 #include "Renderer/Material/Texture.hh"
 #include "Renderer/Model.hh"
@@ -34,13 +34,13 @@ namespace kaTe {
     public:
         auto OnAttach() -> void override;
         auto OnDetach() -> void override;
-        auto OnUpdate() -> void override;
+        auto OnUpdate(double ts) -> void override;
         auto OnEvent(Event& event) -> void override;
         auto OnImGuiRender() -> void override;
     private:
         std::shared_ptr<SceneCamera> m_MainCamera{};
-        std::shared_ptr<SceneCamera> m_OtherCam{};
 
+        // Dock space control
         Editor::DockControlFlags m_DockEditorData{};
 
         // Panels
@@ -61,4 +61,4 @@ namespace kaTe {
 
 }
 
-#endif//KATE_ENGINE_EDITORLAYER_HH
+#endif//KATE_ENGINE_EDITOR_LAYER_HH

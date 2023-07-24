@@ -33,18 +33,28 @@ namespace kaTe {
     }
 
     auto OpenGLDefaultMaterial::SetTiltingColor(float red, float green, float blue, float alpha) -> void {
-        m_DefaultVertexPixelShaders->SetUniformVec4("u_Color", {red, green, blue, alpha});
+        m_Color.r = red;
+        m_Color.g = green;
+        m_Color.b = blue;
+        m_Color.a = alpha;
     }
 
     auto OpenGLDefaultMaterial::SetTiltingColor(const glm::vec4& color) -> void {
-        m_DefaultVertexPixelShaders->SetUniformVec4("u_Color", color);
+        m_Color = color;
     }
 
-    auto OpenGLDefaultMaterial::SetProjectionView(const glm::mat4 &mat) -> void {
-        m_DefaultVertexPixelShaders->SetUniformMat4("u_ProjectionView", mat);
+    auto OpenGLDefaultMaterial::SetProjectionView(const glm::mat4& mat) -> void {
+        m_ProjectionView = mat;
     }
 
-    auto OpenGLDefaultMaterial::SetTransform(const glm::mat4 &mat) -> void {
-        m_DefaultVertexPixelShaders->SetUniformMat4("u_Transform", mat);
+    auto OpenGLDefaultMaterial::SetTransform(const glm::mat4& mat) -> void {
+        m_Transform = mat;
+    }
+
+    auto OpenGLDefaultMaterial::UploadUniformBuffersData() -> void {
+        m_DefaultVertexPixelShaders->SetUniformMat4("u_Transform", m_Transform);
+        m_DefaultVertexPixelShaders->SetUniformMat4("u_ProjectionView", m_ProjectionView);
+        m_DefaultVertexPixelShaders->SetUniformVec4("u_Color", m_Color);
+
     }
 }

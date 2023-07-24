@@ -24,7 +24,7 @@ namespace kaTe {
             m_VertexBuffer->OnRelease();
         }
 
-        auto OnUpdate() -> void override {
+        auto OnUpdate(double ts) -> void override {
 
             RenderCommand::SetClearColor(m_ClearColor);
 

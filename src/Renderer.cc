@@ -47,6 +47,7 @@ namespace kaTe {
         s_DrawData = std::make_unique<RendererDrawData>();
         s_QuadData = std::make_unique<Renderer2DDrawData>();
         s_RenderingStats    = std::make_unique<RenderingStats>();
+        s_SavedSceneStats   = std::make_unique<RenderingStats>();
 
         // Init Data for quad rendering
         const std::vector<float> squareData {
@@ -84,11 +85,6 @@ namespace kaTe {
 
     auto Renderer::ShutDown() -> void {
         delete s_ActiveRendererAPI;
-    }
-
-    auto Renderer::OnWindowResize(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void {
-        // Temporary. Should change when we have multiple frame buffers to render to
-        RenderCommand::UpdateViewPort(x, y, width, height);
     }
 
     auto Renderer::SubmitQuad(const glm::vec3 &position, const glm::vec2 &size, const glm::vec4 &color, double angle, bool useOrthographicCamera) -> void {

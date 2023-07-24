@@ -14,15 +14,15 @@
 #include <Tools/Common.hh>
 #include <Renderer/RendererAPI.hh>
 
-#include <Renderer/Buffers/VertexBuffer.hh>
 #include <Renderer/Buffers/IndexBuffer.hh>
+#include <Renderer/Buffers/VertexBuffer.hh>
+#include <Renderer/Material/Material.hh>
 #include <Renderer/Model.hh>
 #include <Renderer/Renderer.hh>
-#include <Renderer/Material/Material.hh>
-#include <Renderer/Vulkan/StandardMaterial.hh>
 #include <Renderer/Vulkan/VulkanCommandPool.hh>
-#include <Renderer/Vulkan/VulkanTexture2D.hh>
+#include <Renderer/Vulkan/VulkanStandardMaterial.hh>
 #include <Renderer/Vulkan/VulkanSwapChain.hh>
+#include <Renderer/Vulkan/VulkanTexture2D.hh>
 
 namespace kaTe {
     struct DrawData {
@@ -59,7 +59,7 @@ namespace kaTe {
 
         ~VulkanRenderer() override = default;
     private:
-        friend class StandardMaterial;
+        friend class VulkanStandardMaterial;
         friend class Application;
 
     private:
@@ -75,7 +75,7 @@ namespace kaTe {
         /*************************************************************
         * PRIVATE MEMBERS
         * ********************************************************+ */
-        std::shared_ptr<StandardMaterial> m_DefaultMaterial{};
+        std::shared_ptr<VulkanStandardMaterial> m_DefaultMaterial{};
         std::shared_ptr<VulkanCommandPool> m_CommandPool{};
         std::vector<VkCommandBuffer> m_CommandBuffers{};
 

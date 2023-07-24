@@ -70,31 +70,31 @@ namespace kaTe {
         }
 
     public:
-        static constexpr UInt32_T HOURS_TO_SECONDS{ 3600 };
+        static constexpr UInt32_T HOURS_TO_SECONDS{ 3'600 };
         static constexpr UInt32_T MINUTES_TO_SECONDS{ 60 };
 
-        static constexpr UInt32_T SEC_TO_MILLI{ 1000 };
-        static constexpr UInt32_T SEC_TO_MICRO{ 1000'000 };
-        static constexpr UInt32_T SEC_TO_NANO{ 1000'000'000 };
+        static constexpr UInt32_T SEC_TO_MILLI{ 1'000 };
+        static constexpr UInt32_T SEC_TO_MICRO{ 1'000'000 };
+        static constexpr UInt32_T SEC_TO_NANO{ 1'000'000'000 };
     private:
-        [[maybe_unused]] static auto TransformTowSeconds(double time, TimeUnit unit) -> double {
+        [[maybe_unused]] static auto TransformToSeconds(double time, TimeUnit unit) -> double {
             switch (unit) {
                 case TimeUnit::MILLISECONDS:    return time / SEC_TO_MILLI;
                 case TimeUnit::MICROSECONDS:    return time / SEC_TO_MICRO;
                 case TimeUnit::NANOSECONDS:     return time / SEC_TO_NANO;
-                default:                        return -1;
+                default:                        return time;
             }
         }
 
-        using Nano_T = std::chrono::duration<double, std::ratio<1, 1000000000>>;
-        using Micro_T = std::chrono::duration<double, std::ratio<1, 1000000>>;
-        using Milli_T = std::chrono::duration<double, std::ratio<1, 1000>>;
-        using Sec_T = std::chrono::duration<double, std::ratio<1, 1>>;
-        using Clock_T = std::chrono::high_resolution_clock;
+        using Nano_T    = std::chrono::duration<double, std::ratio<1, 1'000'000'000>>;
+        using Micro_T   = std::chrono::duration<double, std::ratio<1, 1'000'000>>;
+        using Milli_T   = std::chrono::duration<double, std::ratio<1, 1'000>>;
+        using Sec_T     = std::chrono::duration<double, std::ratio<1, 1>>;
+
+        using Clock_T       = std::chrono::high_resolution_clock;
         using TimePoint_T   =  std::chrono::time_point<Clock_T>;
 
-        // Time in seconds
-        inline static double s_TimeStep{};
+        inline static double s_TimeStep{};              // Time in seconds
         inline static TimePoint_T s_LastFrameTime{};
         inline static TimePoint_T s_InitTimePoint{};
     };

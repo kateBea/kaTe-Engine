@@ -37,7 +37,6 @@ namespace kaTe {
             float frameWidth{ static_cast<float>(m_Data->SceneFrameBuffer->GetFrameBufferProperties().width) };
             float frameHeight{ static_cast<float>(m_Data->SceneFrameBuffer->GetFrameBufferProperties().height) };
             ImGui::Image((ImTextureID)textId, ImVec2{frameWidth, frameHeight}, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-
             ImGui::End();
             ImGui::PopStyleVar();
         }

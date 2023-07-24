@@ -53,7 +53,7 @@ namespace kaTe {
         friend class VulkanCommandPool;
         friend class VulkanTexture2D;
         friend class VulkanFrameBuffer;
-        friend class StandardMaterial;
+        friend class VulkanStandardMaterial;
         friend class ImGuiLayer;
     private:
         struct ContextData {
@@ -99,8 +99,8 @@ namespace kaTe {
         /*************************************************************
         * CONTEXT FUNCTIONS
         * ********************************************************+ */
-        KT_NODISCARD static auto GetSurface() -> VkSurfaceKHR { return s_ContextData.Surface; }
-        KT_NODISCARD static auto GetInstance() -> VkInstance { return s_ContextData.Instance; }
+        KT_NODISCARD static auto GetSurface() -> VkSurfaceKHR& { return s_ContextData.Surface; }
+        KT_NODISCARD static auto GetInstance() -> VkInstance& { return s_ContextData.Instance; }
         KT_NODISCARD static auto GetGlfwRequiredExtensions() -> std::vector<const char*>;
 
         static auto CreateInstance() -> void;

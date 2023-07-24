@@ -20,6 +20,7 @@
 #include <Renderer/OpenGL/OpenGLTexture2D.hh>
 
 namespace kaTe {
+    //TODO: inherit from common default material
     class OpenGLDefaultMaterial : public Material {
     public:
         explicit OpenGLDefaultMaterial() : Material{ "OpenGL Default Material" } {}
@@ -39,12 +40,18 @@ namespace kaTe {
         auto SetTiltingColor(float red, float green, float blue, float alpha) -> void;
         auto SetTiltingColor(const glm::vec4& color) -> void;
 
+        auto UploadUniformBuffersData() -> void;
+
         auto SetProjectionView(const glm::mat4& mat) -> void;
         auto SetTransform(const glm::mat4& mat) -> void;
 
     private:
         std::shared_ptr<OpenGLTexture2D> m_Texture{};
         std::shared_ptr<OpenGLShader> m_DefaultVertexPixelShaders{};
+
+        glm::mat4 m_ProjectionView{};
+        glm::mat4 m_Transform{};
+        glm::vec4 m_Color{};
     };
 }
 

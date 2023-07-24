@@ -53,7 +53,7 @@ set(RENDERER_SOURCES
         src/Model.cc
         src/Texture.cc
         src/Material.cc
-        src/StandardMaterial.cc
+        src/VulkanStandardMaterial.cc
         src/VulkanFrameBuffer.cc
         src/VulkanIndexBuffer.cc
         src/VulkanShader.cc

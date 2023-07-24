@@ -5,25 +5,21 @@
 #include <memory>
 #include <array>
 
+#include <volk.h>
+
 #include <imgui.h>
 #include <backends/imgui_impl_vulkan.h>
 #include <backends/imgui_impl_glfw.h>
 
-#include <glm/glm.hpp>
-
-#include <volk.h>
-
 #include <Core/Assert.hh>
 #include <Core/Application.hh>
 
-#include <Renderer/Material/Material.hh>
-#include <Renderer/Vulkan/StandardMaterial.hh>
-#include <Renderer/Vulkan/VulkanContext.hh>
-#include <Renderer/Vulkan/VulkanRenderer.hh>
 #include <Renderer/Vulkan/VulkanCommandPool.hh>
-#include <Renderer/Vulkan/VulkanSwapChain.hh>
-#include <Renderer/Vulkan/VulkanVertexBuffer.hh>
+#include <Renderer/Vulkan/VulkanContext.hh>
 #include <Renderer/Vulkan/VulkanIndexBuffer.hh>
+#include <Renderer/Vulkan/VulkanRenderer.hh>
+#include <Renderer/Vulkan/VulkanStandardMaterial.hh>
+#include <Renderer/Vulkan/VulkanVertexBuffer.hh>
 
 namespace kaTe {
 
@@ -36,7 +32,7 @@ namespace kaTe {
         CreateCommandBuffers();
 
         m_ClearColor = glm::vec4(0.2f, 0.2f, 0.2f, 1.0f);
-        m_DefaultMaterial = std::make_shared<StandardMaterial>();
+        m_DefaultMaterial = std::make_shared<VulkanStandardMaterial>();
     }
 
     auto VulkanRenderer::EnableWireframeMode() -> void {

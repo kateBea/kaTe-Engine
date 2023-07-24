@@ -10,8 +10,9 @@
 #include <memory>
 
 // Project Headers
-#include "Layer.hh"
-#include "Tools/Common.hh"
+#include <Tools/Common.hh>
+
+#include <Core/Layer.hh>
 
 namespace kaTe {
     /**
@@ -32,13 +33,13 @@ namespace kaTe {
         explicit LayerStack() = default;
 
         auto Init() -> void;
-        auto shutDown() -> void { /*Empty for now */ }
+        auto ShutDown() -> void { /*Empty for now */ }
 
-        auto addLayer(const std::shared_ptr<Layer>& layer) -> void;
-        auto addOverlay(const std::shared_ptr<Layer>& overlay) -> void;
+        auto AddLayer(const std::shared_ptr<Layer>& layer) -> void;
+        auto AddOverlay(const std::shared_ptr<Layer>& overlay) -> void;
 
-        auto popLayer(const std::shared_ptr<Layer>& layer) -> void;
-        auto popOverlay(const std::shared_ptr<Layer>& overlay) -> void;
+        auto PopLayer(const std::shared_ptr<Layer>& layer) -> void;
+        auto PopOverlay(const std::shared_ptr<Layer>& overlay) -> void;
 
         auto begin() -> std::vector<std::shared_ptr<Layer>>::iterator { return m_Layers.begin(); }
         auto end() -> std::vector<std::shared_ptr<Layer>>::iterator { return m_Layers.end(); }
@@ -51,6 +52,6 @@ namespace kaTe {
         UInt32_T m_LayerIndex{};
     };
 
-} // END NAMESPACE kT
+}
 
 #endif // KATE_ENGINE_LAYER_STACK_HH
