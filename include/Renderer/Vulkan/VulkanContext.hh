@@ -55,6 +55,7 @@ namespace kaTe {
         friend class VulkanFrameBuffer;
         friend class VulkanStandardMaterial;
         friend class ImGuiLayer;
+
     private:
         struct ContextData {
             std::vector<VkPhysicalDevice> PhysicalDevices{};

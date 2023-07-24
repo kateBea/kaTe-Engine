@@ -14,7 +14,7 @@
 #include <Renderer/Vulkan/VulkanCommandPool.hh>
 
 namespace kaTe {
-    auto VulkanCommandPool::OnCreate() -> void {
+    auto VulkanCommandPool::OnCreate(VkCommandPoolCreateInfo createInfo) -> void {
         auto queueFamilyData{ VulkanContext::FindQueueFamilies(VulkanContext::GetPrimaryPhysicalDevice()) };
 
         VkCommandPoolCreateInfo poolInfo{};

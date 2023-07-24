@@ -18,7 +18,7 @@ namespace kaTe {
         explicit VulkanCommandPool() = default;
         ~VulkanCommandPool() = default;
 
-        auto OnCreate() -> void;
+        auto OnCreate(VkCommandPoolCreateInfo createInfo) -> void;
 
         KT_NODISCARD auto GetCommandPool() const -> VkCommandPool { return m_CommandPool; }
         KT_NODISCARD auto BeginSingleTimeCommands() const -> VkCommandBuffer;

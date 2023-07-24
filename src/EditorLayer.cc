@@ -83,7 +83,8 @@ namespace kaTe {
 
     auto EditorLayer::OnUpdate(double ts) -> void {
 #if false
-        // TODO: must probably be ported to the scene panel, which should handle rendering stuff to its viewport
+        // TODO: must probably be ported to the scene panel, which should handle
+        //  rendering stuff to its viewport
         m_ScenePanelInfo->SceneFrameBuffer->Bind();
 
         RenderCommand::SetClearColor(m_SettingsPanelInfo->ClearColor);

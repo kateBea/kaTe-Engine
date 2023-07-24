@@ -11,7 +11,6 @@
 #include <Core/Logger.hh>
 
 #include "Editor/EditorLayer.hh"
-#include "Renderer/Vulkan/VulkanTestLayer.hh"
 
 
 namespace kaTe {
@@ -21,7 +20,6 @@ namespace kaTe {
         try {
             application.Init();
             application.PushLayer(std::make_shared<EditorLayer>());
-            // application.PushLayer(std::make_shared<VulkanTestLayer>());
 
             while (application.IsRunning()) {
                 application.UpdateState();

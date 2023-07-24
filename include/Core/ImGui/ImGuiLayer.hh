@@ -59,9 +59,9 @@ namespace kaTe {
         auto CreateImGuiCommandPool() -> void;
         auto CreateImGuiCommandBuffers() -> void;
 
-        auto AcquireNextSwapChainImage(UInt32_T& imageIndex) -> void;
+        auto AcquireNextSwapChainImage(UInt32_T& imageIndex) -> VkResult;
         auto RecordImGuiCommandBuffers(UInt32_T imageIndex) -> void;
-        auto SubmitImGuiCommandBuffers(UInt32_T& imageIndex) -> void;
+        auto SubmitImGuiCommandBuffers(UInt32_T& imageIndex) -> VkResult;
     private:
         // Do not propagate events to this layer
         bool m_BlockEvents{ false };

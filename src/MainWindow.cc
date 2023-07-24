@@ -44,12 +44,21 @@ namespace kaTe {
                 m_Properties.SetTitle(fmt::format("Radiance (OpenGL Version {}.{}.0)", KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR));
                 break;
             default:
-                // TODO: query vulkan version
-                UInt32_T major{};
-                UInt32_T minor{};
-                UInt32_T patch{};
+#if 0
+            // TODO: needs to be done after initializing the VK context
+                UInt32_T apiVersion{};
+                VkResult result{ vkEnumerateInstanceVersion(&apiVersion) };
 
-                m_Properties.SetTitle(fmt::format("Radiance (Vulkan Version 1.3)"));
+                if (result == VK_SUCCESS) {
+                    UInt32_T major{ VK_API_VERSION_MAJOR(apiVersion) };
+                    UInt32_T minor{ VK_API_VERSION_MINOR(apiVersion) };
+                    UInt32_T patch{ VK_API_VERSION_PATCH(apiVersion) };
+                    m_Properties.SetTitle(fmt::format("Radiance (Vulkan Version {}.{}.{})", major, minor, patch));
+                }
+                else
+                    KATE_CORE_LOGGER_WARN("Failed to retrieve vulkan version for Main Window title");
+#endif
+
                 break;
         }
 

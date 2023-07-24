@@ -26,7 +26,7 @@ namespace kaTe {
     auto VulkanRenderer::Init() -> void {
         m_CommandPool = std::make_shared<VulkanCommandPool>();
         KT_ASSERT(m_CommandPool, "Command Pool pointer is NULL");
-        m_CommandPool->OnCreate();
+        m_CommandPool->OnCreate(VkCommandPoolCreateInfo());
 
         VulkanContext::RecreateSwapChain();
         CreateCommandBuffers();

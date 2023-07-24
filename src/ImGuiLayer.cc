@@ -9,10 +9,10 @@
 // Third-Party Libraries
 #include <volk.h>
 
+#include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_vulkan.h>
-#include <imgui.h>
 
 // Project Headers
 #include <Tools/Common.hh>
@@ -232,25 +232,38 @@ namespace kaTe {
 
     auto ImGuiLayer::BeginImGuiFrameForVulkan() -> void {
         // TODO: swapchain recreate for imgui, see ImGui Vulkan examples
+
         ImGui_ImplVulkan_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
     }
 
     auto ImGuiLayer::EndImGuiFrameForVulkan() -> void {
-        ImGuiIO &io{ImGui::GetIO()};
-        Window &window{Application::Get().GetMainWindow()};
-        io.DisplaySize = ImVec2{(float) window.GetWidth(), (float) window.GetHeight()};
+        ImGuiIO& io{ ImGui::GetIO()};
+        Window& window{ Application::Get().GetMainWindow()};
+        io.DisplaySize = ImVec2{(float) window.GetWidth(), (float) window.GetHeight() };
 
         ImGui::Render();
 
         UInt32_T swapChainImageIndex{};
+        auto ret{ AcquireNextSwapChainImage(swapChainImageIndex) };
 
-        AcquireNextSwapChainImage(swapChainImageIndex);
-        // TODO: SEGFAULT HERE
+        if (ret == VK_ERROR_OUT_OF_DATE_KHR)
+            VulkanContext::RecreateSwapChain();
+
+        if (ret != VK_SUBOPTIMAL_KHR)
+            VulkanContext::RecreateSwapChain();
+
         RecordImGuiCommandBuffers(swapChainImageIndex);
 
-        SubmitImGuiCommandBuffers(swapChainImageIndex);
+        ret = SubmitImGuiCommandBuffers(swapChainImageIndex);
+        if (ret == VK_ERROR_OUT_OF_DATE_KHR || ret == VK_SUBOPTIMAL_KHR)
+            VulkanContext::RecreateSwapChain();
+
+        vkDeviceWaitIdle(VulkanContext::GetPrimaryLogicalDevice());
+
+        if (ret != VK_SUCCESS)
+            throw std::runtime_error("failed to submit imgui command buffers!");
 
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
             ImGui::UpdatePlatformWindows();
@@ -258,23 +271,13 @@ namespace kaTe {
         }
     }
 
-    auto ImGuiLayer::AcquireNextSwapChainImage(UInt32_T &imageIndex) -> void {
-        auto result{VulkanContext::GetSwapChain()->AcquireNextImage(&imageIndex)};
-        if (result == VK_ERROR_OUT_OF_DATE_KHR)
-            return;
+    auto ImGuiLayer::AcquireNextSwapChainImage(UInt32_T &imageIndex) -> VkResult {
+        return VulkanContext::GetSwapChain()->AcquireNextImage(&imageIndex);
 
-        if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
-            throw std::runtime_error("failed to acquire swap chain image!");
     }
 
-    auto ImGuiLayer::SubmitImGuiCommandBuffers(UInt32_T &imageIndex) -> void {
-        auto result = VulkanContext::GetSwapChain()->SubmitCommandBuffers(&m_ImGuiCommandBuffers[imageIndex], &imageIndex);
-
-        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
-            return;
-
-        if (result != VK_SUCCESS)
-            throw std::runtime_error("failed to present swap chain image!");
+    auto ImGuiLayer::SubmitImGuiCommandBuffers(UInt32_T &imageIndex) -> VkResult {
+        return  VulkanContext::GetSwapChain()->SubmitCommandBuffers(&m_ImGuiCommandBuffers[imageIndex], &imageIndex);
     }
 
     auto ImGuiLayer::RecordImGuiCommandBuffers(UInt32_T imageIndex) -> void {
@@ -376,7 +379,7 @@ namespace kaTe {
     auto ImGuiLayer::CreateImGuiCommandPool() -> void {
         m_CommandPool = std::make_shared<VulkanCommandPool>();
         KT_ASSERT(m_CommandPool, "Command Pool pointer is NULL");
-        m_CommandPool->OnCreate();
+        m_CommandPool->OnCreate(VkCommandPoolCreateInfo());
     }
 
     auto ImGuiLayer::CreateImGuiCommandBuffers() -> void {
