@@ -12,7 +12,7 @@
 #include <stb_image.h>
 
 // Project Headers
-#include <Tools/Common.hh>
+#include <Utility/Common.hh>
 #include <Renderer/Vulkan/VulkanContext.hh>
 #include <Renderer/Vulkan/VulkanTexture2D.hh>
 #include <Renderer/Vulkan/VulkanRenderer.hh>

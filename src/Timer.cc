@@ -4,10 +4,10 @@
 
 #include <chrono>
 
+#include <Utility/Common.hh>
+
 #include <Core/TimeManager.hh>
 #include <Core/Timer.hh>
-
-#include <Tools/Common.hh>
 
 namespace kaTe {
 

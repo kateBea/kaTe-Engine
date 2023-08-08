@@ -11,7 +11,7 @@
 #include <glm/glm.hpp>
 
 // Project Headers
-#include <Tools/Common.hh>
+#include <Utility/Common.hh>
 
 #include <Renderer/Renderer.hh>
 #include <Renderer/RenderCommand.hh>

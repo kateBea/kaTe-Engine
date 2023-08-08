@@ -19,8 +19,9 @@
 #include <fmt/core.h>
 
 // Project Libraries
+#include <Utility/Common.hh>
+
 #include <Core/Logger.hh>
-#include <Tools/Common.hh>
 #include <Renderer/OpenGL/OpenGLShader.hh>
 
 

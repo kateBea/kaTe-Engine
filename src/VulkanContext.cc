@@ -13,23 +13,17 @@
 
 // Third-Party Libraries
 #include <volk.h>
+#include <vk_mem_alloc.h>
 
 // Project Headers
-#include <Tools/Common.hh>
-
+#include <Utility/Common.hh>
 #include <Core/Assert.hh>
 #include <Core/Logger.hh>
-
 #include <Core/Application.hh>
-
-#include <Renderer/Vulkan/VulkanContext.hh>
-
 #include <Platform/Window/Window.hh>
 #include <Platform/Window/MainWindow.hh>
-
+#include <Renderer/Vulkan/VulkanContext.hh>
 #include <Renderer/Vulkan/VulkanSwapChain.hh>
-
-
 
 namespace kaTe {
     auto VulkanContext::Init(const std::shared_ptr<Window>& handle) -> void {
@@ -45,6 +39,9 @@ namespace kaTe {
         CreateSurface();
         PickPrimaryPhysicalDevice();
         CreatePrimaryLogicalDevice();
+
+        InitSwapChain();
+        InitMemoryAllocator();
     }
 
     auto CreateDebugUtilsMessengerEXT(
@@ -68,11 +65,14 @@ namespace kaTe {
         // Setup application data
         VkApplicationInfo appInfo{};
         appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-        appInfo.pApplicationName = "MikotoApp";
-        appInfo.applicationVersion = VK_MAKE_API_VERSION(1, 0, 0, 0);
+        appInfo.pApplicationName = "Mikoto Engine";
+        appInfo.applicationVersion = VK_MAKE_API_VERSION(0, 1, 0, 0);
         appInfo.pEngineName = "Mikoto";
-        appInfo.engineVersion = VK_MAKE_API_VERSION(1, 0, 0, 0);
-        appInfo.apiVersion = VK_API_VERSION_1_0;
+        appInfo.engineVersion = VK_MAKE_API_VERSION(0, 1, 0, 0);
+        appInfo.apiVersion = VK_MAKE_API_VERSION(KT_VULKAN_VERSION_VARIANT,
+                                                 KT_VULKAN_VERSION_MAJOR,
+                                                 KT_VULKAN_VERSION_MINOR,
+                                                 KT_VULKAN_VERSION_PATCH); // Patch version should always be set to zero, see Vulkan Spec
 
         // Instance creation info
         VkInstanceCreateInfo createInfo{};
@@ -144,7 +144,7 @@ namespace kaTe {
         createInfo.pfnUserCallback =
             [](VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
                VkDebugUtilsMessageTypeFlagsEXT messageType,
-               const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) -> VKAPI_ATTR VkBool32 //VKAPI_CALL throws warning
+               const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) -> VKAPI_ATTR VkBool32
             {
                 KATE_CORE_LOGGER_ERROR("Validation layer: {}", pCallbackData->pMessage);
                 return VK_FALSE;
@@ -410,7 +410,7 @@ namespace kaTe {
          * Vulkan entry-points directly from the driver with void volkLoadDevice(VkDevice device);
          * See: https://github.com/zeux/volk
          * */
-        volkLoadDevice(GetPrimaryLogicalDevice()); // temporary. Our App only uses one VkDevice
+        volkLoadDevice(GetPrimaryLogicalDevice()); // Temporary. Our App only uses one VkDevice
 
         vkGetDeviceQueue(s_ContextData.LogicalDevices[s_ContextData.PrimaryLogicalDeviceIndex],
                          s_QueueFamiliesData[s_ContextData.PrimaryPhysicalDeviceIndex].GraphicsFamilyIndex, 0, &s_QueueFamiliesData[s_ContextData.PrimaryPhysicalDeviceIndex].GraphicsQueue);
@@ -447,11 +447,12 @@ namespace kaTe {
         vkDestroySurfaceKHR(GetInstance(), GetSurface(), nullptr);
         s_SwapChain->OnRelease();
 
-        // Perform destruction on primary device only since there's
+        // Perform destruction on a primary device only since there's
         // only one for now, see Logical Device creation
         vkDestroyDevice(GetPrimaryLogicalDevice(), nullptr);
 
         vkDestroyInstance(GetInstance(), nullptr);
+        vmaDestroyAllocator(s_DefaultAllocator);
     }
 
     auto VulkanContext::IsExtensionAvailable(std::string_view targetExtensionName, VkPhysicalDevice device) -> bool {
@@ -473,57 +474,96 @@ namespace kaTe {
             VkFormatProperties props{};
             vkGetPhysicalDeviceFormatProperties(device, format, &props);
 
-            if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
+            if ((tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) ||
+                (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features))
+            {
                 return format;
-            else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features)
-                return format;
+            }
         }
 
         throw std::runtime_error("failed to find supported format!");
     }
 
-    auto VulkanContext::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) -> void {
-        VkBufferCreateInfo bufferInfo{};
-        bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-        bufferInfo.size = size;
-        bufferInfo.usage = usage;
-        bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-        if (vkCreateBuffer(VulkanContext::GetPrimaryLogicalDevice(), &bufferInfo, nullptr, &buffer) != VK_SUCCESS)
-            throw std::runtime_error("failed to create vertex buffer!");
-
-        VkMemoryRequirements memRequirements{};
-        vkGetBufferMemoryRequirements(VulkanContext::GetPrimaryLogicalDevice(), buffer, &memRequirements);
-
-        VkMemoryAllocateInfo allocInfo{};
-        allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        allocInfo.allocationSize = memRequirements.size;
-        allocInfo.memoryTypeIndex = VulkanContext::FindMemoryType(memRequirements.memoryTypeBits, properties, VulkanContext::GetPrimaryPhysicalDevice());
-
-        /**
-         * NOTE:
-         * It should be noted that in a real world application, you're not supposed to actually call
-         * vkAllocateMemory for every individual buffer. The maximum number of simultaneous memory
-         * allocations is limited by the maxMemoryAllocationCount physical device limit, which may
-         * be as low as 4096 even on high end hardware like an NVIDIA GTX 1080
-         * See: https://vulkan-tutorial.com/Vertex_buffers/Staging_buffer
-         * */
-        if (vkAllocateMemory(VulkanContext::GetPrimaryLogicalDevice(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
-            throw std::runtime_error("failed to allocate vertex buffer memory!");
-
-        vkBindBufferMemory(VulkanContext::GetPrimaryLogicalDevice(), buffer, bufferMemory, 0);
-    }
-
-    auto VulkanContext::RecreateSwapChain() -> void {
+    auto VulkanContext::RecreateSwapChain(const VulkanSwapChainCreateInfo& info) -> void {
         vkDeviceWaitIdle(VulkanContext::GetPrimaryLogicalDevice());
-        auto appWindowExtent{ Application::Get().GetMainWindowPtr()->GetExtent() };
-        VkExtent2D extent{ (UInt32_T)appWindowExtent.first, (UInt32_T)appWindowExtent.second };
         if (s_SwapChain)
             s_SwapChain->OnRelease();
 
-        s_SwapChain = std::make_shared<VulkanSwapChain>(extent);
+        s_SwapChain = std::make_shared<VulkanSwapChain>(info);
     }
-    auto VulkanContext::GetSwapChain() -> std::shared_ptr<VulkanSwapChain> {
-        return s_SwapChain;
+
+    auto VulkanContext::EnableVSync() -> void {
+        auto appWindowExtent{ Application::Get().GetMainWindowPtr()->GetExtent() };
+        VkExtent2D extent{ (UInt32_T)appWindowExtent.first, (UInt32_T)appWindowExtent.second };
+        VulkanSwapChainCreateInfo createInfo{
+                .Extent = extent,
+                .VSyncEnable = true,
+        };
+
+        RecreateSwapChain(createInfo);
+    }
+
+    auto VulkanContext::DisableVSync() -> void {
+        auto appWindowExtent{ Application::Get().GetMainWindowPtr()->GetExtent() };
+        VkExtent2D extent{ (UInt32_T)appWindowExtent.first, (UInt32_T)appWindowExtent.second };
+        VulkanSwapChainCreateInfo createInfo{
+                .Extent = extent,
+                .VSyncEnable = false,
+        };
+
+        RecreateSwapChain(createInfo);
+    }
+
+    auto VulkanContext::IsVSyncActive() -> bool {
+        return s_SwapChain->GetSwapChainCreateInfo().VSyncEnable;
+    }
+
+    auto VulkanContext::Present() -> void {
+        // Present images from the swapchain
+    }
+
+    auto VulkanContext::InitSwapChain() -> void {
+        RecreateSwapChain();
+    }
+
+    auto VulkanContext::InitMemoryAllocator() -> void {
+        // Setup Vulkan Functions
+        VmaVulkanFunctions vulkanFunctions{};
+        vulkanFunctions.vkGetInstanceProcAddr = vkGetInstanceProcAddr;  // Required when using VMA_DYNAMIC_VULKAN_FUNCTIONS.
+        vulkanFunctions.vkGetDeviceProcAddr = vkGetDeviceProcAddr;      // Required when using VMA_DYNAMIC_VULKAN_FUNCTIONS.
+        vulkanFunctions.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
+        vulkanFunctions.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
+        vulkanFunctions.vkAllocateMemory = vkAllocateMemory;
+        vulkanFunctions.vkFreeMemory = vkFreeMemory;
+        vulkanFunctions.vkMapMemory = vkMapMemory;
+        vulkanFunctions.vkUnmapMemory = vkUnmapMemory;
+        vulkanFunctions.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges;
+        vulkanFunctions.vkInvalidateMappedMemoryRanges = vkFlushMappedMemoryRanges;
+        vulkanFunctions.vkBindBufferMemory = vkBindBufferMemory;
+        vulkanFunctions.vkBindImageMemory = vkBindImageMemory;
+        vulkanFunctions.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements;
+        vulkanFunctions.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements;
+        vulkanFunctions.vkCreateBuffer = vkCreateBuffer;
+        vulkanFunctions.vkDestroyBuffer = vkDestroyBuffer;
+        vulkanFunctions.vkCreateImage = vkCreateImage;
+        vulkanFunctions.vkDestroyImage = vkDestroyImage;
+        vulkanFunctions.vkCmdCopyBuffer = vkCmdCopyBuffer;
+        vulkanFunctions.vkGetBufferMemoryRequirements2KHR = vkGetBufferMemoryRequirements2;             // Fetch "vkGetBufferMemoryRequirements2" on Vulkan >= 1.1, fetch "vkGetBufferMemoryRequirements2KHR" when using VK_KHR_dedicated_allocation extension.
+        vulkanFunctions.vkGetImageMemoryRequirements2KHR = vkGetImageMemoryRequirements2;               // Fetch "vkGetImageMemoryRequirements2" on Vulkan >= 1.1, fetch "vkGetImageMemoryRequirements2KHR" when using VK_KHR_dedicated_allocation extension.
+        vulkanFunctions.vkBindBufferMemory2KHR = vkBindBufferMemory2;                                   // Fetch "vkBindBufferMemory2" on Vulkan >= 1.1, fetch "vkBindBufferMemory2KHR" when using VK_KHR_bind_memory2 extension.
+        vulkanFunctions.vkBindImageMemory2KHR = vkBindImageMemory2;                                     //Fetch "vkBindImageMemory2" on Vulkan >= 1.1, fetch "vkBindImageMemory2KHR" when using VK_KHR_bind_memory2 extension.
+        vulkanFunctions.vkGetPhysicalDeviceMemoryProperties2KHR = vkGetPhysicalDeviceMemoryProperties2;
+        vulkanFunctions.vkGetDeviceBufferMemoryRequirements = vkGetDeviceBufferMemoryRequirements;      //Fetch from "vkGetDeviceBufferMemoryRequirements" on Vulkan >= 1.3, but you can also fetch it from "vkGetDeviceBufferMemoryRequirementsKHR" if you enabled extension VK_KHR_maintenance4.
+        vulkanFunctions.vkGetDeviceImageMemoryRequirements = vkGetDeviceImageMemoryRequirements;        //Fetch from "vkGetDeviceImageMemoryRequirements" on Vulkan >= 1.3, but you can also fetch it from "vkGetDeviceImageMemoryRequirementsKHR" if you enabled extension VK_KHR_maintenance4.
+
+        // Setup VmaAllocator
+        VmaAllocatorCreateInfo allocatorInfo{};
+        allocatorInfo.vulkanApiVersion = VK_MAKE_API_VERSION(KT_VULKAN_VERSION_VARIANT,KT_VULKAN_VERSION_MAJOR,KT_VULKAN_VERSION_MINOR, KT_VULKAN_VERSION_PATCH);
+        allocatorInfo.physicalDevice = GetPrimaryPhysicalDevice();
+        allocatorInfo.device = GetPrimaryLogicalDevice();
+        allocatorInfo.instance = GetInstance();
+        allocatorInfo.pVulkanFunctions = &vulkanFunctions;
+
+        vmaCreateAllocator(&allocatorInfo, &s_DefaultAllocator);
     }
 }

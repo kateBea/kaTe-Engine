@@ -9,14 +9,13 @@
 #include <memory>
 
 // Project Headers
-#include <Tools/Common.hh>
+#include <Utility/Common.hh>
 #include <Renderer/Material/Material.hh>
 
 namespace kaTe {
 
     auto Material::Create(Type matType) -> std::shared_ptr<Material> {
         switch(matType) {
-                // TODO:
             case Type::STANDARD: return nullptr;
         }
     }

@@ -2,6 +2,7 @@
  * MainWindow.cc
  * Created by kate on 5/26/23.
  * */
+
 // C++ Standard Library
 #include <any>
 #include <memory>
@@ -11,17 +12,15 @@
 #include <GLFW/glfw3.h>
 
 // Projects headers
+#include <Utility/Common.hh>
 #include <Core/Logger.hh>
-#include <Tools/Common.hh>
 #include <Core/Assert.hh>
-
 #include <Core/Events/AppEvents.hh>
 #include <Core/Events/KeyEvents.hh>
 #include <Core/Events/MouseEvents.hh>
-
 #include <Renderer/Renderer.hh>
-#include <Platform/Window/MainWindow.hh>
 #include <Renderer/RenderContext.hh>
+#include <Platform/Window/MainWindow.hh>
 
 namespace kaTe {
     MainWindow::MainWindow(const WindowProperties& properties)
@@ -31,7 +30,7 @@ namespace kaTe {
         glfwPollEvents();
 
         // not be done when the window is minimized, it CPU waste
-        RenderContext::Draw();
+        RenderContext::Present();
     }
 
     auto MainWindow::Init() -> void {
@@ -43,22 +42,10 @@ namespace kaTe {
                 m_CurrentGraphicsAPIIsOpenGL = true;
                 m_Properties.SetTitle(fmt::format("Radiance (OpenGL Version {}.{}.0)", KT_OPENGL_VERSION_MAJOR, KT_OPENGL_VERSION_MINOR));
                 break;
-            default:
-#if 0
-            // TODO: needs to be done after initializing the VK context
-                UInt32_T apiVersion{};
-                VkResult result{ vkEnumerateInstanceVersion(&apiVersion) };
-
-                if (result == VK_SUCCESS) {
-                    UInt32_T major{ VK_API_VERSION_MAJOR(apiVersion) };
-                    UInt32_T minor{ VK_API_VERSION_MINOR(apiVersion) };
-                    UInt32_T patch{ VK_API_VERSION_PATCH(apiVersion) };
-                    m_Properties.SetTitle(fmt::format("Radiance (Vulkan Version {}.{}.{})", major, minor, patch));
-                }
-                else
-                    KATE_CORE_LOGGER_WARN("Failed to retrieve vulkan version for Main Window title");
-#endif
-
+            case Renderer::GraphicsAPI::VULKAN_API:
+                UInt32_T major{ KT_VULKAN_VERSION_MAJOR };
+                UInt32_T minor{ KT_VULKAN_VERSION_MINOR };
+                m_Properties.SetTitle(fmt::format("Radiance (Vulkan Version {}.{})", major, minor));
                 break;
         }
 
@@ -186,7 +173,7 @@ namespace kaTe {
     }
 
     auto MainWindow::SpawnOnCenter() const -> void {
-#if defined(_DEBUG) || defined(NDEBUG)
+#if !defined(NDEBUG)
         Int32_T count{};
         KATE_CORE_LOGGER_INFO("Number of available monitors: {}", count);
 #endif
@@ -197,7 +184,7 @@ namespace kaTe {
         Int32_T monitorHeight{};
         GLFWmonitor* primary{ glfwGetPrimaryMonitor() };
         glfwGetMonitorWorkarea(primary, nullptr, nullptr, &monitorWidth, &monitorHeight);
-        glfwSetWindowPos(m_Window, monitorWidth / 5, monitorHeight / 5);
+        glfwSetWindowPos(m_Window, monitorWidth / 10, monitorHeight / 10);
     }
 
     auto MainWindow::InitGLFW() -> void {
@@ -213,8 +200,8 @@ namespace kaTe {
         }
     }
 
-    auto MainWindow::CreateWindowSurface(VkInstance instance, VkSurfaceKHR *surface) -> void {
+    auto MainWindow::CreateWindowSurface(VkInstance instance, VkSurfaceKHR* surface) -> void {
         if (glfwCreateWindowSurface(instance, m_Window, nullptr, surface) != VK_SUCCESS)
-            throw std::runtime_error("Failed to create Vk Surface");
+            throw std::runtime_error("Failed to create Vulkan Surface");
     }
 }

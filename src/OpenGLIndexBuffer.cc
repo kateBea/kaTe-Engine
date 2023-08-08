@@ -1,6 +1,6 @@
 #include <vector>
 
-#include <Tools/Common.hh>
+#include <Utility/Common.hh>
 #include <Core/Logger.hh>
 #include <Renderer/OpenGL/OpenGLIndexBuffer.hh>
 

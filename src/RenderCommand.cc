@@ -32,7 +32,7 @@ namespace kaTe {
 
     auto RenderCommand::UpdateViewPort(UInt32_T x, UInt32_T y, UInt32_T width, UInt32_T height) -> void {
         KT_ASSERT(s_ActiveRendererAPI, "Render command active API is NULL");
-        s_ActiveRendererAPI->SetViewPort(x, y, width, height);
+        s_ActiveRendererAPI->SetViewport(x, y, width, height);
     }
     auto RenderCommand::ShutDown() -> void {
 

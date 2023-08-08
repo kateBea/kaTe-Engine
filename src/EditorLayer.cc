@@ -26,7 +26,7 @@ namespace kaTe {
     auto EditorLayer::OnAttach() -> void {
         Window& window{ Application::Get().GetMainWindow() };
 
-        // Necessary for OpenGL, must be removed
+        // Necessary for OpenGL for rendering to ImGui panel, should not be here
         FrameBufferCreateInfo createInfo{};
 
         createInfo.width = window.GetWidth();
@@ -82,16 +82,17 @@ namespace kaTe {
     }
 
     auto EditorLayer::OnUpdate(double ts) -> void {
-#if false
-        // TODO: must probably be ported to the scene panel, which should handle
-        //  rendering stuff to its viewport
-        m_ScenePanelInfo->SceneFrameBuffer->Bind();
-
         RenderCommand::SetClearColor(m_SettingsPanelInfo->ClearColor);
+#if false
+        // TODO: framebuffer should be part of the renderer as it is the entity we render our geometry into, in the case of opengl the framebuffer must be bound prior to rendering
+        m_ScenePanelInfo->SceneFrameBuffer->Bind();
 
         m_ScenePanelInfo->Viewport->OnUpdate();
         m_ScenePanelInfo->SceneFrameBuffer->Unbind();
 #endif
+
+        // For Vulkan testing
+        m_ScenePanelInfo->Viewport->OnUpdate();
     }
 
     auto EditorLayer::OnEvent(Event &event) -> void {
@@ -103,14 +104,14 @@ namespace kaTe {
     }
 
     auto EditorLayer::OnImGuiRender() -> void {
-        Editor::OnDockSpaceUpdate(m_DockEditorData);
+        Editor::OnDockSpaceUpdate();
+        auto controlFlags{ Editor::GetControlFlags() };
 
-        m_SettingsPanel->MakeVisible(m_DockEditorData.SettingPanelVisible);
-        m_HierarchyPanel->MakeVisible(m_DockEditorData.HierarchyPanelVisible);
-        m_InspectorPanel->MakeVisible(m_DockEditorData.InspectorPanelVisible);
-        //m_ScenePanel->MakeVisible(m_DockEditorData.ScenePanelVisible);
-        m_ScenePanel->MakeVisible(false);
-        m_StatsPanel->MakeVisible(m_DockEditorData.StatsPanelVisible);
+        m_SettingsPanel->MakeVisible(controlFlags.SettingPanelVisible);
+        m_HierarchyPanel->MakeVisible(controlFlags.HierarchyPanelVisible);
+        m_InspectorPanel->MakeVisible(controlFlags.InspectorPanelVisible);
+        m_ScenePanel->MakeVisible(controlFlags.ScenePanelVisible);
+        m_StatsPanel->MakeVisible(controlFlags.StatsPanelVisible);
 
         m_SettingsPanel->OnUpdate();
         m_HierarchyPanel->OnUpdate();
@@ -118,7 +119,7 @@ namespace kaTe {
         m_ScenePanel->OnUpdate();
         m_StatsPanel->OnUpdate();
 
-        if (m_DockEditorData.ApplicationCloseFlag)
+        if (controlFlags.ApplicationCloseFlag)
             Application::Get().Stop();
     }
 }

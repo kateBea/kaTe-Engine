@@ -10,13 +10,12 @@
 #include "Renderer/OpenGL/OpenGLFrameBuffer.hh"
 #include "Renderer/Renderer.hh"
 
-
 namespace kaTe {
 
     auto FrameBuffer::CreatFrameBuffer(const FrameBufferCreateInfo &properties) -> std::shared_ptr<FrameBuffer> {
         switch(Renderer::GetActiveGraphicsAPI()) {
             case Renderer::GraphicsAPI::OPENGL_API:
-                return std::make_shared<OpenGLFrameBuffer>(properties);
+                return std::make_shared<OpenGLFrameBuffer>();
             default:
                 KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API");
                 return nullptr;
@@ -26,7 +25,7 @@ namespace kaTe {
     auto FrameBuffer::CreatFrameBufferRawPtr(const FrameBufferCreateInfo &properties) -> FrameBuffer* {
         switch(Renderer::GetActiveGraphicsAPI()) {
             case Renderer::GraphicsAPI::OPENGL_API:
-                return new OpenGLFrameBuffer(properties);
+                return new OpenGLFrameBuffer();
             default:
                 KATE_CORE_LOGGER_CRITICAL("Unsupported renderer API");
                 return nullptr;

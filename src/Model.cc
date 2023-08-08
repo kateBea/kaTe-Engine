@@ -10,7 +10,7 @@
 #include <assimp/postprocess.h>
 
 // Project Headers
-#include <Tools/Common.hh>
+#include <Utility/Common.hh>
 
 #include <Renderer/Mesh.hh>
 #include <Renderer/Model.hh>
@@ -53,8 +53,8 @@ namespace kaTe {
 
         m_Meshes.reserve(scene->mRootNode->mNumMeshes);
 
-        // Contains the model's directory. Since substr will not include the ast character in the range,
-        // this variable does not include the last slash of the path string
+        // Contains the model's directory. Since substr will not engine the ast character in the range,
+        // this variable does not engine the last slash of the path string
         const Path_T modelDirectory{ path.string().substr(0,  path.string().find_last_of('/')) };
         ProcessNode(scene->mRootNode, scene, modelDirectory, wantLoadTextures);
     }

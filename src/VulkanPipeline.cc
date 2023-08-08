@@ -1,10 +1,11 @@
 //
 // Created by kate on 6/2/23.
 //
+
 #include <fstream>
 #include <array>
 
-#include <Tools/Common.hh>
+#include <Utility/Common.hh>
 
 #include <Core/Logger.hh>
 
@@ -127,7 +128,7 @@ namespace kaTe {
         configInfo.rasterizationInfo.depthClampEnable = VK_FALSE;
         configInfo.rasterizationInfo.rasterizerDiscardEnable = VK_FALSE; // requires extension if enabled
         configInfo.rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
-        configInfo.rasterizationInfo.lineWidth = configInfo.rasterizationInfo.polygonMode == VK_POLYGON_MODE_LINE ? GPU_STANDARD_LINE_WIDTH : 0.0f; // The maximum line width that is supported depends on the hardware and any line thicker than 1.0f requires you to enable the wideLines GPU feature.
+        configInfo.rasterizationInfo.lineWidth = configInfo.rasterizationInfo.polygonMode == VK_POLYGON_MODE_LINE ? GPU_STANDARD_LINE_WIDTH : 0.0f; // The maximum line width that is supported depends on the hardware, any line thicker than 1.0f requires you to enable the wideLines GPU feature.
         configInfo.rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT;
         configInfo.rasterizationInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
         configInfo.rasterizationInfo.depthBiasEnable = VK_FALSE;

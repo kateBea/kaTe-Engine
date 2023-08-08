@@ -15,7 +15,7 @@
 #include <backends/imgui_impl_vulkan.h>
 
 // Project Headers
-#include <Tools/Common.hh>
+#include <Utility/Common.hh>
 
 #include <Core/KeyCodes.hh>
 #include <Core/Logger.hh>
@@ -30,13 +30,8 @@
 #include <Renderer/Vulkan/VulkanRenderer.hh>
 
 namespace kaTe {
-    struct ImGuiVulkanData {
-    };
-
-    inline static ImGuiVulkanData s_ImGuiVulkanData{};
-
     ImGuiLayer::ImGuiLayer() noexcept
-        : Layer{"ImGuiLayer"} {}
+        :   Layer{"ImGuiLayer"} {}
 
     auto ImGuiLayer::OnAttach() -> void {
         // Setup Dear ImGui context
@@ -83,7 +78,8 @@ namespace kaTe {
 
             if (m_UseVulkan)
                 InitImGuiForVulkan(window);
-        } catch (const std::bad_any_cast &exception) {
+        }
+        catch (const std::bad_any_cast &exception) {
             KATE_APP_LOGGER_CRITICAL("Exception thrown std::any_cast. What: {}", exception.what());
         }
     }
@@ -94,8 +90,8 @@ namespace kaTe {
         }
 
         if (m_UseVulkan) {
+            vkDeviceWaitIdle(VulkanContext::GetPrimaryLogicalDevice());
             ImGui_ImplVulkan_Shutdown();
-
             m_CommandPool->OnRelease();
             vkDestroyDescriptorPool(VulkanContext::GetPrimaryLogicalDevice(), m_ImGuiDescriptorPool, nullptr);
         }
@@ -296,35 +292,36 @@ namespace kaTe {
         renderPassInfo.renderArea.offset = {0, 0};
         renderPassInfo.renderArea.extent = VulkanContext::GetSwapChain()->GetSwapChainExtent();
 
-        std::array<VkClearValue, 2> clearValues{};        // Only one clear value for the color attachment
-
-        clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};// Clear color for ImGui
+        std::array<VkClearValue, 2> clearValues{};                                  // Only one clear value for the color attachment
+        clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};   // Clear color for ImGui
         clearValues[1].depthStencil = { 1.0f, 0 };
 
         renderPassInfo.clearValueCount = static_cast<UInt32_T>(clearValues.size());
         renderPassInfo.pClearValues = clearValues.data();
-
         renderPassInfo.clearValueCount = static_cast<UInt32_T>(clearValues.size());
         renderPassInfo.pClearValues = clearValues.data();
 
         vkCmdBeginRenderPass(m_ImGuiCommandBuffers[imageIndex], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-        VkViewport viewport{
-                .x = 0.0f,
-                .y = 0.0f,
-                .width = static_cast<float>(VulkanContext::GetSwapChain()->GetSwapChainExtent().width),
-                .height = static_cast<float>(VulkanContext::GetSwapChain()->GetSwapChainExtent().height),
-                .minDepth = 0.0f,
-                .maxDepth = 1.0f,
-        };
+        {
+            // Set Viewport and Scissor
+            VkViewport viewport{
+                    .x = 0.0f,
+                    .y = 0.0f,
+                    .width = static_cast<float>(VulkanContext::GetSwapChain()->GetSwapChainExtent().width),
+                    .height = static_cast<float>(VulkanContext::GetSwapChain()->GetSwapChainExtent().height),
+                    .minDepth = 0.0f,
+                    .maxDepth = 1.0f,
+            };
 
-        VkRect2D scissor{
-                .offset{0, 0},
-                .extent{VulkanContext::GetSwapChain()->GetSwapChainExtent()},
-        };
+            VkRect2D scissor{
+                    .offset{ 0, 0 },
+                    .extent{ VulkanContext::GetSwapChain()->GetSwapChainExtent() },
+            };
 
-        vkCmdSetViewport(m_ImGuiCommandBuffers[imageIndex], 0, 1, &viewport);
-        vkCmdSetScissor(m_ImGuiCommandBuffers[imageIndex], 0, 1, &scissor);
+            vkCmdSetViewport(m_ImGuiCommandBuffers[imageIndex], 0, 1, &viewport);
+            vkCmdSetScissor(m_ImGuiCommandBuffers[imageIndex], 0, 1, &scissor);
+        }
 
         ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_ImGuiCommandBuffers[imageIndex]);
 
@@ -374,13 +371,13 @@ namespace kaTe {
         info.pDependencies = &dependency;
 
         if (vkCreateRenderPass(VulkanContext::GetPrimaryLogicalDevice(), &info, nullptr, &m_ImGuiRenderPass) != VK_SUCCESS)
-            throw std::runtime_error("failed to create render pass!");
+            throw std::runtime_error("Failed to create render pass!");
     }
 
     auto ImGuiLayer::CreateImGuiCommandPool() -> void {
         m_CommandPool = std::make_shared<VulkanCommandPool>();
         KT_ASSERT(m_CommandPool, "Command Pool pointer is NULL");
-        m_CommandPool->OnCreate(VkCommandPoolCreateInfo());
+        m_CommandPool->OnCreate(VkCommandPoolCreateInfo() /* temporary to add more flexibility to command pool creation*/);
     }
 
     auto ImGuiLayer::CreateImGuiCommandBuffers() -> void {

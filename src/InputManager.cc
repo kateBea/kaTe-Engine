@@ -9,9 +9,10 @@
 #include <GLFW/glfw3.h>
 
 // Project Headers
+#include <Utility/Common.hh>
+
 #include <Core/Logger.hh>
 #include <Core/Application.hh>
-#include <Tools/Common.hh>
 
 #include <Platform/InputManager.hh>
 

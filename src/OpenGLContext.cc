@@ -10,7 +10,7 @@
 #include <GLFW/glfw3.h>
 
 // Project Headers
-#include <Tools/Common.hh>
+#include <Utility/Common.hh>
 
 #include <Core/Assert.hh>
 #include <Core/Logger.hh>
@@ -19,9 +19,9 @@
 
 namespace kaTe {
 
-    auto OpenGLContext::Init(std::shared_ptr<Window> windowHandle) -> void {
+    auto OpenGLContext::Init(const std::shared_ptr<Window>& windowHandle) -> void {
         try {
-            // We expect the native window for Linux Window to be a GLFWwindow*
+            // We expect the native window for Linux Window to be a pointer to a GLFW window
             s_Handle = std::any_cast<GLFWwindow*>(windowHandle->GetNativeWindow());
             KT_ASSERT(s_Handle, "Window handle for OpenGL context initialization is NULL");
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, KT_OPENGL_VERSION_MAJOR);
@@ -57,13 +57,11 @@ namespace kaTe {
         s_VSync = false;
     }
 
-
-
     auto OpenGLContext::ShutDown() -> void {
 
     }
 
-    auto OpenGLContext::Draw() -> void {
+    auto OpenGLContext::Present() -> void {
         glfwSwapBuffers(s_Handle);
     }
 }

@@ -3,13 +3,14 @@
 #include <cmath>
 
 // Project headers
+#include <Utility/Common.hh>
+
 #include <Core/Events/AppEvents.hh>
 #include <Core/Logger.hh>
 
 #include <Core/Application.hh>
-#include <Tools/Common.hh>
 
-#include "Core/ImGui/ImGuiLayer.hh"
+#include <Core/ImGui/ImGuiLayer.hh>
 #include <Platform/InputManager.hh>
 #include <Platform/Window/MainWindow.hh>
 

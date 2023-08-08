@@ -6,9 +6,10 @@
 
 #include <stb_image.h>
 
+#include <Utility/Common.hh>
+
 #include <Core/Logger.hh>
 #include <Core/Assert.hh>
-#include <Tools/Common.hh>
 
 #include <Renderer/OpenGL/OpenGLTexture2D.hh>
 

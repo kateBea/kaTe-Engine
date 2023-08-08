@@ -33,10 +33,13 @@ namespace kaTe {
         }
     }
 
-    auto RenderContext::Draw() -> void {
+    auto RenderContext::Present() -> void {
         switch (s_ActiveAPI) {
             case Renderer::GraphicsAPI::OPENGL_API:
-                OpenGLContext::Draw();
+                OpenGLContext::Present();
+                break;
+            case Renderer::GraphicsAPI::VULKAN_API:
+                VulkanContext::Present();
                 break;
         }
     }
@@ -44,10 +47,8 @@ namespace kaTe {
         switch (s_ActiveAPI) {
             case Renderer::GraphicsAPI::OPENGL_API:
                 return OpenGLContext::IsVSyncActive();
-                break;
             case Renderer::GraphicsAPI::VULKAN_API:
-                // TODO:
-                break;
+                return VulkanContext::IsVSyncActive();
             default: return false;
         }
     }
@@ -58,7 +59,7 @@ namespace kaTe {
                 OpenGLContext::EnableVSync();
                 break;
             case Renderer::GraphicsAPI::VULKAN_API:
-                // TODO:
+                VulkanContext::EnableVSync();
                 break;
         }
     }
@@ -69,7 +70,7 @@ namespace kaTe {
                 OpenGLContext::DisableVSync();
                 break;
             case Renderer::GraphicsAPI::VULKAN_API:
-                // TODO:
+                VulkanContext::DisableVSync();
                 break;
         }
     }

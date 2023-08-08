@@ -125,12 +125,12 @@ namespace kaTe::Editor {
         }
     }
 
-    auto OnDockSpaceUpdate(DockControlFlags& flags) -> void {
+    auto OnDockSpaceUpdate() -> void {
         // If you strip some features of, this demo is pretty much equivalent to calling DockSpaceOverViewport()!
         // In most cases you should be able to just call DockSpaceOverViewport() and ignore all the code below!
         // In this specific demo, we are not using DockSpaceOverViewport() because:
         // - we allow the host window to be floating/moveable instead of filling the viewport (when opt_fullscreen == false)
-        // - we allow the host window to have padding (when opt_padding == true)
+        // - we allow the host window to have padding (when optPadding == true)
         // - we have a local menu bar in the host window (vs. you could use BeginMainMenuBar() + DockSpaceOverViewport() in your code!)
         // TL;DR; this demo is more complicated than what you would normally use.
         // If we removed all the options we are showcasing, this demo would become:
@@ -139,7 +139,7 @@ namespace kaTe::Editor {
         //         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
         //     }
 
-        static bool opt_padding = false;
+        static bool optPadding{ false };
         static ImGuiDockNodeFlags dockSpaceConfigFlags = ImGuiDockNodeFlags_None;
 
         // We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
@@ -166,10 +166,10 @@ namespace kaTe::Editor {
         // all active windows docked into it will lose their parent and become undocked.
         // We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
         // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-        if (!opt_padding)
+        if (!optPadding)
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("DockSpace Demo", &flags.ApplicationCloseFlag, window_flags);
-        if (!opt_padding)
+        ImGui::Begin("DockSpace Demo", &s_ControlFlags.ApplicationCloseFlag, window_flags);
+        if (!optPadding)
             ImGui::PopStyleVar();
 
         // DockSpace is always fullscreen
@@ -202,7 +202,7 @@ namespace kaTe::Editor {
                 ImGui::Separator();
 
                 if (ImGui::MenuItem("Close", nullptr, false))
-                    flags.ApplicationCloseFlag = true;
+                    s_ControlFlags.ApplicationCloseFlag = true;
 
                 ImGui::EndMenu();
             }
@@ -220,11 +220,11 @@ namespace kaTe::Editor {
             // Window. Need to extract to separated function
             if (ImGui::BeginMenu("Window")) {
                 if (ImGui::BeginMenu("Panels")) {
-                    if (ImGui::MenuItem("Hierarchy", nullptr, flags.HierarchyPanelVisible))   flags.HierarchyPanelVisible = !flags.HierarchyPanelVisible;
-                    if (ImGui::MenuItem("Inspector", nullptr, flags.InspectorPanelVisible))   flags.InspectorPanelVisible = !flags.InspectorPanelVisible;
-                    if (ImGui::MenuItem("Scene", nullptr, flags.ScenePanelVisible))       flags.ScenePanelVisible = !flags.ScenePanelVisible;
-                    if (ImGui::MenuItem("Settings", nullptr, flags.SettingPanelVisible))    flags.SettingPanelVisible = !flags.SettingPanelVisible;
-                    if (ImGui::MenuItem("Statistics", nullptr, flags.StatsPanelVisible))    flags.StatsPanelVisible = !flags.StatsPanelVisible;
+                    if (ImGui::MenuItem("Hierarchy", nullptr, s_ControlFlags.HierarchyPanelVisible))   s_ControlFlags.HierarchyPanelVisible = !s_ControlFlags.HierarchyPanelVisible;
+                    if (ImGui::MenuItem("Inspector", nullptr, s_ControlFlags.InspectorPanelVisible))   s_ControlFlags.InspectorPanelVisible = !s_ControlFlags.InspectorPanelVisible;
+                    if (ImGui::MenuItem("Scene", nullptr, s_ControlFlags.ScenePanelVisible))       s_ControlFlags.ScenePanelVisible = !s_ControlFlags.ScenePanelVisible;
+                    if (ImGui::MenuItem("Settings", nullptr, s_ControlFlags.SettingPanelVisible))    s_ControlFlags.SettingPanelVisible = !s_ControlFlags.SettingPanelVisible;
+                    if (ImGui::MenuItem("Statistics", nullptr, s_ControlFlags.StatsPanelVisible))    s_ControlFlags.StatsPanelVisible = !s_ControlFlags.StatsPanelVisible;
                     ImGui::EndMenu();
                 }
 

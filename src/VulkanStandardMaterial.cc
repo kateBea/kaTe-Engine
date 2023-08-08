@@ -38,6 +38,7 @@ namespace kaTe {
         vkDestroyDescriptorSetLayout(VulkanContext::GetPrimaryLogicalDevice(), m_DescriptorSetLayout, nullptr);
 
         for (std::size_t i{}; i < VulkanSwapChain::MAX_FRAMES_IN_FLIGHT; i++) {
+            // TODO: remove, we will have one uniform buffer only which is setup properly before rendering a frame we will no longer be rendering directly to the swapchain images
             vkDestroyBuffer(VulkanContext::GetPrimaryLogicalDevice(), m_UniformBuffers[i], nullptr);
             vkFreeMemory(VulkanContext::GetPrimaryLogicalDevice(), m_UniformBuffersMemory[i], nullptr);
         }

@@ -3,15 +3,16 @@
 #include <utility>
 #include <array>
 
-#include <Tools/Common.hh>
+#include <Utility/Common.hh>
 
+#include <Core/Application.hh>
 #include <Renderer/Vulkan/VulkanContext.hh>
 #include <Renderer/Vulkan/VulkanSwapChain.hh>
 
 namespace kaTe {
 
-    VulkanSwapChain::VulkanSwapChain(VkExtent2D extent)
-        :   m_WindowExtent{ extent }
+    VulkanSwapChain::VulkanSwapChain(const VulkanSwapChainCreateInfo& createInfo)
+        : m_SwapChainDetails{ createInfo }, m_WindowExtent{ createInfo.Extent }
     {
         OnCreate();
     }
@@ -32,6 +33,7 @@ namespace kaTe {
     }
 
     auto VulkanSwapChain::SubmitCommandBuffers(const VkCommandBuffer* buffers, const UInt32_T imageIndex) -> VkResult {
+        // TODO: This should most likely be part of the present function from the VulkanContext
         if (m_ImagesInFlight[imageIndex] != VK_NULL_HANDLE)
             vkWaitForFences(VulkanContext::GetPrimaryLogicalDevice(), 1, &m_ImagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
 
@@ -56,7 +58,6 @@ namespace kaTe {
         vkResetFences(VulkanContext::GetPrimaryLogicalDevice(), 1, &m_InFlightFences[m_CurrentFrame]);
         if (vkQueueSubmit(VulkanContext::GetPrimaryLogicalDeviceGraphicsQueue(), 1, &submitInfo, m_InFlightFences[m_CurrentFrame]) != VK_SUCCESS)
             throw std::runtime_error("failed to submit draw command buffer!");
-
 
         VkPresentInfoKHR presentInfo{};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -159,6 +160,7 @@ namespace kaTe {
 
             viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
             viewInfo.format = m_SwapChainImageFormat;
+            viewInfo.flags = VK_IMAGE_USAGE_SAMPLED_BIT;
 
             if (vkCreateImageView(VulkanContext::GetPrimaryLogicalDevice(), &viewInfo, nullptr, &m_SwapChainImageViews[i]) != VK_SUCCESS)
                 throw std::runtime_error("failed to create texture image view!");
@@ -225,10 +227,11 @@ namespace kaTe {
 
     auto VulkanSwapChain::CreateFrameBuffers() -> void {
         m_SwapChainFrameBuffers.resize(GetImageCount());
-        for (std::size_t i{}; i < GetImageCount(); i++) {
+        for (Size_T i{}; i < GetImageCount(); i++) {
             std::array<VkImageView, 2> attachments{ m_SwapChainImageViews[i], m_DepthImageViews[i] };
 
             VkExtent2D swapChainExtent{ GetSwapChainExtent() };
+
 
             VkFramebufferCreateInfo framebufferInfo{};
             framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -346,15 +349,19 @@ namespace kaTe {
         return availableFormats[0];
     }
 
-    auto VulkanSwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) -> VkPresentModeKHR {
-        for (const auto &availablePresentMode: availablePresentModes) {
-            if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
-                return availablePresentMode;
+    auto VulkanSwapChain::ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes) const -> VkPresentModeKHR {
+        if (m_SwapChainDetails.VSyncEnable)
+            return VK_PRESENT_MODE_FIFO_KHR;
+        else {
+            for (const auto &availablePresentMode: availablePresentModes) {
+                if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
+                    return availablePresentMode;
+                }
             }
-        }
 
-        // to enable V-Sync
-        return VK_PRESENT_MODE_FIFO_KHR;
+            // if VK_PRESENT_MODE_MAILBOX_KHR is not supported
+            return VK_PRESENT_MODE_FIFO_KHR;
+        }
     }
 
     auto VulkanSwapChain::ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) -> VkExtent2D {
@@ -387,7 +394,7 @@ namespace kaTe {
         vkDestroySwapchainKHR(VulkanContext::GetPrimaryLogicalDevice(), m_SwapChain, nullptr);
 
         // Depth resources cleanup
-        for (std::size_t i{}; i < m_DepthImages.size(); i++) {
+        for (Size_T i{}; i < m_DepthImages.size(); i++) {
             vkDestroyImageView(VulkanContext::GetPrimaryLogicalDevice(), m_DepthImageViews[i], nullptr);
             vkDestroyImage(VulkanContext::GetPrimaryLogicalDevice(), m_DepthImages[i], nullptr);
             vkFreeMemory(VulkanContext::GetPrimaryLogicalDevice(), m_DepthImageMemories[i], nullptr);
@@ -399,10 +406,19 @@ namespace kaTe {
         vkDestroyRenderPass(VulkanContext::GetPrimaryLogicalDevice(), m_RenderPass, nullptr);
 
         // cleanup synchronization objects
-        for (std::size_t i{}; i < MAX_FRAMES_IN_FLIGHT; i++) {
+        for (Size_T i{}; i < MAX_FRAMES_IN_FLIGHT; i++) {
             vkDestroySemaphore(VulkanContext::GetPrimaryLogicalDevice(), m_RenderFinishedSemaphores[i], nullptr);
             vkDestroySemaphore(VulkanContext::GetPrimaryLogicalDevice(), m_ImageAvailableSemaphores[i], nullptr);
             vkDestroyFence(VulkanContext::GetPrimaryLogicalDevice(), m_InFlightFences[i], nullptr);
         }
+    }
+    auto VulkanSwapChain::GetDefaultCreateInfo() -> VulkanSwapChainCreateInfo {
+        auto appWindowExtent{ Application::Get().GetMainWindowPtr()->GetExtent() };
+        VkExtent2D extent{ (UInt32_T)appWindowExtent.first, (UInt32_T)appWindowExtent.second };
+        VulkanSwapChainCreateInfo createInfo{
+                .Extent = extent,
+                .VSyncEnable = false,
+        };
+        return createInfo;
     }
 }

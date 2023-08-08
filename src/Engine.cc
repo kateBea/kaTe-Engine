@@ -10,7 +10,7 @@
 #include <Core/Application.hh>
 #include <Core/Logger.hh>
 
-#include "Editor/EditorLayer.hh"
+#include <Editor/EditorLayer.hh>
 
 
 namespace kaTe {

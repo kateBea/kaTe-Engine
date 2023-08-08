@@ -2,6 +2,8 @@
 // Created by kate on 6/24/23.
 //
 
+#include <utility>
+
 #include <entt/entt.hpp>
 
 #include <Renderer/Renderer.hh>
@@ -9,7 +11,6 @@
 #include "Scene/Scene.hh"
 #include <Scene/Component.hh>
 #include <Scene/Entity.hh>
-#include <utility>
 
 namespace kaTe {
 

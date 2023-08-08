@@ -1,8 +1,9 @@
+#include <Utility/Common.hh>
+
 #include <Core/Logger.hh>
 #include <Core/Assert.hh>
 #include <Renderer/OpenGL/OpenGLVertexArray.hh>
-
-#include <Tools/Common.hh>
+#include <Renderer/OpenGL/OpenGLVertexBuffer.hh>
 
 namespace kaTe {
     OpenGLVertexArray::OpenGLVertexArray(OpenGLVertexArray&& other) noexcept
@@ -17,8 +18,8 @@ namespace kaTe {
     auto OpenGLVertexArray::UseVertexBuffer(const std::shared_ptr<VertexBuffer>& buffer) const -> void {
         KT_ASSERT(buffer, "Vertex Buffer is NULL");
         KT_ASSERT(!buffer->IsEmpty(), "Vertex Buffer is empty");
-        BindVertexArray();
-        buffer->Bind();
+        Bind();
+        std::dynamic_pointer_cast<OpenGLVertexBuffer>(buffer)->Bind();
 
         UInt32_T attributeIndex{};
         for (const auto& bufferElement : buffer->GetBufferLayout()) {

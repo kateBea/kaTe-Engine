@@ -4,12 +4,15 @@
 
 #include <algorithm>
 
+#include <Utility/Common.hh>
+
 #include <Core/Logger.hh>
 #include <Core/Events/Event.hh>
 #include <Core/TimeManager.hh>
+
 #include <Platform/InputManager.hh>
+
 #include <Renderer/Camera/OrthographicCameraController.hh>
-#include <Tools/Common.hh>
 
 namespace kaTe {
 

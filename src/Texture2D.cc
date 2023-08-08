@@ -4,11 +4,11 @@
 
 #include <memory>
 
+#include <Utility/Common.hh>
+
 #include <Core/Logger.hh>
-#include <Tools/Common.hh>
 
 #include <Renderer/Renderer.hh>
-
 #include <Renderer/Material/Texture.hh>
 #include <Renderer/Material/Texture2D.hh>
 #include <Renderer/OpenGL/OpenGLTexture2D.hh>

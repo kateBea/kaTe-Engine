@@ -1,21 +1,18 @@
-//
-// Created by kate on 6/23/23.
-//
+/**
+ * OpenGLFrameBuffer.cc
+ * Created by kate on 6/23/23.
+ * */
 
-#include "GL/glew.h"
+// Third-Party Libraries
+#include <GL/glew.h>
 
-#include "Core/Assert.hh"
-#include "Core/Logger.hh"
-#include "Renderer/OpenGL/OpenGLFrameBuffer.hh"
-#include "Tools/Common.hh"
+// Project Headers
+#include <Utility/Common.hh>
+#include <Core/Assert.hh>
+#include <Core/Logger.hh>
+#include <Renderer/OpenGL/OpenGLFrameBuffer.hh>
 
 namespace kaTe {
-
-    OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferCreateInfo& properties)
-        : m_FrameBufferCreateInfo{ properties }
-    {
-        Recreate();
-    }
 
     auto OpenGLFrameBuffer::Bind() -> void {
         glBindFramebuffer(GL_FRAMEBUFFER, m_Id);
@@ -50,17 +47,13 @@ namespace kaTe {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_FrameBufferCreateInfo.width, m_FrameBufferCreateInfo.height, 0,
                      GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, nullptr);
 
-#if 1
-        // Step 3: Enable blending
-        glEnable(GL_BLEND);
+        // Enable Depth testing
+        glEnable(GL_DEPTH_TEST);
 
-        // Step 4: Set the blend equation and blending factors
+        // Enable blending and setup blending function
+        glEnable(GL_BLEND);
         glBlendEquation(GL_FUNC_ADD);  // Default blend equation
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  // Default blending factors
-
-        // Step 5: Optionally, set separate blend function for the alpha channel
-        glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-#endif
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
 
@@ -78,6 +71,12 @@ namespace kaTe {
     auto OpenGLFrameBuffer::Resize(UInt32_T width, UInt32_T height) -> void {
         m_FrameBufferCreateInfo.width = width;
         m_FrameBufferCreateInfo.height = height;
+        Recreate();
+    }
+
+    auto OpenGLFrameBuffer::OnCreate(const FrameBufferCreateInfo& properties) -> void {
+        m_FrameBufferCreateInfo = properties;
+
         Recreate();
     }
 }
